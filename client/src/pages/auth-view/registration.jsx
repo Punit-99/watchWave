@@ -22,7 +22,7 @@ const Registration = () => {
       if (data?.payload?.success) {
         console.log(data, true);
 
-        navigate("/auth/sign-in");
+        navigate("/auth/login");
       } else {
         console.log(false);
         // toast
@@ -41,7 +41,7 @@ const Registration = () => {
             Already have an account?
             <Link
               className="font-medium text-indigo-600 hover:text-indigo-500"
-              to="/auth/sign-in"
+              to="/auth/login"
             >
               Login
             </Link>

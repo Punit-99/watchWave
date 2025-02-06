@@ -37,7 +37,7 @@ const Login = () => {
             Don&apos;t have an account?
             <Link
               className="font-medium text-indigo-600 hover:text-indigo-500"
-              to="/auth/sign-up"
+              to="/auth/register"
             >
               Register
             </Link>
