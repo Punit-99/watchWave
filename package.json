@@ -1,0 +1,25 @@
+{
+  "name": "watchwave",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm start",
+    "dev": "concurrently \"npm run client\" \"npm run server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Punit-99/watchWave.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Punit-99/watchWave/issues"
+  },
+  "homepage": "https://github.com/Punit-99/watchWave#readme",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

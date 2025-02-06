@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AdminDashboard from "./pages/admin-view/dashboard";
 import { checkAuth } from "./store/auth-slice/authSlice";
 import { useEffect } from "react";
+
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
@@ -22,13 +23,13 @@ function App() {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  // if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
         {/* HOME */}
-        <Route path="/" element={<LandingHome />} /> {/* Use LandingHome component */}
-        {/* AUTH ROUTE */}
+        <Route path="/" element={<LandingHome />} />
+
+        {/* AUTH ROUTES */}
         <Route
           path="/auth"
           element={
@@ -41,8 +42,7 @@ function App() {
           <Route path="register" element={<Registration />} />
         </Route>
 
-        {/* ADMIN */}
-
+        {/* ADMIN ROUTES */}
         <Route
           path="/admin"
           element={
@@ -54,9 +54,10 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
         </Route>
 
-        {/* STREAM */}
-        <Route path="/movies"></Route>
+        {/* STREAM ROUTE (Placeholder for Movies) */}
+        <Route path="/movies" element={<div>Movies Page</div>} />
 
+        {/* ERROR HANDLING ROUTES */}
         <Route path="/unauth-page" element={<Unauth />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

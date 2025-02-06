@@ -3,6 +3,7 @@ import logo from "../../assets/LOGO.png";
 import heroBg from "../../assets/HERO_BG.png";
 import { Button } from "../ui/button";
 import { StepForward } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -62,9 +63,11 @@ const HeroSection = () => {
               whileHover={{ scale: 0.95 }} // Scale down on hover (zoom-out)
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Button className="px-6 py-6 bg-[#27272A] rounded-lg font-semibold transition duration-300">
-                Get Started
-              </Button>
+              <Link to={"#"}>
+                <Button className="px-6 py-6 bg-[#27272A] rounded-lg font-semibold transition duration-300">
+                  Login
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Second Button with Zoom-out Animation */}
@@ -72,9 +75,11 @@ const HeroSection = () => {
               whileHover={{ scale: 0.95 }} // Scale down on hover (zoom-out)
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Button className="px-6 py-6 bg-[#ff9000] text-white rounded-lg font-semibold  transition duration-300">
-                Explore Collections <StepForward size={20} />
-              </Button>
+              <Link to={"#"}>
+                <Button className="px-6 py-6 bg-[#ff9000] text-white rounded-lg font-semibold  transition duration-300">
+                  Explore Collections <StepForward size={20} />
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>

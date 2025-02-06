@@ -4,6 +4,7 @@ import CommonForm from "../../components/common/commonForm";
 import { LoginFormControl } from "../../config/formFields"; // Updated import statement
 import { loginUser } from "../../store/auth-slice/authSlice"; // Ensure this import is correct
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const initialState = {
   email: "",
@@ -19,7 +20,7 @@ const Login = () => {
 
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
-        // toast
+        toast.success("Successfully Logged In!");
       } else {
         //  toast
       }
