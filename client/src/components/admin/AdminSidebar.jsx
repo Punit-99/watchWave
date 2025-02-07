@@ -1,81 +1,125 @@
-import { LayoutDashboard, Popcorn } from "lucide-react";
+import { motion } from "framer-motion";
+import { LayoutDashboard, Film, Users, Settings, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import capitalizeFirstLetter from "../common/helper/capitalizeFirstLetter ";
+import { logoutUser } from "../../store/auth-slice/authSlice";
+import toast from "react-hot-toast";
 
 const sidebarMenu = [
   {
     id: "dashboard",
-    label: "Dashboard",
+    label: "Overview",
     path: "/admin/dashboard",
     icon: <LayoutDashboard />,
   },
   {
-    id: "products",
-    label: "Products",
+    id: "movies",
+    label: "Movies & Shows",
     path: "/admin/shows",
-    icon: <Popcorn />,
+    icon: <Film />,
   },
-  // {
-  //   id: "orders",
-  //   label: "Orders",
-  //   path: "/admin/orders",
-  //   icon: <BadgeCheck />,
-  // },
+  {
+    id: "users",
+    label: "User Management",
+    path: "/admin/users",
+    icon: <Users />,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    path: "/admin/settings",
+    icon: <Settings />,
+  },
 ];
 
-// function MenuItems() {
-//   const navigate = useNavigate();
-
-//   return (
-//     <nav className="mt-8 flex-col flex gap-2">
-//       {sidebarMenu.map((menuItem) => (
-//         <div
-//           key={menuItem.id}
-//           onClick={() => {
-//             navigate(menuItem.path);
-//           }}
-//           className="flex cursor-pointer text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-//         >
-//           {menuItem.icon}
-//           <span>{menuItem.label}</span>
-//         </div>
-//       ))}
-//     </nav>
-//   );
-// }
+const populateMenu = (navigate, location) => {
+  return sidebarMenu.map((item) => {
+    const isActive = location.pathname === item.path;
+    return (
+      <SidebarMenuItem key={item.id}>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 ${
+            isActive
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-800 text-gray-300"
+          }`}
+          onClick={() => navigate(item.path)}
+        >
+          {item.icon}
+          <span className="text-lg">{item.label}</span>
+        </motion.div>
+      </SidebarMenuItem>
+    );
+  });
+};
 
 const AdminSidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   return (
     <Sidebar variant="floating" className="min-w-[250px]">
-      <SidebarContent className="shadow-[0px_0px_15px_15px_rgba(0,_0,_0,_0.1)] rounded-lg">
+      <SidebarHeader className="flex flex-row items-center">
+        <Avatar>
+          <AvatarImage src={""} />
+        </Avatar>
+        <span className="font-bold">
+          Hello {capitalizeFirstLetter(user.userName)}
+        </span>
+      </SidebarHeader>
+      <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-sm uppercase tracking-wider">
+            Admin Panel
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {sidebarMenu.map((item) => (
-                <SidebarMenuItem key={item?.id}>
-                  <SidebarMenuButton asChild>
-                    <a href={item?.path} className="flex items-center gap-2">
-                      {item?.icon}
-                      <span>{item?.label}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <SidebarMenu>{populateMenu(navigate, location)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 bg-red-400 text-white"
+            >
+              <button
+                className="flex gap-3"
+                onClick={() => {
+                  dispatch(logoutUser()).then(() =>
+                    toast.success("Logged Out!")
+                  );
+                }}
+              >
+                <LogOut />
+                <span className="text-lg">Sign Out</span>
+              </button>
+            </motion.div>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 };
+
 export default AdminSidebar;

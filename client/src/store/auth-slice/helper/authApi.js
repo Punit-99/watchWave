@@ -17,7 +17,11 @@ export const loginUserApi = async (formData) => {
 };
 
 export const logoutUserApi = async () => {
-  const response = await axios.post(`${BASE_URL}/auth/logout`, {}, { withCredentials: true });
+  const response = await axios.post(
+    `${BASE_URL}/auth/logout`,
+    {},
+    { withCredentials: true }
+  );
   return response.data;
 };
 

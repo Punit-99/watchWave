@@ -7,11 +7,12 @@ import Login from "./pages/auth-view/login";
 import Registration from "./pages/auth-view/registration";
 import AdminLayout from "./components/admin/adminLayout";
 import CheckAuth from "./components/common/checkAuth";
-import LandingHome from "./pages/landing-view/landingHome"; // Correct import for LandingHome
+import LandingHome from "./pages/landing-view/landingHome";
 import { useDispatch, useSelector } from "react-redux";
 import AdminDashboard from "./pages/admin-view/dashboard";
 import { checkAuth } from "./store/auth-slice/authSlice";
 import { useEffect } from "react";
+import AdminShows from "./pages/admin-view/shows";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -52,6 +53,7 @@ function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="shows" element={<AdminShows />} />
         </Route>
 
         {/* STREAM ROUTE (Placeholder for Movies) */}
