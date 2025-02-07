@@ -1,5 +1,5 @@
 function AdminDashboard() {
-  return "helloo";
+  return "AdminDashboard";
 }
 
 export default AdminDashboard;
