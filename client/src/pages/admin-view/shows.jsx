@@ -2,22 +2,47 @@ import { useState } from "react";
 import FloatingActionButton from "../../components/admin/fab";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
+import { uploadMovieFormControls } from "../../config/formFields";
+import { useDispatch } from "react-redux";
+import CommonForm from "../../components/common/commonForm";
+
+const initialState = {
+  title: "",
+  description: "",
+  category: "",
+  genres: [],
+  releaseDate: "",
+  poster: null,
+  trailerUrl: "",
+  videoUrl: "",
+  rating: "",
+  isFeatured: false,
+};
 
 const Shows = () => {
+  const [formData, setFormData] = useState(initialState);
+
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State to manage Sheet visibility
 
   const handleOpenSheet = () => {
     setIsSheetOpen(true); // Open the sheet when FAB is clicked
   };
 
-  const handleCloseSheet = () => {
-    setIsSheetOpen(false); // Close the sheet
-  };
+  // const handleCloseSheet = () => {
+  //   setIsSheetOpen(false); // Close the sheet
+  // };
+
+  function onSubmit() {
+    console.log("Upload Clicked");
+  }
 
   return (
     <>
@@ -30,13 +55,17 @@ const Shows = () => {
       >
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Are you absolutely sure?</SheetTitle>
+            <SheetTitle>Show Upload</SheetTitle>
             <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              <CommonForm
+                formControls={uploadMovieFormControls}
+                buttonText={"Upload"}
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={onSubmit}
+              />
             </SheetDescription>
           </SheetHeader>
-          <button onClick={handleCloseSheet}>Close</button>
         </SheetContent>
       </Sheet>
     </>
