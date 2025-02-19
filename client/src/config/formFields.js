@@ -38,86 +38,69 @@ export const LoginFormControl = [
     componentType: "input",
   },
 ];
-
-export const uploadMovieFormControls = [
+// Show Basic Information Form Controls
+export const showBasicFormControls = [
   {
-    label: "Title",
     name: "title",
+    label: "Title",
     componentType: "input",
     type: "text",
-    placeholder: "Enter title",
+    placeholder: "Enter show title",
   },
   {
-    label: "Description",
     name: "description",
+    label: "Description",
     componentType: "textarea",
-    placeholder: "Enter description",
+    placeholder: "Enter show description",
   },
   {
-    label: "Category",
-    name: "category",
-    componentType: "select",
-    options: [
-      { id: "movie", label: "Movie" },
-      { id: "tv_show", label: "TV Show" },
-      { id: "web_series", label: "Web Series" },
-    ],
+    name: "genre",
+    label: "Genre",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter genre",
   },
   {
-    label: "Genres",
-    name: "genres",
-    componentType: "select",
-    multiple: true,
-    options: [
-      { id: "action", label: "Action" },
-      { id: "comedy", label: "Comedy" },
-      { id: "drama", label: "Drama" },
-      { id: "horror", label: "Horror" },
-      { id: "sci-fi", label: "Sci-Fi" },
-      { id: "thriller", label: "Thriller" },
-      { id: "romance", label: "Romance" },
-      { id: "animation", label: "Animation" },
-    ],
-  },
-  {
-    label: "Release Date",
     name: "releaseDate",
-    componentType: "input",
-    type: "date",
-    placeholder: "Select release date",
+    label: "Release Date",
+    componentType: "date",
   },
   {
-    label: "Poster Image",
-    name: "poster",
-    componentType: "file",
-    type: "file",
-    placeholder: "Upload poster image",
+    name: "category",
+    label: "Category",
+    componentType: "select",
+    options: [
+      { value: "movie", label: "Movie" },
+      { value: "webseries", label: "Web Series" },
+    ],
   },
   {
-    label: "Trailer URL",
-    name: "trailerUrl",
-    componentType: "input",
-    type: "url",
-    placeholder: "Enter trailer URL",
-  },
-  {
-    label: "Video URL",
-    name: "videoUrl",
-    componentType: "input",
-    type: "url",
-    placeholder: "Enter video URL",
-  },
-  {
-    label: "Rating (IMDb)",
     name: "rating",
+    label: "Rating",
     componentType: "input",
     type: "number",
-    placeholder: "Enter rating (0-10)",
-  },
-  {
-    label: "Is Featured?",
-    name: "isFeatured",
-    componentType: "checkbox",
-    type: "checkbox",
+    placeholder: "Enter rating (out of 10)",
   },
 ];
+
+// Initial form data
+export const showInitialFormData = {
+  title: "",
+  description: "",
+  genre: "",
+  releaseDate: "",
+  category: "",
+  rating: "",
+};
+
+export const showVideoInitialFormData = [
+  {
+    title: "",
+    videoUrl: "",
+    public_id: "",
+  },
+];
+export const showMediaInitialFormData = {
+  posterUrl: "",
+  thumbnailUrls: [],
+};

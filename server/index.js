@@ -1,10 +1,10 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import connectDB from './db/db.js';
-import authRoutes from './routes/auth/auth-routers.js';
-import userRoutes from './routes/userRoutes.js'; // Ensure correct import
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import connectDB from "./db/db.js";
+import authRoutes from "./routes/auth/auth-routers.js";
+import adminRoutes from "./routes/admin/show-routes.js";
 
 dotenv.config();
 
@@ -30,9 +30,13 @@ app.use(express.json());
 
 // Routes
 const BASE_URL = "/api/v1";
-// auth
+// auth-routes
 app.use(`${BASE_URL}/auth`, authRoutes);
-app.use(`${BASE_URL}/users`, userRoutes); // Ensure correct usage of middleware
+
+// admin-routes
+app.use(`${BASE_URL}/admin/shows`, adminRoutes);
+
+// user-routes
 
 // start
 const startServer = () => {

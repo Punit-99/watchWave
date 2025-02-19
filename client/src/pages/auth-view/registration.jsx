@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import CommonForm from "@/components/common/commonForm";
+import CommonForm from "../../components/common/common-Form/commonForm";
 import { registerFormControls } from "../../config/formFields";
 import { registerUser } from "../../store/auth-slice/authSlice";
 
@@ -48,11 +48,12 @@ const Registration = () => {
           </p>
         </div>
         <CommonForm
-          formControls={registerFormControls}
-          buttonText={"Sign Up"}
           formData={formData}
+          buttonText={"Sign Up"}
+          formControls={registerFormControls}
           setFormData={setFormData}
-          onSubmit={onSubmit}
+          isButtonDisabled={false}
+          handleSubmit={onSubmit}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CommonForm from "../../components/common/commonForm";
+import CommonForm from "../../components/common/common-Form/commonForm";
 import { LoginFormControl } from "../../config/formFields"; // Updated import statement
 import { loginUser } from "../../store/auth-slice/authSlice"; // Ensure this import is correct
 import { useDispatch } from "react-redux";
@@ -44,12 +44,14 @@ const Login = () => {
             </Link>
           </p>
         </div>
+
         <CommonForm
-          formControls={LoginFormControl}
-          buttonText={"Sign In"}
           formData={formData}
+          buttonText={"Sign In"}
+          formControls={LoginFormControl}
           setFormData={setFormData}
-          onSubmit={onSubmit}
+          isButtonDisabled={false}
+          handleSubmit={onSubmit}
         />
       </div>
     </div>

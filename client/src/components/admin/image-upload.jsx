@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -6,7 +8,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
 
-function ProductImageUpload({
+const ShowImageUpload = ({
   imageFile,
   setImageFile,
   imageLoadingState,
@@ -15,17 +17,14 @@ function ProductImageUpload({
   setImageLoadingState,
   isEditMode,
   isCustomStyling = false,
-}) {
+}) => {
   const inputRef = useRef(null);
 
-  console.log(isEditMode, "isEditMode");
-
   function handleImageFileChange(event) {
-    console.log(event.target.files, "event.target.files");
     const selectedFile = event.target.files?.[0];
-    console.log(selectedFile);
-
-    if (selectedFile) setImageFile(selectedFile);
+    if (selectedFile) {
+      setImageFile(selectedFile);
+    }
   }
 
   function handleDragOver(event) {
@@ -46,17 +45,23 @@ function ProductImageUpload({
   }
 
   async function uploadImageToCloudinary() {
-    setImageLoadingState(true);
-    const data = new FormData();
-    data.append("my_file", imageFile);
-    const response = await axios.post(
-      "http://localhost:5000/api/admin/products/upload-image",
-      data
-    );
-    console.log(response, "response");
+    try {
+      setImageLoadingState(true);
+      const data = new FormData();
+      data.append("my_file", imageFile);
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/admin/shows/upload-image",
+        data
+      );
 
-    if (response?.data?.success) {
-      setUploadedImageUrl(response.data.result.url);
+      if (response?.data?.success) {
+        setUploadedImageUrl(response.data.result.url);
+      } else {
+        console.error("Image upload failed");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
       setImageLoadingState(false);
     }
   }
@@ -66,9 +71,7 @@ function ProductImageUpload({
   }, [imageFile]);
 
   return (
-    <div
-      className={`w-full  mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}
-    >
+    <div className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
       <Label className="text-lg font-semibold mb-2 block">Upload Image</Label>
       <div
         onDragOver={handleDragOver}
@@ -117,6 +120,6 @@ function ProductImageUpload({
       </div>
     </div>
   );
-}
+};
 
-export default ProductImageUpload;
+export default ShowImageUpload;

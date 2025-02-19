@@ -54,11 +54,7 @@ const populateMenu = (navigate, location) => {
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 ${
-            isActive
-              ? "bg-blue-600 text-white"
-              : "hover:bg-gray-800 text-gray-300"
-          }`}
+          className={`flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 `}
           onClick={() => navigate(item.path)}
         >
           {item.icon}

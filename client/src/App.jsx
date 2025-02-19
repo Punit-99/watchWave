@@ -6,7 +6,7 @@ import Unauth from "./pages/unauth-view/unauth";
 import Login from "./pages/auth-view/login";
 import Registration from "./pages/auth-view/registration";
 import AdminLayout from "./components/admin/adminLayout";
-import CheckAuth from "./components/common/checkAuth";
+import CheckAuth from "./components/common/check-auth/checkAuth";
 import LandingHome from "./pages/landing-view/landingHome";
 import { useDispatch, useSelector } from "react-redux";
 import AdminDashboard from "./pages/admin-view/dashboard";
