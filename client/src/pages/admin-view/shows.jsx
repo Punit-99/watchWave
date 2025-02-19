@@ -34,6 +34,7 @@ export default function ShowUpload() {
 
   // Tabs state to manage navigation
   const [activeTab, setActiveTab] = useState("basic-info");
+  const [dialogClose, setDialogClose] = useState(false);
 
   // Add new episode (Web series)
   function handleAddEpisode() {
@@ -89,11 +90,14 @@ export default function ShowUpload() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={dialogClose} onOpenChange={setDialogClose}>
       <DialogTrigger asChild>
         <Button>Upload Show</Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-lg min-w-[350px] md:min-w-[500px] lg:min-w-[600px] bg-white shadow-xl rounded-xl transition-all duration-300 ">
+      <DialogContent
+        onInteractOutside={(e) => e.preventDefault()}
+        className="w-full max-w-lg min-w-[350px] md:min-w-[500px] lg:min-w-[600px] bg-white shadow-xl rounded-xl transition-all duration-300 "
+      >
         <DialogHeader>
           <DialogTitle>Upload Show</DialogTitle>
         </DialogHeader>
@@ -134,9 +138,7 @@ export default function ShowUpload() {
               {activeTab === "basic-info" ? (
                 <>
                   {/* Cancel and Next on the first tab */}
-                  <Button onClick={() => console.log("Cancelled")}>
-                    Cancel
-                  </Button>
+                  <Button onClick={() => setDialogClose(false)}>Cancel</Button>
                   <Button onClick={handleNextTab}>Next</Button>
                 </>
               ) : (
