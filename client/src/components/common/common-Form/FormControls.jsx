@@ -57,7 +57,7 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
             <SelectTrigger className="w-full p-2 border rounded">
               <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
-            <SelectContent className="w-full p-2 border rounded">
+            <SelectContent className="w-full  border rounded bg-white">
               {getControlItem.options &&
                 getControlItem.options.map((optionItem) => (
                   <SelectItem key={optionItem.value} value={optionItem.value}>
@@ -69,6 +69,7 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
         );
         break;
 
+      // Date Picker
       // Date Picker
       case "date":
         element = (
@@ -85,16 +86,26 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
                   : "Pick a date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent
+              className="w-auto p-0 z-[1000] pointer-events-auto"
+              align="start"
+            >
               <Calendar
+                className="rounded-md border-none shadow bg-white"
                 mode="single"
-                selected={formData[getControlItem.name]}
-                onSelect={(selectedDate) =>
-                  setFormData({
-                    ...formData,
-                    [getControlItem.name]: selectedDate,
-                  })
+                selected={
+                  formData[getControlItem.name]
+                    ? new Date(formData[getControlItem.name])
+                    : undefined
                 }
+                onSelect={(selectedDate) => {
+                  if (selectedDate) {
+                    setFormData({
+                      ...formData,
+                      [getControlItem.name]: selectedDate.toISOString(), // Save as ISO string
+                    });
+                  }
+                }}
                 initialFocus
               />
             </PopoverContent>

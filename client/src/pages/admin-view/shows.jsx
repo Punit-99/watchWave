@@ -93,7 +93,7 @@ export default function ShowUpload() {
       <DialogTrigger asChild>
         <Button>Upload Show</Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-lg min-w-[350px] md:min-w-[500px] lg:min-w-[600px] bg-white shadow-xl rounded-xl transition-all duration-300">
+      <DialogContent className="w-full max-w-lg min-w-[350px] md:min-w-[500px] lg:min-w-[600px] bg-white shadow-xl rounded-xl transition-all duration-300 ">
         <DialogHeader>
           <DialogTitle>Upload Show</DialogTitle>
         </DialogHeader>
