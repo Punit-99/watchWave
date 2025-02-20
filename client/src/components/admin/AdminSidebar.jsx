@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { motion } from "framer-motion";
 import { LayoutDashboard, Film, Users, Settings, LogOut } from "lucide-react";
 import {
@@ -9,10 +10,9 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import capitalizeFirstLetter from "../common/helper/capitalizeFirstLetter ";
