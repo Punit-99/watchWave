@@ -46,28 +46,27 @@ const sidebarMenu = [
   },
 ];
 
-const populateMenu = (navigate, location) => {
-  return sidebarMenu.map((item) => {
-    const isActive = location.pathname === item.path;
-    return (
-      <SidebarMenuItem key={item.id}>
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 `}
-          onClick={() => navigate(item.path)}
-        >
-          {item.icon}
-          <span className="text-lg">{item.label}</span>
-        </motion.div>
-      </SidebarMenuItem>
-    );
-  });
+const populateMenu = (navigate, setTitle) => {
+  return sidebarMenu.map((item) => (
+    <SidebarMenuItem key={item.id}>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200"
+        onClick={() => {
+          navigate(item.path);
+          setTitle(item.label); // Update title on click
+        }}
+      >
+        {item.icon}
+        <span className="text-lg">{item.label}</span>
+      </motion.div>
+    </SidebarMenuItem>
+  ));
 };
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ setTitle }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -87,7 +86,7 @@ const AdminSidebar = () => {
             Admin Panel
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>{populateMenu(navigate, location)}</SidebarMenu>
+            <SidebarMenu>{populateMenu(navigate, setTitle)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
