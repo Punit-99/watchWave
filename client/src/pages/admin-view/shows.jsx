@@ -14,16 +14,17 @@ import {
   showMediaInitialFormData,
 } from "../../config/formFields";
 import { Button } from "../../components/ui/button";
-
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../../components/ui/dialog";
+import { useOutletContext } from "react-router-dom"; // Get modal state from Layout
 
 export default function ShowUpload() {
+  // Access modal state from Layout
+  const [openModal, setOpenModal] = useOutletContext();
   const [showFormData, setShowFormData] = useState(showInitialFormData);
   const [showVideoFormData, setShowVideoFormData] = useState(
     showVideoInitialFormData
@@ -34,15 +35,9 @@ export default function ShowUpload() {
 
   // Tabs state to manage navigation
   const [activeTab, setActiveTab] = useState("basic-info");
-  const [dialogClose, setDialogClose] = useState(false);
 
   // Add new episode (Web series)
-  function handleAddEpisode() {
-    setShowVideoFormData([
-      ...showVideoFormData,
-      { title: "", videoUrl: "", public_id: "" },
-    ]);
-  }
+  function handleAddEpisode() {}
 
   // Remove an episode (Web series)
   function handleRemoveEpisode(index) {
@@ -50,33 +45,10 @@ export default function ShowUpload() {
   }
 
   // Handle image upload (just storing file info for now)
-  function handleImageUpload(event, type) {
-    const file = event.target.files[0];
-    if (file) {
-      const fileUrl = URL.createObjectURL(file);
-      if (type === "poster") {
-        setShowMediaFormData({
-          ...showMediaFormData,
-          posterUrl: fileUrl,
-        });
-      } else if (type === "thumbnail") {
-        setShowMediaFormData({
-          ...showMediaFormData,
-          thumbnailUrls: [...showMediaFormData.thumbnailUrls, fileUrl],
-        });
-      }
-    }
-  }
+  function handleImageUpload(event, type) {}
 
   // Submit handler
-  function handleSubmit() {
-    const finalFormData = {
-      ...showFormData,
-      videoData: showVideoFormData,
-      mediaData: showMediaFormData,
-    };
-    console.log("Final Show Data:", finalFormData);
-  }
+  function handleSubmit() {}
 
   // Handle tab navigation
   function handleNextTab() {
@@ -90,17 +62,16 @@ export default function ShowUpload() {
   }
 
   return (
-    <Dialog open={dialogClose} onOpenChange={setDialogClose}>
-      <DialogTrigger asChild>
-        <Button>Upload Show</Button>
-      </DialogTrigger>
+    <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
-        className="w-full max-w-lg min-w-[350px] md:min-w-[500px] lg:min-w-[600px] bg-white shadow-xl rounded-xl transition-all duration-300 "
+        className="w-full max-w-lg bg-white shadow-xl rounded-xl transition-all duration-300"
       >
         <DialogHeader>
           <DialogTitle>Upload Show</DialogTitle>
         </DialogHeader>
+
+        {/* Tabs for different sections of the upload form */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 rounded-lg">
             <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
@@ -138,7 +109,8 @@ export default function ShowUpload() {
               {activeTab === "basic-info" ? (
                 <>
                   {/* Cancel and Next on the first tab */}
-                  <Button onClick={() => setDialogClose(false)}>Cancel</Button>
+                  <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+
                   <Button onClick={handleNextTab}>Next</Button>
                 </>
               ) : (
