@@ -12,6 +12,10 @@ export const uploadFile = createAsyncThunk(
       // Determine file type (image or video)
       const fileType = file.type.startsWith("video") ? "video" : "image";
       formData.append("type", fileType);
+      console.log("🚀UPLOAD-SLICE");
+      console.log("🦁", file);
+      console.log("🦁", fileType);
+      console.log("🦁", formData);
 
       // Send to backend instead of Cloudinary
       const response = await axios.post(`${BASE_URL}/upload-file`, formData, {

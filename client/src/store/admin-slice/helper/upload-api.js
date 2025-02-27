@@ -13,26 +13,30 @@ export const uploadMediaFiles = async (
     let thumbnailUrl = "";
     let videoUrls = [];
 
-    // ✅ Upload Poster
+    // ✅ Poster uplaod
     if (showMediaFormData.poster) {
       posterUrl = await dispatch(uploadFile(showMediaFormData.poster)).unwrap();
     }
 
-    // ✅ Upload Thumbnail
+    // ✅ Thumbnail upload
     if (showMediaFormData.thumbnail) {
       thumbnailUrl = await dispatch(
         uploadFile(showMediaFormData.thumbnail)
       ).unwrap();
     }
-    console.log("🟢 UPLOAD-API::Uploading Video:", showVideoFormData);
 
-    // ✅ Upload Video Files (Movie or Web Series)
-    if (showFormData.type === "movie" && showVideoFormData.length > 0) {
+    console.log("🟢 Uploading Movie Video:", showVideoFormData[0].videoFile);
+    if (
+      showFormData?.category === "movie" &&
+      Array.isArray(showVideoFormData) &&
+      showVideoFormData.length > 0
+    ) {
       console.log("🟢 Uploading Movie Video:", showVideoFormData[0].videoFile);
       videoUrls.push(
         await dispatch(uploadFile(showVideoFormData[0].videoFile)).unwrap()
       );
-    } else if (showFormData.type === "webseries") {
+    } else if (showFormData?.category === "webseries") {
+      console.log("WB");
       const uploadPromises = showVideoFormData.map((episode) =>
         dispatch(uploadFile(episode.videoFile)).unwrap()
       );

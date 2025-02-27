@@ -38,7 +38,7 @@ export default function VideoUploadForm({
         <FileUpload
           fileType="video"
           setSelectedFiles={(files) =>
-            setShowVideoFormData({ videoFile: files[0] })
+            setShowVideoFormData([{ videoFile: files[0] }])
           }
         />
       ) : (

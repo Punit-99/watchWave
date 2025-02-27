@@ -3,23 +3,15 @@ import { videoUploadUtil, imageUploadUtil } from "../../helper/cloudinary.js";
 
 export const handleFileUpload = async (req, res) => {
   try {
-    const { type } = req.body; // "image" or "video"
-    console.log("🔵 Upload Request Received:", type);
-
+    const { type } = req.body;
     if (!req.file) {
       return res
         .status(400)
         .json({ success: false, message: "No file uploaded" });
     }
 
-    // console.log("🟢 File Received:", req.file.originalname);
-
-    // Determine correct upload function
     const uploadFunction = type === "video" ? videoUploadUtil : imageUploadUtil;
-
-    // Upload to Cloudinary
     const result = await uploadFunction(req.file);
-    // console.log("🟢 Cloudinary Upload Success:", result);
 
     res.json({ success: true, result });
   } catch (e) {

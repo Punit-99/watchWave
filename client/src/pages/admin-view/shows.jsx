@@ -61,10 +61,10 @@ export default function ShowUpload() {
     thumbnailUrl: "",
     videoUrls: [],
   });
-  console.log(showVideoFormData);
   // ✅ Upload Media First
   const handleUploadMedia = async () => {
     setIsUploading(true);
+    // why  lenght is undefine ?
     const uploadedMedia = await uploadMediaFiles(
       dispatch,
       showMediaFormData,
@@ -80,13 +80,11 @@ export default function ShowUpload() {
     setUploadedData(uploadedMedia);
     setIsUploading(false);
     toast.success("Media uploaded successfully!");
-    console.log(uploadedData.videoUrls);
+    console.log("🚀AFTER UPLOAD:", uploadedData.videoUrls);
   };
 
   // ✅ Submit Data After Upload
   const handleSubmit = async () => {
-    console.log("🚀 Submitting Show Data...");
-
     if (
       !uploadedData.posterUrl ||
       !uploadedData.thumbnailUrl ||

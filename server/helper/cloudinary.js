@@ -15,7 +15,6 @@ const storage = new multer.memoryStorage();
 const upload = multer({ storage }); // ✅ Store file on disk before upload
 
 async function imageUploadUtil(file) {
-  console.log(file);
   const base64String = `data:${file.mimetype};base64,${file.buffer.toString(
     "base64"
   )}`;
@@ -34,13 +33,10 @@ async function imageUploadUtil(file) {
 // .then(result=>console.log(result));
 
 async function videoUploadUtil(file) {
-  console.log(file);
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload(
-      file,
+    const uploadStream = cloudinary.uploader.upload_stream(
       {
         resource_type: "video",
-        public_id: "dog_closeup",
       },
       (error, result) => {
         if (error) reject(error);
@@ -48,9 +44,14 @@ async function videoUploadUtil(file) {
       }
     );
 
-    uploadStream.end(file.buffer); // ✅ Send file buffer correctly
+    if (!file.buffer) {
+      reject(new Error("File buffer is missing"));
+    } else {
+      uploadStream.end(file.buffer); // ✅ Ensure buffer is passed correctly
+    }
   });
 }
+
 // const uploadMediaToCloudinary = async (filePath) => {
 //   try {
 //     const result = await cloudinary.uploader.upload(filePath, {
