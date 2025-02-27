@@ -9,41 +9,49 @@ export const uploadMediaFiles = async (
   showVideoFormData
 ) => {
   try {
-    let posterUrl = "";
-    let thumbnailUrl = "";
-    let videoUrls = [];
+    let poster = {};
+    let thumbnail = {};
+    let videoFiles = [];
 
-    // ✅ Poster uplaod
+    // ✅ Poster upload
     if (showMediaFormData.poster) {
-      posterUrl = await dispatch(uploadFile(showMediaFormData.poster)).unwrap();
+      const { public_id, resource_type, secure_url } = await dispatch(
+        uploadFile(showMediaFormData.poster)
+      ).unwrap();
+      poster = { public_id, resource_type, secure_url };
     }
 
     // ✅ Thumbnail upload
     if (showMediaFormData.thumbnail) {
-      thumbnailUrl = await dispatch(
+      const { public_id, resource_type, secure_url } = await dispatch(
         uploadFile(showMediaFormData.thumbnail)
       ).unwrap();
+      thumbnail = { public_id, resource_type, secure_url };
+
+      console.log("API THUMB:", public_id, resource_type, secure_url);
     }
 
-    console.log("🟢 Uploading Movie Video:", showVideoFormData[0].videoFile);
-    if (
-      showFormData?.category === "movie" &&
-      Array.isArray(showVideoFormData) &&
-      showVideoFormData.length > 0
-    ) {
-      console.log("🟢 Uploading Movie Video:", showVideoFormData[0].videoFile);
-      videoUrls.push(
-        await dispatch(uploadFile(showVideoFormData[0].videoFile)).unwrap()
-      );
+    if (showFormData?.category === "movie" && showVideoFormData.length > 0) {
+      // ✅ Movie upload
+      const { public_id, resource_type, secure_url } = await dispatch(
+        uploadFile(showVideoFormData[0].videoFile)
+      ).unwrap();
+      videoFiles.push({ public_id, resource_type, secure_url });
+      console.log("API MOVIE:", public_id, resource_type, secure_url);
     } else if (showFormData?.category === "webseries") {
-      console.log("WB");
-      const uploadPromises = showVideoFormData.map((episode) =>
-        dispatch(uploadFile(episode.videoFile)).unwrap()
-      );
-      videoUrls = await Promise.all(uploadPromises);
+      // ✅ Upload all episodes in parallel and store public_id, resource_type, secure_url
+      const uploadPromises = showVideoFormData.map(async (episode) => {
+        const { public_id, resource_type, secure_url } = await dispatch(
+          uploadFile(episode.videoFile)
+        ).unwrap();
+        console.log("API WEB:", public_id, resource_type, secure_url);
+        return { public_id, resource_type, secure_url };
+      });
+
+      videoFiles = await Promise.all(uploadPromises);
     }
 
-    return { posterUrl, thumbnailUrl, videoUrls };
+    return { poster, thumbnail, videoFiles };
   } catch (error) {
     console.error("❌ Upload failed:", error);
     toast.error("Media upload failed!");
