@@ -44,10 +44,7 @@ export default function ShowUpload() {
 
   // ✅ Add new episode correctly
   const handleAddEpisode = () => {
-    setShowVideoFormData((prev) => [
-      ...prev,
-      { title: "", videoFile: null }, // ✅ No extra fields
-    ]);
+    setShowVideoFormData((prev) => [...prev, { title: "", videoFile: null }]);
   };
 
   // ✅ Remove episode correctly
@@ -57,14 +54,15 @@ export default function ShowUpload() {
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedData, setUploadedData] = useState({
-    posterUrl: "",
-    thumbnailUrl: "",
-    videoUrls: [],
+    poster: {},
+    thumbnail: {},
+    videoFiles: [],
   });
+  const [mediaUploaded, setMediaUploaded] = useState(false); // ✅ Track Upload Completion
+
   // ✅ Upload Media First
   const handleUploadMedia = async () => {
     setIsUploading(true);
-    // why  lenght is undefine ?
     const uploadedMedia = await uploadMediaFiles(
       dispatch,
       showMediaFormData,
@@ -77,46 +75,41 @@ export default function ShowUpload() {
       return;
     }
 
-    setUploadedData(uploadedMedia);
+    setUploadedData({ ...uploadedMedia });
     setIsUploading(false);
+    setMediaUploaded(true); // ✅ Set media uploaded state
     toast.success("Media uploaded successfully!");
-    console.log("🚀AFTER UPLOAD:", uploadedData.videoUrls);
   };
 
   // ✅ Submit Data After Upload
   const handleSubmit = async () => {
-    if (
-      !uploadedData.posterUrl ||
-      !uploadedData.thumbnailUrl ||
-      !uploadedData.videoUrls.length
-    ) {
+    if (!mediaUploaded) {
       toast.error("Please upload media before submitting!");
       return;
     }
 
-    const formattedEpisodes =
-      showFormData.type === "webseries"
-        ? showVideoFormData.map((episode, index) => ({
-            title: episode.title,
-            videoUrl: uploadedData.videoUrls[index] || "",
-          }))
-        : [];
-
-    const finalData = {
+    let finalData = {
       ...showFormData,
-      posterUrl: uploadedData.posterUrl,
-      thumbnailUrls: uploadedData.thumbnailUrl,
-      type: showFormData.category,
-      episodes: formattedEpisodes.length > 0 ? formattedEpisodes : undefined,
-      videoUrl:
-        showFormData.type === "movie" ? uploadedData.videoUrls[0] : undefined,
+      poster: uploadedData.poster,
+      thumbnail: uploadedData.thumbnail,
+      type: showFormData.category, // Ensure this is either 'movie' or 'webseries'
     };
 
-    console.log("📌 Final Form Data:", finalData);
+    if (showFormData.category === "movie") {
+      // ✅ Structure the movie data properly
+      finalData.video = uploadedData.videoFiles[0] || {}; // Ensure only a single video
+    } else if (showFormData.category === "webseries") {
+      // ✅ Structure the web series episodes properly
+      finalData.episodes = showVideoFormData.map((episode, index) => ({
+        title: episode.title,
+        video: uploadedData.videoFiles[index] || {}, // Ensure the correct video is mapped
+      }));
+    }
 
+    // Uncomment when ready to submit
     await dispatch(addNewShow(finalData)).unwrap();
     toast.success("Show added successfully!");
-    setOpenModal(false);
+    // setOpenModal(false);
   };
 
   return (
@@ -129,7 +122,6 @@ export default function ShowUpload() {
           <DialogTitle className="mb-5">Upload Show</DialogTitle>
         </DialogHeader>
 
-        {/* Tabs for different sections of the upload form */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 rounded-lg">
             <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
@@ -175,7 +167,6 @@ export default function ShowUpload() {
                 />
               </div>
 
-              {/* Navigation Buttons */}
               <div className="mt-6 flex justify-between">
                 {activeTab === "basic-info" ? (
                   <>
@@ -215,7 +206,7 @@ export default function ShowUpload() {
                           onClick={
                             isUploading
                               ? null
-                              : uploadedData.posterUrl
+                              : mediaUploaded
                               ? handleSubmit
                               : handleUploadMedia
                           }
@@ -223,7 +214,7 @@ export default function ShowUpload() {
                         >
                           {isUploading
                             ? "Uploading..."
-                            : uploadedData.posterUrl
+                            : mediaUploaded
                             ? "Submit"
                             : "Upload"}
                         </Button>

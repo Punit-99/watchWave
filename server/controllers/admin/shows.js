@@ -20,24 +20,6 @@ export const handleFileUpload = async (req, res) => {
   }
 };
 
-// export const handleFileUpload = async (req, res) => {
-//   try {
-//     if (!req.file) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "No file uploaded" });
-//     }
-
-//     const result = await uploadMediaToCloudinary(req.file.path);
-//     console.log("🟢 Cloudinary Upload Success:", result);
-
-//     res.json({ success: true, result });
-//   } catch (e) {
-//     console.error("❌ Upload Error:", e);
-//     res.status(500).json({ success: false, message: "Upload Failed" });
-//   }
-// };
-
 export const addShow = async (req, res) => {
   try {
     const {
@@ -46,26 +28,35 @@ export const addShow = async (req, res) => {
       type,
       genre,
       releaseDate,
-      posterUrl,
-      trailerUrl,
-      videoUrl,
       rating,
-      episodes,
-      thumbnailUrls,
+      poster, // { public_id, resource_type, secure_url }
+      thumbnail, // { public_id, resource_type, secure_url }
+      video, // { public_id, resource_type, secure_url } (only for movies)
+      episodes, // Array of { title, video: { public_id, resource_type, secure_url } } (only for web series)
     } = req.body;
 
+    // Validation
     if (
       !title ||
       !description ||
       !type ||
       !releaseDate ||
-      !posterUrl ||
+      !poster ||
       !genre ||
-      !thumbnailUrls
+      !thumbnail
     ) {
       return res
         .status(400)
         .json({ success: false, message: "Required fields are missing" });
+    }
+
+    // Ensure `rating` is stored as a number
+    const parsedRating = rating ? Number(rating) : undefined;
+    if (parsedRating && (parsedRating < 0 || parsedRating > 10)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid rating value (0-10 allowed)",
+      });
     }
 
     const newShow = new Show({
@@ -73,19 +64,18 @@ export const addShow = async (req, res) => {
       description,
       type,
       genre,
-      releaseDate,
-      posterUrl,
-      trailerUrl,
-      videoUrl: type === "movie" ? videoUrl : undefined,
+      releaseDate: new Date(releaseDate),
+      rating: parsedRating,
+      poster,
+      thumbnail,
+      video: type === "movie" ? video : undefined,
       episodes: type === "webseries" ? episodes : undefined,
-      rating,
-      thumbnailUrls,
     });
 
     await newShow.save();
     res.status(201).json({ success: true, data: newShow });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error in addShow:", error);
     res.status(500).json({ success: false, message: "Error Occurred" });
   }
 };

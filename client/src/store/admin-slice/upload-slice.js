@@ -22,7 +22,6 @@ export const uploadFile = createAsyncThunk(
       const { result } = response.data;
       const { public_id, resource_type, secure_url } = result;
 
-      console.log("upload slice", public_id, resource_type, secure_url); // UNDEFINE
       return { public_id, resource_type, secure_url };
     } catch (error) {
       return rejectWithValue(error.response?.data || "Upload failed");

@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
 
+const mediaSchema = new mongoose.Schema({
+  public_id: { type: String, required: true },
+  resource_type: { type: String, required: true },
+  secure_url: { type: String, required: true },
+});
+
 const episodeSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  videoUrl: { type: String, required: true },
+  video: { type: mediaSchema, required: true }, // ✅ Updated video field
   releaseDate: { type: Date },
 });
 
@@ -12,15 +18,19 @@ const showSchema = new mongoose.Schema({
   genre: { type: [String], required: true },
   releaseDate: { type: Date, required: true },
   rating: { type: Number, min: 0, max: 10 },
-  posterUrl: { type: String, required: true },
-  thumbnailUrls: { type: String, required: true },
+
+  poster: { type: mediaSchema, required: true }, // ✅ Updated poster field
+  thumbnail: { type: mediaSchema, required: true }, // ✅ Updated thumbnail field
+
   type: { type: String, enum: ["movie", "webseries"], required: true },
-  videoUrl: {
-    type: String,
+
+  video: {
+    type: mediaSchema,
     required: function () {
       return this.type === "movie";
     },
-  },
+  }, // ✅ Updated video field for movies
+
   episodes: {
     type: [episodeSchema],
     validate: {
@@ -30,6 +40,7 @@ const showSchema = new mongoose.Schema({
       message: "Web series must have at least one episode",
     },
   },
+
   createdAt: { type: Date, default: Date.now },
 });
 

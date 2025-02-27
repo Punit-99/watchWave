@@ -27,8 +27,6 @@ export const uploadMediaFiles = async (
         uploadFile(showMediaFormData.thumbnail)
       ).unwrap();
       thumbnail = { public_id, resource_type, secure_url };
-
-      console.log("API THUMB:", public_id, resource_type, secure_url);
     }
 
     if (showFormData?.category === "movie" && showVideoFormData.length > 0) {
@@ -37,7 +35,7 @@ export const uploadMediaFiles = async (
         uploadFile(showVideoFormData[0].videoFile)
       ).unwrap();
       videoFiles.push({ public_id, resource_type, secure_url });
-      console.log("API MOVIE:", public_id, resource_type, secure_url);
+      console.log(videoFiles);
     } else if (showFormData?.category === "webseries") {
       // ✅ Upload all episodes in parallel and store public_id, resource_type, secure_url
       const uploadPromises = showVideoFormData.map(async (episode) => {
@@ -49,6 +47,7 @@ export const uploadMediaFiles = async (
       });
 
       videoFiles = await Promise.all(uploadPromises);
+      console.log(videoFiles);
     }
 
     return { poster, thumbnail, videoFiles };
