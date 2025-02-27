@@ -1,13 +1,14 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
 } from "../../components/ui/tabs";
-import BasicInfoForm from "../../components/admin/show-uplaod/BasicInfoForm";
-import VideoUploadForm from "../../components/admin/show-uplaod/VideoUploadForm";
-import MediaUploadForm from "../../components/admin/show-uplaod/MediaUploadForm";
+import BasicInfoForm from "../../components/admin/show-upload/BasicInfoForm";
+import VideoUploadForm from "../../components/admin/show-upload/VideoUploadForm";
+import MediaUploadForm from "../../components/admin/show-upload/MediaUploadForm";
 import {
   showInitialFormData,
   showVideoInitialFormData,
@@ -20,15 +21,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { useOutletContext } from "react-router-dom"; // Get modal state from Layout
+import { ScrollArea } from "../../components/ui/scroll-area";
+import { useOutletContext } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { uploadMediaFiles } from "../../store/admin-slice/helper/upload-api";
+import { addNewShow } from "../../store/admin-slice/admin-slice";
+import toast from "react-hot-toast";
 
 export default function ShowUpload() {
-  // Access modal state from Layout
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useOutletContext();
+
+  // Forms (Persisted State)
   const [showFormData, setShowFormData] = useState(showInitialFormData);
-  const [showVideoFormData, setShowVideoFormData] = useState(
-    showVideoInitialFormData
-  );
+  const [showVideoFormData, setShowVideoFormData] = useState([]);
   const [showMediaFormData, setShowMediaFormData] = useState(
     showMediaInitialFormData
   );
@@ -36,30 +42,84 @@ export default function ShowUpload() {
   // Tabs state to manage navigation
   const [activeTab, setActiveTab] = useState("basic-info");
 
-  // Add new episode (Web series)
-  function handleAddEpisode() {}
+  // ✅ Add new episode correctly
+  const handleAddEpisode = () => {
+    setShowVideoFormData((prev) => [
+      ...prev,
+      { title: "", videoFile: null }, // ✅ No extra fields
+    ]);
+  };
 
-  // Remove an episode (Web series)
+  // ✅ Remove episode correctly
   function handleRemoveEpisode(index) {
-    setShowVideoFormData(showVideoFormData.filter((_, i) => i !== index));
+    setShowVideoFormData((prev) => prev.filter((_, i) => i !== index));
   }
 
-  // Handle image upload (just storing file info for now)
-  function handleImageUpload(event, type) {}
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedData, setUploadedData] = useState({
+    posterUrl: "",
+    thumbnailUrl: "",
+    videoUrls: [],
+  });
+  console.log(showVideoFormData);
+  // ✅ Upload Media First
+  const handleUploadMedia = async () => {
+    setIsUploading(true);
+    const uploadedMedia = await uploadMediaFiles(
+      dispatch,
+      showMediaFormData,
+      showFormData,
+      showVideoFormData
+    );
 
-  // Submit handler
-  function handleSubmit() {}
+    if (!uploadedMedia) {
+      setIsUploading(false);
+      return;
+    }
 
-  // Handle tab navigation
-  function handleNextTab() {
-    if (activeTab === "basic-info") setActiveTab("video-upload");
-    else if (activeTab === "video-upload") setActiveTab("media-upload");
-  }
+    setUploadedData(uploadedMedia);
+    setIsUploading(false);
+    toast.success("Media uploaded successfully!");
+    console.log(uploadedData.videoUrls);
+  };
 
-  function handlePrevTab() {
-    if (activeTab === "media-upload") setActiveTab("video-upload");
-    else if (activeTab === "video-upload") setActiveTab("basic-info");
-  }
+  // ✅ Submit Data After Upload
+  const handleSubmit = async () => {
+    console.log("🚀 Submitting Show Data...");
+
+    if (
+      !uploadedData.posterUrl ||
+      !uploadedData.thumbnailUrl ||
+      !uploadedData.videoUrls.length
+    ) {
+      toast.error("Please upload media before submitting!");
+      return;
+    }
+
+    const formattedEpisodes =
+      showFormData.type === "webseries"
+        ? showVideoFormData.map((episode, index) => ({
+            title: episode.title,
+            videoUrl: uploadedData.videoUrls[index] || "",
+          }))
+        : [];
+
+    const finalData = {
+      ...showFormData,
+      posterUrl: uploadedData.posterUrl,
+      thumbnailUrls: uploadedData.thumbnailUrl,
+      type: showFormData.category,
+      episodes: formattedEpisodes.length > 0 ? formattedEpisodes : undefined,
+      videoUrl:
+        showFormData.type === "movie" ? uploadedData.videoUrls[0] : undefined,
+    };
+
+    console.log("📌 Final Form Data:", finalData);
+
+    await dispatch(addNewShow(finalData)).unwrap();
+    toast.success("Show added successfully!");
+    setOpenModal(false);
+  };
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
@@ -68,7 +128,7 @@ export default function ShowUpload() {
         className="w-full max-w-lg bg-white shadow-xl rounded-xl transition-all duration-300"
       >
         <DialogHeader>
-          <DialogTitle>Upload Show</DialogTitle>
+          <DialogTitle className="mb-5">Upload Show</DialogTitle>
         </DialogHeader>
 
         {/* Tabs for different sections of the upload form */}
@@ -79,55 +139,103 @@ export default function ShowUpload() {
             <TabsTrigger value="media-upload">Media Upload</TabsTrigger>
           </TabsList>
 
-          <div className="min-h-[300px] flex flex-col justify-between">
-            <TabsContent value="basic-info">
-              <BasicInfoForm
-                showFormData={showFormData}
-                setShowFormData={setShowFormData}
-              />
-            </TabsContent>
+          <ScrollArea className="h-[520px]">
+            <div className="h-[520px] flex flex-col justify-between">
+              <div
+                style={{
+                  display: activeTab === "basic-info" ? "block" : "none",
+                }}
+              >
+                <BasicInfoForm
+                  showFormData={showFormData}
+                  setShowFormData={setShowFormData}
+                />
+              </div>
 
-            <TabsContent value="video-upload">
-              <VideoUploadForm
-                showFormData={showFormData}
-                showVideoFormData={showVideoFormData}
-                setShowVideoFormData={setShowVideoFormData}
-                handleAddEpisode={handleAddEpisode}
-                handleRemoveEpisode={handleRemoveEpisode}
-              />
-            </TabsContent>
+              <div
+                style={{
+                  display: activeTab === "video-upload" ? "block" : "none",
+                }}
+              >
+                <VideoUploadForm
+                  showFormData={showFormData}
+                  showVideoFormData={showVideoFormData}
+                  setShowVideoFormData={setShowVideoFormData}
+                  handleAddEpisode={handleAddEpisode}
+                  handleRemoveEpisode={handleRemoveEpisode}
+                />
+              </div>
 
-            <TabsContent value="media-upload">
-              <MediaUploadForm
-                showMediaFormData={showMediaFormData}
-                handleImageUpload={handleImageUpload}
-              />
-            </TabsContent>
+              <div
+                style={{
+                  display: activeTab === "media-upload" ? "block" : "none",
+                }}
+              >
+                <MediaUploadForm
+                  showMediaFormData={showMediaFormData}
+                  setShowMediaFormData={setShowMediaFormData}
+                />
+              </div>
 
-            {/* Navigation Buttons */}
-            <div className="mt-6 flex justify-between">
-              {activeTab === "basic-info" ? (
-                <>
-                  {/* Cancel and Next on the first tab */}
-                  <Button onClick={() => setOpenModal(false)}>Cancel</Button>
-
-                  <Button onClick={handleNextTab}>Next</Button>
-                </>
-              ) : (
-                <>
-                  {/* Previous and Next/Submit on other tabs */}
-                  <Button variant="outline" onClick={handlePrevTab}>
-                    Previous
-                  </Button>
-                  {activeTab !== "media-upload" ? (
-                    <Button onClick={handleNextTab}>Next</Button>
-                  ) : (
-                    <Button onClick={handleSubmit}>Submit</Button>
-                  )}
-                </>
-              )}
+              {/* Navigation Buttons */}
+              <div className="mt-6 flex justify-between">
+                {activeTab === "basic-info" ? (
+                  <>
+                    <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+                    <Button onClick={() => setActiveTab("video-upload")}>
+                      Next
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        if (activeTab === "media-upload")
+                          setActiveTab("video-upload");
+                        else if (activeTab === "video-upload")
+                          setActiveTab("basic-info");
+                      }}
+                    >
+                      Previous
+                    </Button>
+                    {activeTab !== "media-upload" ? (
+                      <Button
+                        onClick={() =>
+                          setActiveTab(
+                            activeTab === "video-upload"
+                              ? "media-upload"
+                              : "video-upload"
+                          )
+                        }
+                      >
+                        Next
+                      </Button>
+                    ) : (
+                      activeTab === "media-upload" && (
+                        <Button
+                          onClick={
+                            isUploading
+                              ? null
+                              : uploadedData.posterUrl
+                              ? handleSubmit
+                              : handleUploadMedia
+                          }
+                          disabled={isUploading}
+                        >
+                          {isUploading
+                            ? "Uploading..."
+                            : uploadedData.posterUrl
+                            ? "Submit"
+                            : "Upload"}
+                        </Button>
+                      )
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

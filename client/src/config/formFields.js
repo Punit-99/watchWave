@@ -38,7 +38,7 @@ export const LoginFormControl = [
     componentType: "input",
   },
 ];
-// Show Basic Information Form Controls
+
 export const showBasicFormControls = [
   {
     name: "title",
@@ -56,9 +56,22 @@ export const showBasicFormControls = [
   {
     name: "genre",
     label: "Genre",
-    componentType: "input",
-    type: "text",
-    placeholder: "Enter genre",
+    componentType: "toggle-group",
+    options: [
+      { value: "action", label: "Action" },
+      { value: "adventure", label: "Adventure" },
+      { value: "comedy", label: "Comedy" },
+      { value: "drama", label: "Drama" },
+      { value: "fantasy", label: "Fantasy" },
+      { value: "horror", label: "Horror" },
+      { value: "romance", label: "Romance" },
+      { value: "documentary", label: "Documentary" },
+      { value: "sci-fi", label: "Sci-Fi" },
+      { value: "thriller", label: "Thriller" },
+      { value: "mystery", label: "Mystery" },
+      { value: "crime", label: "Crime" },
+      { value: "war", label: "War" },
+    ],
   },
   {
     name: "releaseDate",
@@ -83,24 +96,22 @@ export const showBasicFormControls = [
   },
 ];
 
-// Initial form data
 export const showInitialFormData = {
-  title: "",
-  description: "",
-  genre: "",
+  title: "DBZ",
+  description:
+    "Dragon Ball Z follows the adventures of Goku who, along with the Z Warriors, defends the Earth against evil. The action adventures are entertaining and reinforce the concept of good versus evil. Dragon Ball Z teaches valuable character virtues such as teamwork, loyalty, and trustworthiness.",
+  genre: ["action", "adventure"],
   releaseDate: "",
   category: "",
-  rating: "",
+  rating: "10",
 };
 
-export const showVideoInitialFormData = [
-  {
-    title: "",
-    videoUrl: "",
-    public_id: "",
-  },
-];
+export const showVideoInitialFormData = {
+  movie: { videoFile: null },
+  webseries: [],
+};
+
 export const showMediaInitialFormData = {
-  posterUrl: "",
-  thumbnailUrls: [],
+  poster: null,
+  thumbnail: null,
 };

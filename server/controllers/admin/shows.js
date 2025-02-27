@@ -1,25 +1,57 @@
 import Show from "../../models/Shows.js";
-import { imageUploadUtil } from "../../helper/cloudinary.js";
+import { videoUploadUtil, imageUploadUtil } from "../../helper/cloudinary.js";
 
-export const handleImageUpload = async (req, res) => {
+export const handleFileUpload = async (req, res) => {
   try {
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const url = `data:${req.file.mimetype};base64,${b64}`;
-    const result = await imageUploadUtil(url);
+    const { type } = req.body; // "image" or "video"
+    console.log("🔵 Upload Request Received:", type);
+
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
+    }
+
+    // console.log("🟢 File Received:", req.file.originalname);
+
+    // Determine correct upload function
+    const uploadFunction = type === "video" ? videoUploadUtil : imageUploadUtil;
+
+    // Upload to Cloudinary
+    const result = await uploadFunction(req.file);
+    // console.log("🟢 Cloudinary Upload Success:", result);
 
     res.json({ success: true, result });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ success: false, message: "Error Occurred" });
+    console.error("❌ Upload Error:", e);
+    res.status(500).json({ success: false, message: "Upload Failed" });
   }
 };
+
+// export const handleFileUpload = async (req, res) => {
+//   try {
+//     if (!req.file) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "No file uploaded" });
+//     }
+
+//     const result = await uploadMediaToCloudinary(req.file.path);
+//     console.log("🟢 Cloudinary Upload Success:", result);
+
+//     res.json({ success: true, result });
+//   } catch (e) {
+//     console.error("❌ Upload Error:", e);
+//     res.status(500).json({ success: false, message: "Upload Failed" });
+//   }
+// };
 
 export const addShow = async (req, res) => {
   try {
     const {
       title,
       description,
-      type, // Updated from category
+      type,
       genre,
       releaseDate,
       posterUrl,
@@ -27,11 +59,21 @@ export const addShow = async (req, res) => {
       videoUrl,
       rating,
       episodes,
-      thumbnailUrls, // Ensure thumbnails are included
+      thumbnailUrls,
     } = req.body;
 
-    if (!title || !description || !type || !releaseDate || !posterUrl || !genre || !thumbnailUrls) {
-      return res.status(400).json({ success: false, message: "Required fields are missing" });
+    if (
+      !title ||
+      !description ||
+      !type ||
+      !releaseDate ||
+      !posterUrl ||
+      !genre ||
+      !thumbnailUrls
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Required fields are missing" });
     }
 
     const newShow = new Show({
@@ -42,8 +84,8 @@ export const addShow = async (req, res) => {
       releaseDate,
       posterUrl,
       trailerUrl,
-      videoUrl: type === "movie" ? videoUrl : undefined, // Only for movies
-      episodes: type === "webseries" ? episodes : undefined, // Only for webseries
+      videoUrl: type === "movie" ? videoUrl : undefined,
+      episodes: type === "webseries" ? episodes : undefined,
       rating,
       thumbnailUrls,
     });
@@ -56,23 +98,13 @@ export const addShow = async (req, res) => {
   }
 };
 
-export const fetchAllShows = async (req, res) => {
-  try {
-    const listOfShows = await Show.find({});
-    res.status(200).json({ success: true, data: listOfShows });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ success: false, message: "Error Occurred" });
-  }
-};
-
 export const editShow = async (req, res) => {
   try {
     const { id } = req.params;
     const {
       title,
       description,
-      type, // Updated from category
+      type,
       genre,
       releaseDate,
       posterUrl,
@@ -84,9 +116,10 @@ export const editShow = async (req, res) => {
     } = req.body;
 
     let findShow = await Show.findById(id);
-
     if (!findShow) {
-      return res.status(404).json({ success: false, message: "Show not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Show not found" });
     }
 
     findShow.title = title || findShow.title;
@@ -96,14 +129,15 @@ export const editShow = async (req, res) => {
     findShow.releaseDate = releaseDate || findShow.releaseDate;
     findShow.posterUrl = posterUrl || findShow.posterUrl;
     findShow.trailerUrl = trailerUrl || findShow.trailerUrl;
-    findShow.videoUrl = type === "movie" ? videoUrl || findShow.videoUrl : undefined;
+    findShow.videoUrl =
+      type === "movie" ? videoUrl || findShow.videoUrl : undefined;
     findShow.rating = rating || findShow.rating;
     findShow.thumbnailUrls = thumbnailUrls || findShow.thumbnailUrls;
 
     if (type === "webseries") {
-      findShow.episodes = episodes || findShow.episodes;
+      findShow.episodes = episodes?.length ? episodes : findShow.episodes;
     } else {
-      findShow.episodes = undefined; // Ensure episodes are removed for movies
+      findShow.episodes = undefined; // Remove episodes if switching to movie
     }
 
     await findShow.save();
@@ -120,10 +154,23 @@ export const deleteShow = async (req, res) => {
     const show = await Show.findByIdAndDelete(id);
 
     if (!show) {
-      return res.status(404).json({ success: false, message: "Show not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Show not found" });
     }
 
-    res.status(200).json({ success: true, message: "Show deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Show deleted successfully" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ success: false, message: "Error Occurred" });
+  }
+};
+export const fetchAllShows = async (req, res) => {
+  try {
+    const listOfShows = await Show.find({});
+    res.status(200).json({ success: true, data: listOfShows });
   } catch (e) {
     console.error(e);
     res.status(500).json({ success: false, message: "Error Occurred" });

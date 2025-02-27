@@ -17,10 +17,10 @@ const Layout = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="p-5 m-2 rounded-lg h-[calc(100vh-16px)] overflow-auto shadow-md">
+        <main className="bg-gray-500 p-5 m-2 rounded-lg h-[calc(100vh-16px)] overflow-auto shadow-md">
           {/* Header now triggers modal open */}
           <AdminHeader title={title} onButtonClick={() => setOpenModal(true)} />
-          
+
           {/* Outlet context provides modal state to child routes */}
           <Outlet context={[openModal, setOpenModal]} />
         </main>

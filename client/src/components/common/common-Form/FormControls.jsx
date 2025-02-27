@@ -6,7 +6,6 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Button } from "../../ui/button";
 import { Textarea } from "../../ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
 import {
   Select,
@@ -69,8 +68,57 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
         );
         break;
 
-      // Date Picker
-      // Date Picker
+      case "textarea":
+        element = (
+          <Textarea
+            className="w-full p-2 border rounded min-h-25"
+            name={getControlItem.name}
+            placeholder={getControlItem.placeholder}
+            id={getControlItem.name}
+            type={getControlItem.type}
+            value={value}
+            onChange={(event) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: event.target.value,
+              })
+            }
+          />
+        );
+        break;
+      // Toggle Group (Genre Selection)
+
+      case "toggle-group":
+        element = (
+          <ToggleGroup
+            type="multiple"
+            className="flex flex-wrap gap-2"
+            value={formData[getControlItem.name] || []} // Ensure it's always an array
+            onValueChange={(value) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: Array.isArray(value) ? value : [value], // Ensure it's always an array
+              })
+            }
+          >
+            {getControlItem.options.map((optionItem) => (
+              <ToggleGroupItem
+                key={optionItem.value}
+                value={optionItem.value}
+                className={`px-3 py-2 border rounded ${
+                  formData[getControlItem.name]?.includes(optionItem.value)
+                    ? "bg-gray-300" // Add active state styling
+                    : ""
+                }`}
+              >
+                {optionItem.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        );
+        break;
+
+      // Date Picker (Better Date Format)
       case "date":
         element = (
           <Popover>
@@ -102,7 +150,9 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
                   if (selectedDate) {
                     setFormData({
                       ...formData,
-                      [getControlItem.name]: selectedDate.toISOString(), // Save as ISO string
+                      [getControlItem.name]: selectedDate
+                        .toISOString()
+                        .split("T")[0], // Saves as YYYY-MM-DD
                     });
                   }
                 }}
@@ -113,31 +163,12 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
         );
         break;
 
-      // Toggle Group for Genre selection
-      case "toggle":
-        element = (
-          <ToggleGroup
-            type="multiple"
-            value={formData[getControlItem.name] || []}
-            onValueChange={(values) => {
-              setFormData({ ...formData, [getControlItem.name]: values });
-            }}
-            className="flex gap-2"
-          >
-            {getControlItem.options.map((optionItem) => (
-              <ToggleGroupItem key={optionItem.value} value={optionItem.value}>
-                {optionItem.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        );
-        break;
-
+      // File Upload (Dynamic Accept Type)
       case "file":
         element = (
           <Input
             type="file"
-            accept="video/*"
+            accept={getControlItem.accept || "video/*"} // Allows dynamic file types
             className="w-full p-2 border rounded"
             name={getControlItem.name}
             id={getControlItem.name}
@@ -151,7 +182,6 @@ const FormControls = ({ formControls = [], formData, setFormData }) => {
         );
         break;
 
-      // Default Input Field (Fallback)
       default:
         element = (
           <Input

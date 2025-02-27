@@ -12,9 +12,8 @@ const showSchema = new mongoose.Schema({
   genre: { type: [String], required: true },
   releaseDate: { type: Date, required: true },
   rating: { type: Number, min: 0, max: 10 },
-  trailerUrl: { type: String },
-  posterUrl: { type: String, required: true }, // Main face of movie/show
-  thumbnailUrls: { type: [String], required: true }, // Multiple thumbnails
+  posterUrl: { type: String, required: true },
+  thumbnailUrls: { type: String, required: true },
   type: { type: String, enum: ["movie", "webseries"], required: true },
   videoUrl: {
     type: String,
@@ -24,8 +23,11 @@ const showSchema = new mongoose.Schema({
   },
   episodes: {
     type: [episodeSchema],
-    required: function () {
-      return this.type === "webseries";
+    validate: {
+      validator: function (v) {
+        return this.type === "webseries" ? v.length > 0 : true;
+      },
+      message: "Web series must have at least one episode",
     },
   },
   createdAt: { type: Date, default: Date.now },
