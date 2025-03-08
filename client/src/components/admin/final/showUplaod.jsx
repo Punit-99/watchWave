@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShowBasicDetails } from "./tabs/ShowBasicDetails";
-import { ShowFileUplaod } from "./tabs/showFileUplaod";
+import { ShowFileUpload } from "./tabs/showFileUplaod";
 import { ScrollArea } from "../../ui/scroll-area";
 
 export const ShowUpload = () => {
@@ -31,7 +31,7 @@ export const ShowUpload = () => {
       <div className="p-4 bg-gray-700 rounded-md">
         <ScrollArea className="w-full flex-1 overflow-auto h-[415px]">
           {activeTab === "showDetails" && <ShowBasicDetails />}
-          {activeTab === "showUpload" && <ShowFileUplaod />}
+          {activeTab === "showUpload" && <ShowFileUpload />}
         </ScrollArea>
       </div>
     </div>
