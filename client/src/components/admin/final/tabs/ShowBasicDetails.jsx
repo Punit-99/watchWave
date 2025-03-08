@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FINAL_initialState,
   FINAL_showBasicFormControls,
 } from "../../../../config/formFields";
-
 import { AdminForm } from "../../../common/common-Form/adminForm";
 
 export const ShowBasicDetails = ({ setCategory }) => {
   const [showBasicDetails, setShowBasicDetails] = useState(FINAL_initialState);
 
-  // ✅ Handle Category Change
   const handleCategoryChange = (formData) => {
     setShowBasicDetails(formData);
-    setCategory(formData.category); // ✅ Update Category in Parent
+    setCategory(formData.category);
   };
 
   return (

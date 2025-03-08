@@ -168,7 +168,8 @@ export const AdminForm = ({ formControls = [], formData, setFormData }) => {
       case "file":
         element = (
           <AdminFileUpload
-            accept={getControlItem.accept || "image/*"}
+            accept={getControlItem.accept || "image/*,video/*,.srt,.vtt"}
+            text={getControlItem.label}
             onUpload={(fileUrl) =>
               setFormData({
                 ...formData,
@@ -178,6 +179,7 @@ export const AdminForm = ({ formControls = [], formData, setFormData }) => {
           />
         );
         break;
+
       default:
         element = (
           <Input

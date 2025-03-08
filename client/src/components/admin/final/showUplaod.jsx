@@ -7,11 +7,10 @@ import { ScrollArea } from "../../ui/scroll-area";
 
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");
-  const [category, setCategory] = useState(""); // ✅ Now storing Category here
+  const [category, setCategory] = useState(""); // ✅ Store Category
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Tabs Header */}
       <div className="w-full flex justify-between items-center p-4 bg-gray-700 rounded-md">
         <Tabs
           value={activeTab}
@@ -25,16 +24,16 @@ export const ShowUpload = () => {
         </Tabs>
       </div>
 
-      {/* Separator */}
       <Separator className="my-2 bg-gray-600" />
 
-      {/* Fixed Height Scroll Area */}
       <div className="p-4 bg-gray-700 rounded-md">
         <ScrollArea className="w-full flex-1 overflow-auto h-[415px]">
           {activeTab === "showDetails" && (
             <ShowBasicDetails setCategory={setCategory} />
           )}
-          {activeTab === "showUpload" && <ShowFileUpload category={category} />}
+          {activeTab === "showUpload" && (
+            <ShowFileUpload category={category} />
+          )}
         </ScrollArea>
       </div>
     </div>
