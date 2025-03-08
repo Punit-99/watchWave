@@ -55,10 +55,7 @@ export const AdminFileUpload = ({
   }
 
   return (
-    <div className="w-full mt-4">
-      <Label className="text-lg font-semibold mb-2 block">{text}</Label>
-
-      {/* ✅ File Upload Box */}
+    <div className="w-full">
       <div
         className="border-2 border-dashed rounded-lg p-4 cursor-pointer flex flex-col items-center justify-center"
         onClick={handleClick}

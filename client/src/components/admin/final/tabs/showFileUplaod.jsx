@@ -33,6 +33,9 @@ export const ShowFileUpload = ({ category }) => {
     setEpisodes(updatedEpisodes);
   };
 
+  if (!category) {
+    return "Choose Category";
+  }
   return (
     <div className="flex-1 p-4 bg-gray-700 rounded-md">
       <h2 className="text-lg font-semibold text-white mb-4">
