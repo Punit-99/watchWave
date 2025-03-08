@@ -141,7 +141,7 @@ export const FINAL_showBasicFormControls = [
     name: "thumbnail",
     label: "Thumbnail",
     componentType: "file",
-    accept: "image/*, video/*",
+    accept: " video/*",
   },
   {
     name: "category",
