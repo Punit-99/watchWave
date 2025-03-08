@@ -71,7 +71,7 @@ const AdminSidebar = ({ setTitle }) => {
   const dispatch = useDispatch();
 
   return (
-    <Sidebar variant="floating" className="min-w-[250px] bg-gray-500">
+    <Sidebar className="min-w-[250px] bg-[#292928]">
       <SidebarHeader className="flex flex-row items-center">
         <Avatar>
           <AvatarImage src={""} />

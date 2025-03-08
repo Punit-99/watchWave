@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/admin-view/dashboard";
 import { checkAuth } from "./store/auth-slice/authSlice";
 import { useEffect } from "react";
 import AdminShows from "./pages/admin-view/shows";
+import Layout from "./components/admin/final/layout";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -62,6 +63,8 @@ function App() {
         {/* ERROR HANDLING ROUTES */}
         <Route path="/unauth-page" element={<Unauth />} />
         <Route path="*" element={<NotFound />} />
+
+        <Route path="/check" element={<Layout />} />
       </Routes>
     </div>
   );

@@ -17,7 +17,7 @@ const Layout = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="bg-gray-500 p-5 m-2 rounded-lg h-[calc(100vh-16px)] overflow-auto shadow-md">
+        <main className="bg-[#292928] overflow-auto">
           {/* Header now triggers modal open */}
           <AdminHeader title={title} onButtonClick={() => setOpenModal(true)} />
 
