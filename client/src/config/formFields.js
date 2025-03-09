@@ -187,14 +187,15 @@ export const FINAL_showBasicFormControls = [
   },
 ];
 export const FINAL_initialState = {
-  title: "",
-  description: "",
+  title: "DBZ",
+  description:
+    "Dragon Ball Z follows the adventures of Goku who, along with the Z Warriors, defends the Earth against evil. The action adventures are entertaining and reinforce the concept of good versus evil. Dragon Ball Z teaches valuable character virtues such as teamwork, loyalty, and trustworthiness.",
   poster: null, // Assuming file input
   thumbnail: null, // Assuming file input
   category: "",
-  genre: [],
-  releaseDate: "",
-  rating: "",
+  genre: ["action", "adventure"],
+  releaseDate: "04/04/2025",
+  rating: "10",
 };
 export const FINAL_showVideoInitialFormData = {
   movie: { videoFile: null },

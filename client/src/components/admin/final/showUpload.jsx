@@ -14,9 +14,7 @@ import {
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");
   const [showDetailsData, setShowDetailsData] = useState(FINAL_initialState);
-  const [UploadDetailsData, setUploadDetailsData] = useState(
-    FINAL_showVideoInitialFormData
-  );
+  const [UploadDetailsData, setUploadDetailsData] = useState({});
   const [category, setCategory] = useState("");
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export const ShowUpload = () => {
   const handleCancel = () => {
     toast.success("Upload Cancelled.");
     setShowDetailsData(FINAL_initialState);
-    setUploadDetailsData(FINAL_showVideoInitialFormData);
+    setUploadDetailsData({});
   };
 
   const handleUpload = () => {

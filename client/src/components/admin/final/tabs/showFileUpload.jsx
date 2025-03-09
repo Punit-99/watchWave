@@ -14,11 +14,37 @@ export const ShowFileUpload = ({
   const [episodes, setEpisodes] = useState([
     { title: "", video: null, subtitle: null },
   ]);
+  const [movie, setMovie] = useState({
+    video: null,
+    subtitle: null,
+  });
 
-  // ✅ Reset Episodes When Category Changes 🔥
+  // ✅ Reset Data When Category Changes 🔥
   useEffect(() => {
-    setEpisodes([{ title: "", video: null, subtitle: null }]);
+    if (category === "movie") {
+      setMovie({ video: null, subtitle: null });
+      setUploadDetails({ movie: { video: null, subtitle: null } });
+    } else {
+      setEpisodes([{ title: "", video: null, subtitle: null }]);
+      setUploadDetails({
+        episodes: [{ title: "", video: null, subtitle: null }],
+      });
+    }
   }, [category]);
+
+  // ✅ Sync Movie Data With Parent 🔥
+  useEffect(() => {
+    if (category === "movie") {
+      setUploadDetails({ movie });
+    }
+  }, [movie]);
+
+  // ✅ Sync Episode Data With Parent 🔥
+  useEffect(() => {
+    if (category === "webseries") {
+      setUploadDetails({ episodes });
+    }
+  }, [episodes]);
 
   // ✅ Handle Add Episode 🔥
   const handleAddEpisode = () => {
@@ -65,12 +91,15 @@ export const ShowFileUpload = ({
           <Label className="text-white">Upload Movie</Label>
           <AdminFileUpload
             accept="video/*"
-            onUpload={(file) => console.log("Movie File:", file)}
+            onUpload={(file) => setMovie((prev) => ({ ...prev, video: file }))}
           />
+
           <Label className="text-white mt-2">Upload Subtitle</Label>
           <AdminFileUpload
             accept=".srt,.vtt"
-            onUpload={(file) => console.log("Subtitle File:", file)}
+            onUpload={(file) =>
+              setMovie((prev) => ({ ...prev, subtitle: file }))
+            }
           />
         </>
       ) : (
@@ -112,10 +141,9 @@ export const ShowFileUpload = ({
                 onUpload={(file) => handleChange(index, "video", file)}
               />
 
-              {/* ✅ VIDEO PREVIEW (PREVENTED ERROR) */}
+              {/* ✅ VIDEO PREVIEW */}
               {episode.video && episode.video instanceof File && (
-                <div className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] cursor-pointer mt-2 relative bg-gray-900">
-                  {/* ✅ Remove Button */}
+                <div className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] mt-2 relative bg-gray-900">
                   <Button
                     size="icon"
                     variant="ghost"
@@ -131,12 +159,8 @@ export const ShowFileUpload = ({
               <Label className="text-white mt-2">Upload Subtitle</Label>
               <AdminFileUpload
                 accept=".srt,.vtt"
-                onUpload={(file) => {
-                  handleChange(index, "subtitle", file);
-                }}
+                onUpload={(file) => handleChange(index, "subtitle", file)}
               />
-
-              {/* ✅ SUBTITLE PREVIEW */}
             </div>
           ))}
         </>
