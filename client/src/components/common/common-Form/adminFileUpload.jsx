@@ -20,7 +20,10 @@ export const AdminFileUpload = ({
   // ✅ Handle File Selection
   function handleFileChange(event) {
     const selectedFile = event.target.files[0];
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      toast.error("❌ File Upload Failed!");
+      return;
+    }
 
     // ✅ Reset Input Lock
     event.target.value = "";
@@ -40,8 +43,17 @@ export const AdminFileUpload = ({
     // ✅ Pass File URL Directly to FormData
     onUpload(fileUrl);
 
-    // ✅ Show Success Toast
-    toast.success(`${selectedFile.name} Uploaded Successfully!`);
+    // ✅ Show Confirmation Based on File Type
+    if (selectedFile.type.startsWith("video/")) {
+      toast.success("✅ Video File Selected!");
+    } else if (
+      selectedFile.name.endsWith(".srt") ||
+      selectedFile.name.endsWith(".vtt")
+    ) {
+      toast.success("✅ Subtitle File Selected!");
+    } else {
+      toast.success(`✅ ${selectedFile.name} Uploaded Successfully!`);
+    }
   }
 
   // ✅ Handle File Removal
@@ -97,12 +109,14 @@ export const AdminFileUpload = ({
             )}
 
             {/* ✅ IF SUBTITLE */}
-            {file.type.includes(".srt") || file.type.includes(".vtt") ? (
+            {(file.name.endsWith(".srt") || file.name.endsWith(".vtt")) && (
               <div className="text-center text-white">
-                <FileIcon className="w-6 h-6 text-primary" />
-                <p className="text-sm font-medium mt-2">{file.name}</p>
+                <span className="flex justify-center align-middle text-center gap-2">
+                  <FileIcon className="w-6 h-6 text-primary" />
+                  <p className=" font-medium ">{file.name}</p>
+                </span>
               </div>
-            ) : null}
+            )}
           </>
         ) : (
           <>

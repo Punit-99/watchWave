@@ -38,6 +38,13 @@ export const ShowFileUpload = ({ category }) => {
     setEpisodes(updatedEpisodes);
   };
 
+  // ✅ Handle Video Removal 🔥
+  const handleRemoveVideo = (index) => {
+    const updatedEpisodes = [...episodes];
+    updatedEpisodes[index].video = null;
+    setEpisodes(updatedEpisodes);
+  };
+
   if (!category) {
     return "Choose Category";
   }
@@ -68,7 +75,7 @@ export const ShowFileUpload = ({ category }) => {
             <Button onClick={handleAddEpisode}>+ Add Episode</Button>
           </div>
 
-          {/* ✅ LOOP THROUGH EPISODES (FIXED LAYOUT) */}
+          {/* ✅ LOOP THROUGH EPISODES */}
           {episodes.map((episode, index) => (
             <div
               key={index}
@@ -85,51 +92,47 @@ export const ShowFileUpload = ({ category }) => {
                   </Button>
                 )}
               </div>
-              {/* ✅ EPISODE TITLE */}{" "}
+
+              {/* ✅ EPISODE TITLE */}
               <Label className="text-white mt-2">Episode {index + 1}</Label>
               <Input
                 value={episode.title}
                 onChange={(e) => handleChange(index, "title", e.target.value)}
                 placeholder={`Episode ${index + 1} Title`}
               />
+
               {/* ✅ VIDEO UPLOAD */}
               <Label className="text-white mt-2">Upload Video</Label>
               <AdminFileUpload
                 accept="video/*"
                 onUpload={(file) => handleChange(index, "video", file)}
               />
-              {/* ✅ VIDEO PREVIEW */}
-              {episode.video && (
-                <div
-                  className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] cursor-pointer mt-2"
-                  onClick={() => handleChange(index, "video", null)}
-                >
-                  <video
-                    src={URL.createObjectURL(episode.video)}
-                    className="w-full h-full object-cover rounded-md"
-                    controls
-                  />
-                </div>
-              )}
-              {/* ✅ SUBTITLE UPLOAD */}
-              <Label className="text-white mt-2">Upload Subtitle</Label>
-              <AdminFileUpload
-                accept=".srt,.vtt"
-                onUpload={(file) => handleChange(index, "subtitle", file)}
-              />
-              {/* ✅ SUBTITLE PREVIEW */}
-              {episode.subtitle && (
-                <div className="border-2 border-dashed rounded-lg flex items-center justify-between bg-gray-900 p-2 text-white mt-2">
-                  <span>{episode.subtitle.name}</span>
+
+              {/* ✅ VIDEO PREVIEW (PREVENTED ERROR) */}
+              {episode.video && episode.video instanceof File && (
+                <div className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] cursor-pointer mt-2 relative bg-gray-900">
+                  {/* ✅ Remove Button */}
                   <Button
-                    variant="ghost"
                     size="icon"
-                    onClick={() => handleChange(index, "subtitle", null)}
+                    variant="ghost"
+                    className="absolute top-1 right-1 bg-red-800"
+                    onClick={() => handleRemoveVideo(index)}
                   >
                     <X size={14} />
                   </Button>
                 </div>
               )}
+
+              {/* ✅ SUBTITLE UPLOAD */}
+              <Label className="text-white mt-2">Upload Subtitle</Label>
+              <AdminFileUpload
+                accept=".srt,.vtt"
+                onUpload={(file) => {
+                  handleChange(index, "subtitle", file);
+                }}
+              />
+
+              {/* ✅ SUBTITLE PREVIEW */}
             </div>
           ))}
         </>
