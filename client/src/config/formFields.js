@@ -188,12 +188,16 @@ export const FINAL_showBasicFormControls = [
 ];
 export const FINAL_initialState = {
   title: "",
-  // description: "",
-  // thumbnailAndPoster: null, // Assuming file input
-  // category: "",
-  // genre: [],
-  // releaseDate: "",
-  // rating: "",
+  description: "",
+  poster: null, // Assuming file input
+  thumbnail: null, // Assuming file input
+  category: "",
+  genre: [],
+  releaseDate: "",
+  rating: "",
 };
-
+export const FINAL_showVideoInitialFormData = {
+  movie: { videoFile: null },
+  webseries: [],
+};
 // =============

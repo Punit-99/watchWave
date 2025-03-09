@@ -6,7 +6,11 @@ import { X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { AdminFileUpload } from "../../../common/common-Form/adminFileUpload";
 
-export const ShowFileUpload = ({ category }) => {
+export const ShowFileUpload = ({
+  category,
+  UploadDetails,
+  setUploadDetails,
+}) => {
   const [episodes, setEpisodes] = useState([
     { title: "", video: null, subtitle: null },
   ]);

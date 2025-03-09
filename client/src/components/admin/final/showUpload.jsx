@@ -6,34 +6,29 @@ import { ShowFileUpload } from "./tabs/showFileUpload";
 import { ScrollArea } from "../../ui/scroll-area";
 import { Button } from "../../ui/button";
 import { toast } from "react-hot-toast";
+import {
+  FINAL_initialState,
+  FINAL_showVideoInitialFormData,
+} from "../../../config/formFields";
 
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");
-
-  // ✅ PERSIST DATA IN PARENT STATE (NO DATA LOSS NOW 🔥)
-  const [showDetailsData, setShowDetailsData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    genre: [],
-    releaseDate: "",
-  });
-
-  // ✅ HANDLE CATEGORY CHANGE INSTANTLY 🔥
+  const [showDetailsData, setShowDetailsData] = useState(FINAL_initialState);
+  const [UploadDetailsData, setUploadDetailsData] = useState(
+    FINAL_showVideoInitialFormData
+  );
   const [category, setCategory] = useState("");
 
-  // ✅ Update Category Whenever Details Change 🔥
   useEffect(() => {
     setCategory(showDetailsData.category);
   }, [showDetailsData.category]);
 
-  // ✅ Handle Button Navigation
   const handleNext = () => {
     if (activeTab === "showDetails") {
-      if (!category) {
-        toast.error("Please select a category first.");
-        return;
-      }
+      // if (!category) {
+      //   toast.error("Please select a category first.");
+      //   return;
+      // }
       setActiveTab("showUpload");
     }
   };
@@ -46,20 +41,14 @@ export const ShowUpload = () => {
 
   const handleCancel = () => {
     toast.success("Upload Cancelled.");
-    setActiveTab("showDetails");
-    setShowDetailsData({
-      title: "",
-      description: "",
-      category: "",
-      genre: [],
-      releaseDate: "",
-    });
+    setShowDetailsData(FINAL_initialState);
+    setUploadDetailsData(FINAL_showVideoInitialFormData);
   };
 
   const handleUpload = () => {
-    // ✅ FINAL STEP → SEND DATA TO BACKEND 💯🔥
     const payload = {
       ...showDetailsData,
+      ...UploadDetailsData,
     };
     console.log("FINAL DATA TO BACKEND: ✅🔥", payload);
     toast.success("Show Uploaded Successfully! 🎉");
@@ -81,23 +70,26 @@ export const ShowUpload = () => {
         </Tabs>
       </div>
 
-      {/* ✅ Separator */}
       <Separator className="my-2 bg-gray-600" />
 
-      {/* ✅ Dynamic Page Content */}
       <div className="p-4 bg-gray-700 rounded-md">
         <ScrollArea className="w-full flex-1 overflow-auto h-[370px]">
           {activeTab === "showDetails" && (
             <ShowBasicDetails
-              formData={showDetailsData}
-              setFormData={setShowDetailsData}
+              showDetails={showDetailsData}
+              setShowDetails={setShowDetailsData}
             />
           )}
-          {activeTab === "showUpload" && <ShowFileUpload category={category} />}
+          {activeTab === "showUpload" && (
+            <ShowFileUpload
+              UploadDetails={UploadDetailsData}
+              setUploadDetails={setUploadDetailsData}
+              category={category}
+            />
+          )}
         </ScrollArea>
       </div>
 
-      {/* ✅ Dynamic Buttons */}
       <div className="flex justify-between items-center mt-4">
         {activeTab === "showDetails" && (
           <>

@@ -63,8 +63,10 @@ export default function ShowUpload() {
   // ✅ Upload Media First
   const handleUploadMedia = async () => {
     setIsUploading(true);
+
+    console.log(showMediaFormData, showFormData, showVideoFormData);
     const uploadedMedia = await uploadMediaFiles(
-      dispatch,
+      // dispatch,
       showMediaFormData,
       showFormData,
       showVideoFormData
@@ -107,7 +109,8 @@ export default function ShowUpload() {
     }
 
     // Uncomment when ready to submit
-    await dispatch(addNewShow(finalData)).unwrap();
+    console.log(finalData);
+    // await dispatch(addNewShow(finalData)).unwrap();
     toast.success("Show added successfully!");
     // setOpenModal(false);
   };
