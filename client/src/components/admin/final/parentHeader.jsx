@@ -3,7 +3,7 @@ import { Search, Plus } from "lucide-react"; // Icons from Lucide
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShowUpload } from "./showUplaod";
+import { ShowUpload } from "./showUpload";
 import {
   Dialog,
   DialogTrigger,
