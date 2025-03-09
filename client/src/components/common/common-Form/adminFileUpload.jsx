@@ -95,7 +95,7 @@ export const AdminFileUpload = ({
               <img
                 src={file.url}
                 alt="Preview"
-                className="w-full h-[150px] object-cover rounded-lg"
+                className="w-full h-[150px] object-none rounded-lg "
               />
             )}
 
@@ -103,7 +103,7 @@ export const AdminFileUpload = ({
             {file.type.startsWith("video/") && (
               <video
                 src={file.url}
-                className="w-full h-[150px] object-cover rounded-lg"
+                className="w-full h-[150px] object-none rounded-lg"
                 controls
               />
             )}
