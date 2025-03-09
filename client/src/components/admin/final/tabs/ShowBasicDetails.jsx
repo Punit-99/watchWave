@@ -1,16 +1,12 @@
-import { useState } from "react";
 import {
   FINAL_initialState,
   FINAL_showBasicFormControls,
 } from "../../../../config/formFields";
 import { AdminForm } from "../../../common/common-Form/adminForm";
 
-export const ShowBasicDetails = ({ setCategory }) => {
-  const [showBasicDetails, setShowBasicDetails] = useState(FINAL_initialState);
-
-  const handleCategoryChange = (formData) => {
-    setShowBasicDetails(formData);
-    setCategory(formData.category);
+export const ShowBasicDetails = ({ formData, setFormData }) => {
+  const handleFormChange = (newFormData) => {
+    setFormData(newFormData);
   };
 
   return (
@@ -19,8 +15,8 @@ export const ShowBasicDetails = ({ setCategory }) => {
 
       <AdminForm
         formControls={FINAL_showBasicFormControls}
-        formData={showBasicDetails}
-        setFormData={handleCategoryChange}
+        formData={formData}
+        setFormData={handleFormChange}
       />
     </div>
   );

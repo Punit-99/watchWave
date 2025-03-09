@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../ui/button";
 import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
@@ -11,12 +11,17 @@ export const ShowFileUpload = ({ category }) => {
     { title: "", video: null, subtitle: null },
   ]);
 
-  // ✅ Add New Episode
+  // ✅ Reset Episodes When Category Changes 🔥
+  useEffect(() => {
+    setEpisodes([{ title: "", video: null, subtitle: null }]);
+  }, [category]);
+
+  // ✅ Handle Add Episode 🔥
   const handleAddEpisode = () => {
     setEpisodes([...episodes, { title: "", video: null, subtitle: null }]);
   };
 
-  // ✅ Remove Episode (Except 1st)
+  // ✅ Handle Remove Episode 🔥
   const handleRemoveEpisode = (index) => {
     if (episodes.length === 1) {
       toast.error("At least one episode is mandatory.");
@@ -26,7 +31,7 @@ export const ShowFileUpload = ({ category }) => {
     setEpisodes(updatedEpisodes);
   };
 
-  // ✅ Handle File Change
+  // ✅ Handle File & Text Change 🔥
   const handleChange = (index, field, value) => {
     const updatedEpisodes = [...episodes];
     updatedEpisodes[index][field] = value;
@@ -36,12 +41,14 @@ export const ShowFileUpload = ({ category }) => {
   if (!category) {
     return "Choose Category";
   }
+
   return (
     <div className="flex-1 p-4 bg-gray-700 rounded-md">
       <h2 className="text-lg font-semibold text-white mb-4">
         {category === "movie" ? "Upload Movie & Subtitle" : "Upload Episodes"}
       </h2>
 
+      {/* ✅ IF CATEGORY IS MOVIE */}
       {category === "movie" ? (
         <>
           <Label className="text-white">Upload Movie</Label>
@@ -61,29 +68,67 @@ export const ShowFileUpload = ({ category }) => {
             <Button onClick={handleAddEpisode}>+ Add Episode</Button>
           </div>
 
+          {/* ✅ LOOP THROUGH EPISODES (FIXED LAYOUT) */}
           {episodes.map((episode, index) => (
-            <div key={index} className="p-4 border rounded-md bg-gray-800">
+            <div
+              key={index}
+              className="p-4 border rounded-md bg-gray-800 mb-4 relative"
+            >
+              {/* ✅ REMOVE BUTTON AT TOP RIGHT */}
+              <div className="w-full flex justify-end mb-2.5">
+                {index > 0 && (
+                  <Button
+                    className="flex flex-row-reverse bg-red-900"
+                    onClick={() => handleRemoveEpisode(index)}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+              {/* ✅ EPISODE TITLE */}{" "}
+              <Label className="text-white mt-2">Episode {index + 1}</Label>
               <Input
                 value={episode.title}
                 onChange={(e) => handleChange(index, "title", e.target.value)}
-                placeholder="Episode Title"
+                placeholder={`Episode ${index + 1} Title`}
               />
-              <Label>Upload Video</Label>
+              {/* ✅ VIDEO UPLOAD */}
+              <Label className="text-white mt-2">Upload Video</Label>
               <AdminFileUpload
                 accept="video/*"
-                key={`video-${index}-${Date.now()}`} // ✅ MAGIC FIX
                 onUpload={(file) => handleChange(index, "video", file)}
               />
-              <Label>Upload Subtitle</Label>
+              {/* ✅ VIDEO PREVIEW */}
+              {episode.video && (
+                <div
+                  className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] cursor-pointer mt-2"
+                  onClick={() => handleChange(index, "video", null)}
+                >
+                  <video
+                    src={URL.createObjectURL(episode.video)}
+                    className="w-full h-full object-cover rounded-md"
+                    controls
+                  />
+                </div>
+              )}
+              {/* ✅ SUBTITLE UPLOAD */}
+              <Label className="text-white mt-2">Upload Subtitle</Label>
               <AdminFileUpload
                 accept=".srt,.vtt"
-                key={`subtitle-${index}-${Date.now()}`} // ✅ MAGIC FIX
                 onUpload={(file) => handleChange(index, "subtitle", file)}
               />
-              {index > 0 && (
-                <Button onClick={() => handleRemoveEpisode(index)}>
-                  <X size={14} /> Remove
-                </Button>
+              {/* ✅ SUBTITLE PREVIEW */}
+              {episode.subtitle && (
+                <div className="border-2 border-dashed rounded-lg flex items-center justify-between bg-gray-900 p-2 text-white mt-2">
+                  <span>{episode.subtitle.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleChange(index, "subtitle", null)}
+                  >
+                    <X size={14} />
+                  </Button>
+                </div>
               )}
             </div>
           ))}
