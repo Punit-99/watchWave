@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Button } from "../../../ui/button";
 import { Label } from "../../../ui/label";
 import { Input } from "../../../ui/input";
-import { X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { AdminFileUpload } from "../../../common/common-Form/adminFileUpload";
 
