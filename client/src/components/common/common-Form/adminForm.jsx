@@ -170,29 +170,11 @@ export const AdminForm = ({ formControls = [], formData, setFormData }) => {
           <AdminFileUpload
             accept={getControlItem.accept || "image/*,video/*,.srt,.vtt"}
             text={getControlItem.label}
-            onUpload={(fileUrl) =>
+            file={formData[getControlItem.name]} // ✅ Persist File Preview
+            onUpload={(fileObj) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: fileUrl,
-              })
-            }
-          />
-        );
-        break;
-
-      default:
-        element = (
-          <Input
-            className="w-full p-2 border rounded"
-            name={getControlItem.name}
-            placeholder={getControlItem.placeholder}
-            id={getControlItem.name}
-            type={getControlItem.type}
-            value={value}
-            onChange={(event) =>
-              setFormData({
-                ...formData,
-                [getControlItem.name]: event.target.value,
+                [getControlItem.name]: fileObj,
               })
             }
           />
