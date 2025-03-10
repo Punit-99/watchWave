@@ -15,7 +15,7 @@ export const AdminFileUpload = ({
 
   // ✅ Sync the received file with localFile (if switching tabs)
   useEffect(() => {
-    if (file) {
+    if (file && !localFile) {
       setLocalFile(file);
     }
   }, [file]);

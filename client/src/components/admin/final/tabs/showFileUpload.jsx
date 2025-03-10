@@ -11,38 +11,39 @@ export const ShowFileUpload = ({
   UploadDetails,
   setUploadDetails,
 }) => {
-  const [episodes, setEpisodes] = useState([
-    { title: "", video: null, subtitle: null },
-  ]);
-  const [movie, setMovie] = useState({
-    video: null,
-    subtitle: null,
-  });
+  const [episodes, setEpisodes] = useState(
+    UploadDetails?.episodes || [{ title: "", video: null, subtitle: null }]
+  );
+  const [movie, setMovie] = useState(
+    UploadDetails?.movie || { video: null, subtitle: null }
+  );
 
   // ✅ Reset Data When Category Changes 🔥
   useEffect(() => {
     if (category === "movie") {
-      setMovie({ video: null, subtitle: null });
-      setUploadDetails({ movie: { video: null, subtitle: null } });
+      setUploadDetails((prev) => ({
+        ...prev,
+        movie: movie.video ? movie : prev.movie,
+      }));
     } else {
-      setEpisodes([{ title: "", video: null, subtitle: null }]);
-      setUploadDetails({
-        episodes: [{ title: "", video: null, subtitle: null }],
-      });
+      setUploadDetails((prev) => ({
+        ...prev,
+        episodes: episodes.length ? episodes : prev.episodes,
+      }));
     }
-  }, [category]);
+  }, [movie, episodes]);
 
   // ✅ Sync Movie Data With Parent 🔥
   useEffect(() => {
     if (category === "movie") {
-      setUploadDetails({ movie });
+      setUploadDetails((prev) => ({ ...prev, movie }));
     }
   }, [movie]);
 
   // ✅ Sync Episode Data With Parent 🔥
   useEffect(() => {
     if (category === "webseries") {
-      setUploadDetails({ episodes });
+      setUploadDetails((prev) => ({ ...prev, episodes }));
     }
   }, [episodes]);
 
@@ -88,15 +89,19 @@ export const ShowFileUpload = ({
       {/* ✅ IF CATEGORY IS MOVIE */}
       {category === "movie" ? (
         <>
+          {/* ✅ Movie Video */}
           <Label className="text-white">Upload Movie</Label>
           <AdminFileUpload
             accept="video/*"
+            file={movie.video}
             onUpload={(file) => setMovie((prev) => ({ ...prev, video: file }))}
           />
 
+          {/* ✅ Movie Subtitle */}
           <Label className="text-white mt-2">Upload Subtitle</Label>
           <AdminFileUpload
             accept=".srt,.vtt"
+            file={movie.subtitle}
             onUpload={(file) =>
               setMovie((prev) => ({ ...prev, subtitle: file }))
             }
@@ -138,27 +143,15 @@ export const ShowFileUpload = ({
               <Label className="text-white mt-2">Upload Video</Label>
               <AdminFileUpload
                 accept="video/*"
+                file={episode.video}
                 onUpload={(file) => handleChange(index, "video", file)}
               />
-
-              {/* ✅ VIDEO PREVIEW */}
-              {episode.video && episode.video instanceof File && (
-                <div className="border-2 border-dashed rounded-lg flex items-center justify-center w-full h-[120px] mt-2 relative bg-gray-900">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="absolute top-1 right-1 bg-red-800"
-                    onClick={() => handleRemoveVideo(index)}
-                  >
-                    <X size={14} />
-                  </Button>
-                </div>
-              )}
 
               {/* ✅ SUBTITLE UPLOAD */}
               <Label className="text-white mt-2">Upload Subtitle</Label>
               <AdminFileUpload
                 accept=".srt,.vtt"
+                file={episode.subtitle}
                 onUpload={(file) => handleChange(index, "subtitle", file)}
               />
             </div>
