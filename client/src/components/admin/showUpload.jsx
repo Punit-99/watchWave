@@ -3,10 +3,10 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShowBasicDetails } from "./tabs/ShowBasicDetails";
 import { ShowFileUpload } from "./tabs/showFileUpload";
-import { ScrollArea } from "../../ui/scroll-area";
-import { Button } from "../../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import { Button } from "../ui/button";
 import { toast } from "react-hot-toast";
-import { FINAL_initialState } from "../../../config/formFields";
+import { FINAL_initialState } from "../../config/formFields";
 
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");

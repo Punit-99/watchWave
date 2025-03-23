@@ -12,7 +12,7 @@ import AdminDashboard from "./pages/admin-view/dashboard";
 import { checkAuth } from "./store/auth-slice/authSlice";
 import { useEffect } from "react";
 import AdminShows from "./pages/admin-view/shows";
-import Layout from "./components/admin/final/layout";
+import AdminLayout from "./components/admin/AdminLayout/AdminLayout";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -27,10 +27,8 @@ function App() {
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
-        {/* HOME */}
         <Route path="/" element={<LandingHome />} />
 
-        {/* AUTH ROUTES */}
         <Route
           path="/auth"
           element={
@@ -43,12 +41,11 @@ function App() {
           <Route path="register" element={<Registration />} />
         </Route>
 
-        {/* ADMIN ROUTES */}
         <Route
           path="/admin"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-              <Layout />
+              <AdminLayout />
             </CheckAuth>
           }
         >
@@ -56,10 +53,8 @@ function App() {
           <Route path="shows" element={<AdminShows />} />
         </Route>
 
-        {/* STREAM ROUTE (Placeholder for Movies) */}
         <Route path="/movies" element={<div>Movies Page</div>} />
 
-        {/* ERROR HANDLING ROUTES */}
         <Route path="/unauth-page" element={<Unauth />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

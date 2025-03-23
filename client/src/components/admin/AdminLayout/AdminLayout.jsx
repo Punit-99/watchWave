@@ -1,15 +1,16 @@
+/* eslint-disable no-unused-vars */
 // components/Layout.jsx
-import ParentHead from "./parentHeader";
+import ParentHeader from "./ParentHeader";
 import AppSidebar from "./sidebar";
 import { SidebarProvider } from "../../ui/sidebar";
-import SecondHeader from "./childHeader";
+import SecondHeader from "./SecondHeader";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col">
       {/* Full-width Parent Head */}
-      <ParentHead />
+      <ParentHeader />
 
       <div className="flex flex-1">
         {/* Sidebar */}

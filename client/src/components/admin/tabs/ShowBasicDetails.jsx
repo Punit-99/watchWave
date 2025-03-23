@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { FINAL_showBasicFormControls } from "../../../../config/formFields";
-import { AdminForm } from "../../../common/common-Form/adminForm";
+import { FINAL_showBasicFormControls } from "../../../config/formFields";
+import { AdminForm } from "../../common/common-Form/adminForm";
 
 export const ShowBasicDetails = ({ showDetails, setShowDetails }) => {
   return (

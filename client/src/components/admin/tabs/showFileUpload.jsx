@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { Button } from "../../../ui/button";
-import { Label } from "../../../ui/label";
-import { Input } from "../../../ui/input";
+import { Button } from "../../ui/button";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
 import { toast } from "react-hot-toast";
-import { AdminFileUpload } from "../../../common/common-Form/adminFileUpload";
+import { AdminFileUpload } from "../../common/common-Form/adminFileUpload";
 
 export const ShowFileUpload = ({
   category,

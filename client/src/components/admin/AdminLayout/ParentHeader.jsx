@@ -1,17 +1,16 @@
+/* eslint-disable no-unused-vars */
 import { useSidebar } from "@/components/ui/sidebar";
-import { Search, Plus } from "lucide-react"; // Icons from Lucide
+import { Plus } from "lucide-react"; // Icons from Lucide
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShowUpload } from "./showUpload";
+import { ShowUpload } from "../showUpload";
 import {
   Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Separator } from "../../ui/separator";
 
@@ -25,7 +24,7 @@ export const CustomTrigger = () => {
   );
 };
 
-const ParentHead = () => {
+const ParentHeader = () => {
   return (
     <header className="w-full bg-gray-800 p-4 flex items-center justify-between shadow-md">
       {/* Left: Hamburger Menu + Logo */}
@@ -74,4 +73,4 @@ const ParentHead = () => {
   );
 };
 
-export default ParentHead;
+export default ParentHeader;
