@@ -5,7 +5,6 @@ import NotFound from "./pages/not-found-view/notFound";
 import Unauth from "./pages/unauth-view/unauth";
 import Login from "./pages/auth-view/login";
 import Registration from "./pages/auth-view/registration";
-import AdminLayout from "./components/admin/adminLayout";
 import CheckAuth from "./components/common/check-auth/checkAuth";
 import LandingHome from "./pages/landing-view/landingHome";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +48,7 @@ function App() {
           path="/admin"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-              <AdminLayout />
+              <Layout />
             </CheckAuth>
           }
         >
@@ -63,8 +62,6 @@ function App() {
         {/* ERROR HANDLING ROUTES */}
         <Route path="/unauth-page" element={<Unauth />} />
         <Route path="*" element={<NotFound />} />
-
-        <Route path="/check" element={<Layout />} />
       </Routes>
     </div>
   );

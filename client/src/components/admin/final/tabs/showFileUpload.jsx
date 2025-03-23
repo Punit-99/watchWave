@@ -18,7 +18,6 @@ export const ShowFileUpload = ({
     UploadDetails?.movie || { video: null, subtitle: null }
   );
 
-  // ✅ Reset Data When Category Changes 🔥
   useEffect(() => {
     if (category === "movie") {
       setUploadDetails((prev) => ({

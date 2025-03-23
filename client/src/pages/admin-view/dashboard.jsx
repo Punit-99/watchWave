@@ -1,5 +1,5 @@
 function AdminDashboard() {
-  return "AdminDashboard";
+  return "AdminDashboard hello";
 }
 
 export default AdminDashboard;

@@ -16,6 +16,16 @@ export const ShowUpload = () => {
   const [showDetailsData, setShowDetailsData] = useState(FINAL_initialState);
   const [UploadDetailsData, setUploadDetailsData] = useState({});
   const [category, setCategory] = useState("");
+  const [prevCategory, setPrevCategory] = useState(null);
+
+  // file reset on category change
+  useEffect(() => {
+    if (prevCategory !== null && prevCategory !== category) {
+      console.log("Resetting upload details in parent");
+      setUploadDetailsData({}); // Reset in Parent
+    }
+    setPrevCategory(category);
+  }, [category]);
 
   useEffect(() => {
     setCategory(showDetailsData.category);
