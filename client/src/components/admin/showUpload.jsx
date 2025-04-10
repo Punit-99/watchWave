@@ -6,7 +6,10 @@ import { ShowFileUpload } from "./tabs/showFileUpload";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { toast } from "react-hot-toast";
-import { FINAL_initialState } from "../../config/formFields";
+import {
+  FINAL_showBasicFormControls,
+  FINAL_initialState,
+} from "../../config/formFields";
 
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");
@@ -59,6 +62,36 @@ export const ShowUpload = () => {
     toast.success("Show Uploaded Successfully! 🎉");
   };
 
+  const isFormValid = () => {
+    return FINAL_showBasicFormControls.every((control) => {
+      if (control.required) {
+        const value = showDetailsData[control.name];
+        console.log(`${control.name}:`, value);
+        return value !== undefined && value !== null && value !== "";
+      }
+      return true;
+    });
+  };
+  const isUploadValid = () => {
+    if (category === "movie") {
+      return (
+        UploadDetailsData.movie?.video && UploadDetailsData.movie?.subtitle
+      );
+    }
+
+    if (category === "webseries") {
+      return (
+        Array.isArray(UploadDetailsData.episodes) &&
+        UploadDetailsData.episodes.length > 0 &&
+        UploadDetailsData.episodes.every(
+          (ep) => ep.title && ep.video && ep.subtitle
+        )
+      );
+    }
+
+    return false;
+  };
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* ✅ Tabs */}
@@ -69,8 +102,11 @@ export const ShowUpload = () => {
           className="w-[400px]"
         >
           <TabsList>
+            {/* disabled={true}  */}
             <TabsTrigger value="showDetails">Show Details</TabsTrigger>
-            <TabsTrigger value="showUpload">Show Upload</TabsTrigger>
+            <TabsTrigger disabled={!isFormValid()} value="showUpload">
+              Show Upload
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -101,7 +137,7 @@ export const ShowUpload = () => {
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button onClick={handleNext} disabled={!category}>
+            <Button onClick={handleNext} disabled={!isFormValid()}>
               Next
             </Button>
           </>
@@ -111,7 +147,9 @@ export const ShowUpload = () => {
             <Button variant="outline" onClick={handlePrevious}>
               Previous
             </Button>
-            <Button onClick={handleUpload}>Upload</Button>
+            <Button onClick={handleUpload} disabled={!isUploadValid()}>
+              Upload
+            </Button>
           </>
         )}
       </div>

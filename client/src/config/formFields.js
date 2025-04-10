@@ -47,24 +47,28 @@ export const FINAL_showBasicFormControls = [
     componentType: "input",
     type: "text",
     placeholder: "Enter show title",
+    required: true,
   },
   {
     name: "description",
     label: "Description",
     componentType: "textarea",
     placeholder: "Enter show description",
+    required: true,
   },
   {
     name: "poster",
     label: "Poster",
     componentType: "file",
     accept: "image/*",
+    required: true,
   },
   {
     name: "thumbnail",
     label: "Thumbnail",
     componentType: "file",
-    accept: "image/*, video/*",
+    accept: "image/*",
+    required: true,
   },
   {
     name: "category",
@@ -74,6 +78,7 @@ export const FINAL_showBasicFormControls = [
       { value: "movie", label: "Movie" },
       { value: "webseries", label: "Web Series" },
     ],
+    required: true,
   },
   {
     name: "genre",
@@ -94,11 +99,13 @@ export const FINAL_showBasicFormControls = [
       { value: "crime", label: "Crime" },
       { value: "war", label: "War" },
     ],
+    required: true,
   },
   {
     name: "releaseDate",
     label: "Release Date",
     componentType: "date",
+    required: true,
   },
 
   {
@@ -107,6 +114,7 @@ export const FINAL_showBasicFormControls = [
     componentType: "input",
     type: "number",
     placeholder: "Enter rating (out of 10)",
+    required: true,
   },
 ];
 export const FINAL_initialState = {
