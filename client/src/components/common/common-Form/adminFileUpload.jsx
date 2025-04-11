@@ -3,61 +3,82 @@ import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Input } from "../../ui/input";
 import { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteFile,
+  uploadFile,
+} from "../../../store/admin-slice/upload-slice";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const AdminFileUpload = ({
   onUpload = () => {},
   accept = "image/*,video/*,.srt,.vtt",
   text = "Upload File",
-  file = null, // ✅ Receive file from form (for rehydration)
+  file = null, // ✅ Used for rehydration
 }) => {
   const inputRef = useRef(null);
   const [localFile, setLocalFile] = useState(file);
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.upload.isLoading);
 
-  // ✅ Sync the received file with localFile (if switching tabs)
+  // ✅ Rehydrate from parent form
   useEffect(() => {
     if (file && !localFile) {
       setLocalFile(file);
     }
   }, [file]);
 
-  // ✅ Handle File Upload Click
   function handleClick() {
     if (inputRef.current) inputRef.current.click();
   }
 
-  // ✅ Handle File Selection
-  function handleFileChange(event) {
+  async function handleFileChange(event) {
     const selectedFile = event.target.files[0];
     if (!selectedFile) {
       toast.error("❌ File Upload Failed!");
       return;
     }
 
-    // ✅ Generate File URL
-    const fileUrl = URL.createObjectURL(selectedFile);
-
-    // ✅ Create File Object
     const fileObj = {
       name: selectedFile.name,
-      url: fileUrl,
       type: selectedFile.type,
       size: selectedFile.size,
       raw: selectedFile,
+      url: null, // to be filled after Cloudinary upload
+      public_id: null,
     };
 
-    // ✅ Set File State
-    setLocalFile(fileObj);
-    onUpload(fileObj);
-
-    toast.success(`✅ ${selectedFile.name} Uploaded Successfully!`);
+    setLocalFile(fileObj); // Temporarily show "Uploading..."
+    try {
+      const res = await dispatch(uploadFile({ file: selectedFile })).unwrap();
+      const updatedFileObj = {
+        ...fileObj,
+        url: res.secure_url,
+        public_id: res.public_id, // ✅ Add this
+      };
+      setLocalFile(updatedFileObj);
+      onUpload(updatedFileObj);
+      toast.success(`✅ ${selectedFile.name} Uploaded Successfully!`);
+    } catch (err) {
+      setLocalFile(null);
+      toast.error("❌ Upload Failed");
+    }
   }
 
-  // ✅ Handle File Removal
-  function handleRemoveFile(event) {
+  async function handleRemoveFile(event) {
     event.stopPropagation();
+
+    if (localFile?.public_id) {
+      try {
+        await dispatch(deleteFile({ public_id: localFile.public_id })).unwrap();
+        toast.success("✅ File Removed from Cloudinary!");
+      } catch (err) {
+        toast.error("❌ Failed to delete from Cloudinary");
+      }
+    }
+
     setLocalFile(null);
     onUpload(null);
-    toast.success("File Removed Successfully!");
   }
 
   return (
@@ -74,43 +95,51 @@ export const AdminFileUpload = ({
           onChange={handleFileChange}
         />
 
-        {/* ✅ Show File Preview */}
         {localFile ? (
           <>
             <div
-              className="absolute top-2 right-2 bg-red-500 rounded-full p-1 cursor-pointer"
+              className="absolute top-2 right-2 bg-red-500 rounded-full p-1 cursor-pointer z-10"
               onClick={handleRemoveFile}
             >
               <XIcon className="w-4 h-4 text-white" />
             </div>
 
-            {/* ✅ Image Preview */}
-            {localFile.type.startsWith("image/") && (
-              <img
-                src={localFile.url}
-                alt="Preview"
-                className="w-full h-[150px] object-cover rounded-lg"
-              />
-            )}
+            {isLoading || !localFile.url ? (
+              <Skeleton className="w-full h-[150px] object-cover rounded-lg bg-[#262628]" />
+            ) : (
+              // <div className="flex flex-col items-center text-gray-400">
+              //
+              // </div>
+              <>
+                {/* 🖼️ Image Preview */}
+                {localFile.type.startsWith("image/") && (
+                  <img
+                    src={localFile.url}
+                    alt="Preview"
+                    className="w-full h-[150px] object-cover rounded-lg"
+                  />
+                )}
 
-            {/* ✅ Video Preview */}
-            {localFile.type.startsWith("video/") && (
-              <video
-                src={localFile.url}
-                className="w-full h-[150px] object-cover rounded-lg"
-                controls
-              />
-            )}
+                {/* 🎥 Video Preview */}
+                {localFile.type.startsWith("video/") && (
+                  <video
+                    src={localFile.url}
+                    className="w-full h-[150px] object-cover rounded-lg"
+                    controls
+                  />
+                )}
 
-            {/* ✅ Subtitle Preview */}
-            {(localFile.name.endsWith(".srt") ||
-              localFile.name.endsWith(".vtt")) && (
-              <div className="text-center text-white">
-                <span className="flex justify-center align-middle gap-2">
-                  <FileIcon className="w-6 h-6 text-primary" />
-                  <p className="font-medium">{localFile.name}</p>
-                </span>
-              </div>
+                {/* 📄 Subtitle File */}
+                {(localFile.name.endsWith(".srt") ||
+                  localFile.name.endsWith(".vtt")) && (
+                  <div className="text-center text-white">
+                    <span className="flex justify-center items-center gap-2">
+                      <FileIcon className="w-6 h-6 text-primary" />
+                      <p className="font-medium">{localFile.name}</p>
+                    </span>
+                  </div>
+                )}
+              </>
             )}
           </>
         ) : (

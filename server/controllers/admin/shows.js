@@ -1,22 +1,50 @@
 import Show from "../../models/Shows.js";
-import { videoUploadUtil, imageUploadUtil } from "../../helper/cloudinary.js";
+import { cloudinaryUpload } from "../../helper/cloudinary.js";
+import cloudinary from "cloudinary";
 
+// Upload Cloudinary
 export const handleFileUpload = async (req, res) => {
   try {
-    const { type } = req.body;
+    const { type = "auto" } = req.body;
+
     if (!req.file) {
       return res
         .status(400)
         .json({ success: false, message: "No file uploaded" });
     }
+    console.log("Uploading with type:", type);
 
-    const uploadFunction = type === "video" ? videoUploadUtil : imageUploadUtil;
-    const result = await uploadFunction(req.file);
+    console.log(req.file);
+    const result = await cloudinaryUpload(req.file, type);
 
     res.json({ success: true, result });
+    console.log("✅ Uplaoded Successfull");
   } catch (e) {
     console.error("❌ Upload Error:", e);
     res.status(500).json({ success: false, message: "Upload Failed" });
+  }
+};
+//  Delete From Cloudinary
+export const handleFileUploadDeleteUpload = async (req, res) => {
+  try {
+    const { public_id } = req.body;
+
+    if (!public_id) {
+      return res.status(400).json({ message: "Missing public_id" });
+    }
+
+    const result = await cloudinary.uploader.destroy(public_id, {
+      resource_type: "auto",
+    });
+
+    if (result.result !== "ok" && result.result !== "not found") {
+      return res.status(500).json({ message: "Failed to delete file" });
+    }
+
+    res.status(200).json({ message: "File deleted successfully", result });
+  } catch (err) {
+    console.error("Cloudinary deletion error:", err);
+    res.status(500).json({ message: "Server error while deleting file" });
   }
 };
 

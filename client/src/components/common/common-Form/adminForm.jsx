@@ -34,13 +34,26 @@ export const AdminForm = ({ formControls = [], formData, setFormData }) => {
             placeholder={getControlItem.placeholder}
             id={getControlItem.name}
             type={getControlItem.type}
-            value={value}
-            onChange={(event) =>
+            step="any" // allow decimals
+            min={0}
+            max={10}
+            value={
+              getControlItem.type === "number"
+                ? Math.min(Math.max(parseFloat(value) || 0, 0), 10)
+                : value
+            }
+            onChange={(event) => {
+              const rawValue = event.target.value;
+              const parsedValue =
+                getControlItem.type === "number"
+                  ? parseFloat(rawValue)
+                  : rawValue;
+
               setFormData({
                 ...formData,
-                [getControlItem.name]: event.target.value,
-              })
-            }
+                [getControlItem.name]: parsedValue,
+              });
+            }}
           />
         );
         break;

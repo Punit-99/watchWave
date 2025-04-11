@@ -7,13 +7,15 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { toast } from "react-hot-toast";
 import {
-  FINAL_showBasicFormControls,
-  FINAL_initialState,
+  showBasicFormControls,
+  showBasicFormControlsinitialState,
 } from "../../config/formFields";
 
 export const ShowUpload = () => {
   const [activeTab, setActiveTab] = useState("showDetails");
-  const [showDetailsData, setShowDetailsData] = useState(FINAL_initialState);
+  const [showDetailsData, setShowDetailsData] = useState(
+    showBasicFormControlsinitialState
+  );
   const [UploadDetailsData, setUploadDetailsData] = useState({});
   const [category, setCategory] = useState("");
   const [prevCategory, setPrevCategory] = useState(null);
@@ -21,7 +23,6 @@ export const ShowUpload = () => {
   // file reset on category change
   useEffect(() => {
     if (prevCategory !== null && prevCategory !== category) {
-      console.log("Resetting upload details in parent");
       setUploadDetailsData({}); // Reset in Parent
     }
     setPrevCategory(category);
@@ -49,10 +50,11 @@ export const ShowUpload = () => {
 
   const handleCancel = () => {
     toast.success("Upload Cancelled.");
-    setShowDetailsData(FINAL_initialState);
+    setShowDetailsData(showBasicFormControlsinitialState);
     setUploadDetailsData({});
   };
 
+  // final db uplaod
   const handleUpload = () => {
     const payload = {
       ...showDetailsData,
@@ -63,10 +65,9 @@ export const ShowUpload = () => {
   };
 
   const isFormValid = () => {
-    return FINAL_showBasicFormControls.every((control) => {
+    return showBasicFormControls.every((control) => {
       if (control.required) {
         const value = showDetailsData[control.name];
-        console.log(`${control.name}:`, value);
         return value !== undefined && value !== null && value !== "";
       }
       return true;
