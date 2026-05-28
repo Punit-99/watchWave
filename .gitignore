@@ -2,3 +2,5 @@
 .env
 ./ztask.txt 
 **/.next
+/app/generated/prisma
+/generated/prisma
