@@ -6,3 +6,107 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+// prisma/schema.prisma
+
+enum ContentType {
+  MOVIE
+  SERIES
+}
+
+enum Genre {
+  ACTION
+  COMEDY
+  DRAMA
+  HORROR
+  ROMANCE
+  SCIFI
+  THRILLER
+  ANIME
+  DOCUMENTARY
+}
+
+model Content {
+  id            String       @id @default(cuid())
+
+  title         String
+  description   String?
+  thumbnailUrl  String?
+  bannerUrl     String?
+
+  releaseYear   Int?
+  language      String?
+
+  genre         Genre[]
+  tags          String[]
+
+  ageRating     String? // PG-13 etc.
+
+  isPublished   Boolean      @default(false)
+
+  type          ContentType
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // relations
+  movie          Movie?
+  series         Series?
+}
+
+model Movie {
+  id            String    @id @default(cuid())
+
+  contentId     String    @unique
+  content       Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  duration      Int // minutes
+
+  videoUrl      String?
+}
+
+model Series {
+  id            String     @id @default(cuid())
+
+  contentId     String     @unique
+  content       Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  totalSeasons  Int        @default(1)
+
+  seasons       Season[]
+}
+
+model Season {
+  id            String      @id @default(cuid())
+
+  seriesId      String
+  series        Series      @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  seasonNumber  Int
+
+  episodes      Episode[]
+
+  createdAt     DateTime    @default(now())
+}
+
+model Episode {
+  id             String      @id @default(cuid())
+
+  seasonId       String
+  season         Season      @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  title          String
+
+  description    String?
+
+  episodeNumber  Int
+
+  duration       Int // minutes
+
+  videoUrl       String?
+
+  thumbnailUrl   String?
+
+  createdAt      DateTime    @default(now())
+}
