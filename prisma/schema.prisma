@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -6,7 +7,6 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
 
 // SCHEMA 
 
@@ -28,85 +28,148 @@ enum Genre {
 }
 
 model Content {
-  id            String       @id @default(cuid())
+  id String @id @default(cuid())
 
-  title         String
-  description   String?
-  thumbnailUrl  String?
-  bannerUrl     String?
+  title        String
+  description  String?
+  thumbnailUrl String?
+  bannerUrl    String?
 
-  releaseYear   Int?
-  language      String[]
+  releaseYear Int?
+  language    String[]
 
-  genre         Genre[]
-  tags          String[]
+  genre Genre[]
+  tags  String[]
 
-  ageRating     String? // PG-13 etc.
+  ageRating String? // PG-13 etc.
 
-  isPublished   Boolean      @default(false)
+  isPublished Boolean @default(false)
 
-  type          ContentType
+  type ContentType
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // relations
-  movie          Movie?
-  series         Series?
+  movie  Movie?
+  series Series?
 }
 
 model Movie {
-  id            String    @id @default(cuid())
+  id String @id @default(cuid())
 
-  contentId     String    @unique
-  content       Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  contentId String  @unique
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
-  duration      Int // minutes
+  duration Int // minutes
 
-  videoUrl      String?
+  videoUrl String?
 }
 
 model Series {
-  id            String     @id @default(cuid())
+  id String @id @default(cuid())
 
-  contentId     String     @unique
-  content       Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  contentId String  @unique
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
-  totalSeasons  Int        @default(1)
+  totalSeasons Int @default(1)
 
-  seasons       Season[]
+  seasons Season[]
 }
 
 model Season {
-  id            String      @id @default(cuid())
+  id String @id @default(cuid())
 
-  seriesId      String
-  series        Series      @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seriesId String
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
-  seasonNumber  Int
+  seasonNumber Int
 
-  episodes      Episode[]
+  episodes Episode[]
 
-  createdAt     DateTime    @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Episode {
-  id             String      @id @default(cuid())
+  id String @id @default(cuid())
 
-  seasonId       String
-  season         Season      @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonId String
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
 
-  title          String
+  title String
 
-  description    String?
+  description String?
 
-  episodeNumber  Int
+  episodeNumber Int
 
-  duration       Int // minutes
+  duration Int // minutes
 
-  videoUrl       String?
+  videoUrl String?
 
-  thumbnailUrl   String?
+  thumbnailUrl String?
 
-  createdAt      DateTime    @default(now())
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
