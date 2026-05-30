@@ -1,14 +1,15 @@
-
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// SCHEMA 
+// ======================
+// ENUMS
+// ======================
 
 enum ContentType {
   MOVIE
@@ -27,6 +28,15 @@ enum Genre {
   DOCUMENTARY
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// ======================
+// CONTENT
+// ======================
+
 model Content {
   id String @id @default(cuid())
 
@@ -41,7 +51,7 @@ model Content {
   genre Genre[]
   tags  String[]
 
-  ageRating String? // PG-13 etc.
+  ageRating String?
 
   isPublished Boolean @default(false)
 
@@ -50,9 +60,8 @@ model Content {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // relations
   movie  Movie?
-  series Series?
+  series Series[]
 }
 
 model Movie {
@@ -61,7 +70,7 @@ model Movie {
   contentId String  @unique
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
-  duration Int // minutes
+  duration Int
 
   videoUrl String?
 }
@@ -69,12 +78,14 @@ model Movie {
 model Series {
   id String @id @default(cuid())
 
-  contentId String  @unique
+  contentId String
   content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   totalSeasons Int @default(1)
 
   seasons Season[]
+
+  @@unique([contentId])
 }
 
 model Season {
@@ -88,6 +99,8 @@ model Season {
   episodes Episode[]
 
   createdAt DateTime @default(now())
+
+  @@unique([seriesId, seasonNumber])
 }
 
 model Episode {
@@ -102,74 +115,32 @@ model Episode {
 
   episodeNumber Int
 
-  duration Int // minutes
+  duration Int
 
   videoUrl String?
 
   thumbnailUrl String?
 
   createdAt DateTime @default(now())
+
+  @@unique([seasonId, episodeNumber])
 }
+
+// ======================
+// USER AUTH (JWT)
+// ======================
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id String @id @default(cuid())
 
-  @@unique([email])
-  @@map("user")
-}
+  name     String
+  email    String @unique
+  password String
 
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
+  role UserRole @default(USER)
+
+  image String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@index([userId])
-  @@map("session")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
 }
