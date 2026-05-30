@@ -53,8 +53,6 @@ model Content {
 
   ageRating String?
 
-  isPublished Boolean @default(false)
-
   type ContentType
 
   createdAt DateTime @default(now())
