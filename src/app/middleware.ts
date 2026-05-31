@@ -7,7 +7,8 @@ export function middleware(req: NextRequest) {
 
   const isProtected =
     req.nextUrl.pathname.startsWith("/api/movies") ||
-    req.nextUrl.pathname.startsWith("/api/series");
+    req.nextUrl.pathname.startsWith("/api/series") ||
+    req.nextUrl.pathname.startsWith("/api/upload");
 
   if (!isProtected) return NextResponse.next();
 
@@ -22,6 +23,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
 }
+
 export const config = {
   matcher: ["/api/movies/:path*", "/api/series/:path*", "/api/upload/:path*"],
 };

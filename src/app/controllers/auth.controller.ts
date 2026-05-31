@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { loginSchema, registerSchema } from "@/validation/auth.validation";
 import { loginService, registerService } from "@/services/auth/auth.service";
-import { setAuthCookies } from "@/lib/cookies";
 
-// Register
+// REGISTER
 export async function registerController(req: Request) {
   try {
     const body = await req.json();
@@ -11,9 +10,7 @@ export async function registerController(req: Request) {
 
     const result = await registerService(validatedData);
 
-    setAuthCookies(result.accessToken, result.refreshToken);
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         message: "User registered successfully",
@@ -21,6 +18,24 @@ export async function registerController(req: Request) {
       },
       { status: 201 },
     );
+
+    response.cookies.set("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: false, // ✅ IMPORTANT for POSTMAN/local dev
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 15,
+    });
+
+    response.cookies.set("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message },
@@ -28,8 +43,8 @@ export async function registerController(req: Request) {
     );
   }
 }
-// Login
 
+// LOGIN
 export async function loginController(req: Request) {
   try {
     const body = await req.json();
@@ -37,9 +52,7 @@ export async function loginController(req: Request) {
 
     const result = await loginService(validatedData);
 
-    setAuthCookies(result.accessToken, result.refreshToken);
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         message: "Login successful",
@@ -47,6 +60,24 @@ export async function loginController(req: Request) {
       },
       { status: 200 },
     );
+
+    response.cookies.set("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 15,
+    });
+
+    response.cookies.set("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message },

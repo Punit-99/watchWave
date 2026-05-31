@@ -1,6 +1,6 @@
-import { deleteMovieController } from "@/src/app/controllers/movie.controller";
-import { updateMovieController } from "@/src/app/controllers/movie.controller";
-import { getMovieController } from "@/src/app/controllers/movie.controller";
+import { deleteMovieController } from "@/controllers/movie.controller";
+import { updateMovieController } from "@/controllers/movie.controller";
+import { getMovieController } from "@/controllers/movie.controller";
 
 export async function DELETE(
   req: Request,
