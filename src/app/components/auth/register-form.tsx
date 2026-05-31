@@ -1,50 +1,62 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { registerSchema, RegisterInput } from "@/validation/auth.validation";
+import { useRegister } from "@/hooks/use-auth";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import PasswordInput from "../ui/password-input";
 
 export default function RegisterForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { mutate, isPending } = useRegister();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+  });
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+  const onSubmit = (data: RegisterInput) => {
+    mutate(data, {
+      onSuccess: (res) => {
+        console.log("registered", res);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
     });
-
-    console.log(await res.json());
   };
 
   return (
-    <form onSubmit={handleRegister} className="space-y-4">
-      <Input
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Input placeholder="Name" {...register("name")} />
+        {errors.name && (
+          <p className="text-sm text-red-500">{errors.name.message}</p>
+        )}
+      </div>
 
-      <Input
-        placeholder="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div>
+        <Input placeholder="Email" {...register("email")} />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
+      </div>
 
-      <Input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div>
+        <PasswordInput placeholder="Password" {...register("password")} />
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
+      </div>
 
-      <Button className="w-full" type="submit">
-        Create Account
+      <Button className="w-full" type="submit" disabled={isPending}>
+        {isPending ? "Creating..." : "Create Account"}
       </Button>
     </form>
   );
