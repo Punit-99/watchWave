@@ -1,6 +1,6 @@
 import { deleteMovieController } from "@/controllers/movie.controller";
 import { updateMovieController } from "@/controllers/movie.controller";
-import { getMovieController } from "@/controllers/movie.controller";
+import { getMovieByIdController } from "@/controllers/movie.controller";
 
 export async function DELETE(
   req: Request,
@@ -26,5 +26,5 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  return getMovieController(req, { id });
+  return getMovieByIdController(req, { id });
 }

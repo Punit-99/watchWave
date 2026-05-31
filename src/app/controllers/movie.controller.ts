@@ -265,7 +265,7 @@ export async function getMoviesController(req: Request) {
   }
 }
 // get movie by id
-export async function getMovieController(_: Request, params: { id: string }) {
+export async function getMovieByIdController(_: Request, params: { id: string }) {
   try {
     const movie = await prisma.content.findUnique({
       where: {
