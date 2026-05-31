@@ -10,9 +10,7 @@ import { LoginInput, RegisterInput } from "@/validation/auth.validation";
 
 const REFRESH_EXPIRES_IN_DAYS = 7;
 
-// ======================
 // REGISTER
-// ======================
 export async function registerService(data: RegisterInput) {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -63,37 +61,26 @@ export async function registerService(data: RegisterInput) {
   };
 }
 
-// ======================
 // LOGIN
-// ======================
 export async function loginService(data: LoginInput) {
   const user = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
+    where: { email: data.email },
   });
 
-  if (!user) {
-    throw new Error("Invalid credentials");
-  }
+  if (!user) throw new Error("Invalid credentials");
 
   const isMatch = await bcrypt.compare(data.password, user.password);
 
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
+  if (!isMatch) throw new Error("Invalid credentials");
 
   const accessToken = generateAccessToken(user.id, user.role);
-
   const refreshToken = generateRefreshToken(user.id, user.role);
 
   await prisma.refreshToken.create({
     data: {
       token: refreshToken,
       userId: user.id,
-      expiresAt: new Date(
-        Date.now() + REFRESH_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000,
-      ),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -110,31 +97,16 @@ export async function loginService(data: LoginInput) {
   };
 }
 
-// ======================
 // REFRESH TOKEN
-// ======================
 export async function refreshService(refreshToken: string) {
-  if (!refreshToken) {
-    throw new Error("Refresh token required");
-  }
-
-  const decoded = verifyRefreshToken(refreshToken) as {
-    userId: string;
-    role: string;
-  };
+  if (!refreshToken) throw new Error("Refresh token required");
 
   const storedToken = await prisma.refreshToken.findUnique({
-    where: {
-      token: refreshToken,
-    },
-    include: {
-      user: true,
-    },
+    where: { token: refreshToken },
+    include: { user: true },
   });
 
-  if (!storedToken) {
-    throw new Error("Invalid refresh token");
-  }
+  if (!storedToken) throw new Error("Invalid refresh token");
 
   if (storedToken.expiresAt < new Date()) {
     await prisma.refreshToken.delete({
@@ -149,7 +121,5 @@ export async function refreshService(refreshToken: string) {
     storedToken.user.role,
   );
 
-  return {
-    accessToken,
-  };
+  return { accessToken };
 }
