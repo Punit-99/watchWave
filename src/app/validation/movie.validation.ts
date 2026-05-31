@@ -1,4 +1,4 @@
-import { Genre } from "@/generated/prisma/enums";
+import { Genre } from "../../../generated/prisma/enums";
 import { z } from "zod";
 
 // create

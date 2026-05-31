@@ -1,5 +1,5 @@
-import { createMovieController } from "../../controller/movie.controller";
-import { getMoviesController } from "../../controller/movie.controller";
+import { createMovieController } from "../../controllers/movie.controller";
+import { getMoviesController } from "../../controllers/movie.controller";
 
 export async function POST(req: Request) {
   return createMovieController(req);
