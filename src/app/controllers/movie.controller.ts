@@ -1,5 +1,3 @@
-// controllers/movie.controller.ts
-
 import { prisma } from "../lib/prisma";
 import {
   createMovieSchema,
@@ -7,7 +5,7 @@ import {
 } from "../validation/movie.validation";
 import { ZodError } from "zod";
 
-// edit
+// create
 export async function createMovieController(req: Request) {
   try {
     const body = await req.json();
@@ -264,8 +262,12 @@ export async function getMoviesController(req: Request) {
     );
   }
 }
+
 // get movie by id
-export async function getMovieByIdController(_: Request, params: { id: string }) {
+export async function getMovieByIdController(
+  _: Request,
+  params: { id: string },
+) {
   try {
     const movie = await prisma.content.findUnique({
       where: {
