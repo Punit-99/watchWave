@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAccessToken } from "@/lib/jwt";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
+  console.log("🔥 PROXY HIT");
+
   const token = req.cookies.get("accessToken")?.value;
 
   const isProtected =
@@ -25,5 +27,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/movies/:path*", "/api/series/:path*", "/api/upload/:path*"],
+  matcher: ["/api/:path*"],
 };
