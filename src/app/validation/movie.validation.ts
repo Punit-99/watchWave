@@ -7,10 +7,16 @@ export const createMovieSchema = z.object({
 
   description: z.string().optional(),
 
-  thumbnailUrl: z.string().url().optional(),
-  bannerUrl: z.string().url().optional(),
+  thumbnailUrl: z.string().url().optional().or(z.literal("")),
+  bannerUrl: z.string().url().optional().or(z.literal("")),
+  videoUrl: z.string().url().optional().or(z.literal("")),
 
-  releaseYear: z.coerce.number().int().optional(),
+  releaseYear: z.coerce
+    .number()
+    .int()
+    .min(1900)
+    .max(new Date().getFullYear())
+    .optional(),
 
   language: z.array(z.string()).min(1),
 
@@ -20,9 +26,7 @@ export const createMovieSchema = z.object({
 
   ageRating: z.string().optional(),
 
-  duration: z.coerce.number().positive(),
-
-  videoUrl: z.string().url().optional(),
+  duration: z.coerce.number().positive("Duration must be greater than 0"),
 });
 
 export type CreateMovieInput = z.infer<typeof createMovieSchema>;
