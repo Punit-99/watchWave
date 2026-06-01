@@ -1,27 +1,28 @@
+import api from "./axios";
+
 import type { LoginInput, RegisterInput } from "@/validation/auth.validation";
 
-export const authApi = {
-  login: async (data: LoginInput) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+export async function login(data: LoginInput) {
+  console.log("AI HIT");
+  const res = await api.post("/auth/login", data);
+  return res.data;
+}
 
-    if (!res.ok) throw new Error("Login failed");
+export async function register(data: RegisterInput) {
+  console.log("AI HIT");
+  const res = await api.post("/auth/register", data);
+  return res.data;
+}
 
-    return res.json();
-  },
+export async function logout() {
+  console.log("AI HIT");
+  const res = await api.post("/auth/logout");
+  return res.data;
+}
 
-  register: async (data: RegisterInput) => {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+export async function getMe() {
+  console.log("AI HIT");
+  const res = await api.get("/auth/me");
 
-    if (!res.ok) throw new Error("Register failed");
-
-    return res.json();
-  },
-};
+  return res.data.data;
+}

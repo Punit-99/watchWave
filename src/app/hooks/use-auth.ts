@@ -1,36 +1,29 @@
-// /hooks/use-auth.ts
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { useMutation } from "@tanstack/react-query";
-import { LoginInput, RegisterInput } from "@/validation/auth.validation";
-
-async function loginApi(data: LoginInput) {
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) throw new Error("Login failed");
-  return res.json();
-}
-
-async function registerApi(data: RegisterInput) {
-  const res = await fetch("/api/auth/register", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) throw new Error("Register failed");
-  return res.json();
-}
+import { login, register, getMe, logout } from "@/lib/api/auth.api";
 
 export function useLogin() {
   return useMutation({
-    mutationFn: loginApi,
+    mutationFn: login,
   });
 }
 
 export function useRegister() {
   return useMutation({
-    mutationFn: registerApi,
+    mutationFn: register,
+  });
+}
+
+export function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    retry: false,
+  });
+}
+
+export function useLogout() {
+  return useMutation({
+    mutationFn: logout,
   });
 }
