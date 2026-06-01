@@ -33,6 +33,32 @@ enum UserRole {
   ADMIN
 }
 
+enum Language {
+  ENGLISH
+  HINDI
+  GUJARATI
+  TAMIL
+  TELUGU
+  MALAYALAM
+  KANNADA
+  MARATHI
+  BENGALI
+  PUNJABI
+  SPANISH
+  FRENCH
+  JAPANESE
+  KOREAN
+  CHINESE
+  OTHER
+}
+enum AgeRating {
+  G
+  PG
+  PG13
+  R
+  NC17
+}
+
 // ======================
 // CONTENT
 // ======================
