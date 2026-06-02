@@ -24,9 +24,7 @@ export async function getSeriesById(id: string): Promise<{
   success: boolean;
   data: Series;
 }> {
-  console.log("Fetching series with ID:", id); // Debug log to verify ID being fetched
   const res = await api.get(`/series/${id}`);
-  console.log("API response for getSeriesById:", res.data); // Debug log to verify API response structure
   return res.data;
 }
 

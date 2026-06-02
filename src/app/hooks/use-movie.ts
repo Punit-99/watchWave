@@ -32,11 +32,10 @@ export function useCreateMovie() {
     },
   });
 }
-
-export function useGetAllMovies() {
+export function useGetAllMovies(page = 1, limit = 10) {
   return useQuery<GetMoviesResponse>({
-    queryKey: ["movies"],
-    queryFn: getAllMovies,
+    queryKey: ["movies", page, limit],
+    queryFn: () => getAllMovies(page, limit),
   });
 }
 
