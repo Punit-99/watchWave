@@ -89,7 +89,7 @@ export default function MovieTable() {
                       </Button>
 
                       <Button size="sm" variant="outline" asChild>
-                        <Link href={`/admin/movies/${movie.id}/edit`}>
+                        <Link href={`/admin/movies/edit/${movie.id}`}>
                           Edit
                         </Link>
                       </Button>

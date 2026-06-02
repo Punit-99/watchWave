@@ -87,7 +87,7 @@ export default function SeriesTable() {
                       </Button>
 
                       <Button size="sm" variant="outline" asChild>
-                        <Link href={`/admin/series/${item.id}/edit`}>Edit</Link>
+                        <Link href={`/admin/series/edit/${item.id}`}>Edit</Link>
                       </Button>
 
                       <Button
