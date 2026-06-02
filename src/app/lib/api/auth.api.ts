@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../axios";
 
 import type { LoginInput, RegisterInput } from "@/validation/auth.validation";
 

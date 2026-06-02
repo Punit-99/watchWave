@@ -1,28 +1,30 @@
-import axios from "./axios";
-import type { CreateMovieInput } from "@/validation/movie.validation";
+import api from "../axios";
+
+import {
+  GetMoviesResponseSchema,
+  type CreateMovieInput,
+  type GetMoviesResponse,
+} from "@/validation/movie.validation";
 
 export async function createMovie(data: CreateMovieInput) {
-  const { data: res } = await axios.post("movies", data);
+  const { data: res } = await api.post("movies", data);
   return res;
 }
 
-export async function uploadMedia(file: File) {
-  const formData = new FormData();
-  formData.append("file", file);
+export async function getAllMovies(): Promise<GetMoviesResponse> {
+  const { data } = await api.get("/movies");
 
-  const { data } = await axios.post("upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  return GetMoviesResponseSchema.parse(data);
+}
+
+export async function deleteMovie(id: string) {
+  const { data } = await api.delete(`/movies/${id}`);
 
   return data;
 }
 
-export async function deleteMedia(publicId: string) {
-  const { data } = await axios.delete("upload/delete", {
-    data: { publicId },
-  });
-
+export async function getMovieById(id: string) {
+  const { data } = await api.get(`/movies/${id}`);
+  console.log("Fetched movie data:", data);
   return data;
 }
