@@ -17,7 +17,9 @@ import type {
   Series,
 } from "@/validation/series.validation";
 
-// Create
+// =====================
+// CREATE SERIES
+// =====================
 export function useCreateSeries() {
   const queryClient = useQueryClient();
 
@@ -29,6 +31,7 @@ export function useCreateSeries() {
 
       await queryClient.invalidateQueries({
         queryKey: ["series"],
+        exact: false, // 🔥 IMPORTANT FIX
       });
     },
 
@@ -40,15 +43,21 @@ export function useCreateSeries() {
   });
 }
 
-// Get All
+// =====================
+// GET ALL SERIES (PAGINATED)
+// =====================
 export function useGetAllSeries(page = 1, limit = 10) {
   return useQuery<GetSeriesResponse>({
     queryKey: ["series", page, limit],
     queryFn: () => getAllSeries(page, limit),
+
+    keepPreviousData: true, // 🔥 smooth pagination
   });
 }
 
-// Get By Id
+// =====================
+// GET SERIES BY ID
+// =====================
 export function useGetSeriesById(id: string) {
   return useQuery<{
     success: boolean;
@@ -60,7 +69,9 @@ export function useGetSeriesById(id: string) {
   });
 }
 
-// Update
+// =====================
+// UPDATE SERIES
+// =====================
 export function useUpdateSeries() {
   const queryClient = useQueryClient();
 
@@ -74,6 +85,7 @@ export function useUpdateSeries() {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: ["series"],
+          exact: false, // 🔥 FIX: all pages refresh
         }),
 
         queryClient.invalidateQueries({
@@ -90,7 +102,9 @@ export function useUpdateSeries() {
   });
 }
 
-// Delete
+// =====================
+// DELETE SERIES
+// =====================
 export function useDeleteSeries() {
   const queryClient = useQueryClient();
 
@@ -102,6 +116,7 @@ export function useDeleteSeries() {
 
       await queryClient.invalidateQueries({
         queryKey: ["series"],
+        exact: false, // 🔥 CRITICAL FIX
       });
     },
 

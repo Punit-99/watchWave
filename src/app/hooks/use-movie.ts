@@ -8,9 +8,11 @@ import {
 } from "@/lib/api/movie.api";
 
 import { appToast } from "@/lib/toast";
-
 import type { GetMoviesResponse } from "@/validation/movie.validation";
 
+// =====================
+// CREATE MOVIE
+// =====================
 export function useCreateMovie() {
   const queryClient = useQueryClient();
 
@@ -22,6 +24,7 @@ export function useCreateMovie() {
 
       await queryClient.invalidateQueries({
         queryKey: ["movies"],
+        exact: false, // 🔥 IMPORTANT FIX
       });
     },
 
@@ -32,13 +35,21 @@ export function useCreateMovie() {
     },
   });
 }
+
+// =====================
+// GET ALL MOVIES (PAGINATED)
+// =====================
 export function useGetAllMovies(page = 1, limit = 10) {
   return useQuery<GetMoviesResponse>({
     queryKey: ["movies", page, limit],
     queryFn: () => getAllMovies(page, limit),
+    keepPreviousData: true, // 🔥 smooth pagination UX
   });
 }
 
+// =====================
+// DELETE MOVIE
+// =====================
 export function useDeleteMovie() {
   const queryClient = useQueryClient();
 
@@ -50,6 +61,7 @@ export function useDeleteMovie() {
 
       await queryClient.invalidateQueries({
         queryKey: ["movies"],
+        exact: false, // 🔥 FIX: refresh ALL pages
       });
     },
 
@@ -61,6 +73,9 @@ export function useDeleteMovie() {
   });
 }
 
+// =====================
+// GET MOVIE BY ID
+// =====================
 export function useMovie(id: string) {
   return useQuery({
     queryKey: ["movie", id],
