@@ -59,6 +59,7 @@ export default function SeriesTable() {
               <TableHead>Genre</TableHead>
               <TableHead>Language</TableHead>
               <TableHead>Year</TableHead>
+              <TableHead>Total Seasons</TableHead> {/* ADDED */}
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -66,7 +67,7 @@ export default function SeriesTable() {
           <TableBody>
             {seriesList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={6} className="text-center">
                   No series found
                 </TableCell>
               </TableRow>
@@ -77,6 +78,8 @@ export default function SeriesTable() {
                   <TableCell>{item.genre.join(", ")}</TableCell>
                   <TableCell>{item.language.join(", ")}</TableCell>
                   <TableCell>{item.releaseYear}</TableCell>
+
+                  <TableCell>{item.series?.[0]?.totalSeasons ?? 0}</TableCell>
 
                   <TableCell>
                     <div className="flex justify-end gap-2">
