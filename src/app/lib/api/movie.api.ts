@@ -1,17 +1,11 @@
 import axios from "./axios";
 import type { CreateMovieInput } from "@/validation/movie.validation";
 
-/**
- * CREATE MOVIE
- */
 export async function createMovie(data: CreateMovieInput) {
   const { data: res } = await axios.post("movies", data);
   return res;
 }
 
-/**
- * UPLOAD FILE (IMAGE / VIDEO)
- */
 export async function uploadMedia(file: File) {
   const formData = new FormData();
   formData.append("file", file);
@@ -22,14 +16,11 @@ export async function uploadMedia(file: File) {
     },
   });
 
-  return data; // { url, publicId }
+  return data;
 }
 
-/**
- * DELETE FILE FROM CLOUDINARY
- */
 export async function deleteMedia(publicId: string) {
-  const { data } = await axios.delete("upload", {
+  const { data } = await axios.delete("upload/delete", {
     data: { publicId },
   });
 

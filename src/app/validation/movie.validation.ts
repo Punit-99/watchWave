@@ -1,7 +1,10 @@
-import { Genre } from "../../../generated/prisma/enums";
+import { Genre, Language, AgeRating } from "../../../generated//prisma/enums";
 import { z } from "zod";
 
-// create
+const genreEnum = z.enum(Object.values(Genre) as [string, ...string[]]);
+const languageEnum = z.enum(Object.values(Language) as [string, ...string[]]);
+const ageRatingEnum = z.enum(Object.values(AgeRating) as [string, ...string[]]);
+
 export const createMovieSchema = z.object({
   title: z.string().min(1, "Title is required"),
 
@@ -18,13 +21,13 @@ export const createMovieSchema = z.object({
     .max(new Date().getFullYear())
     .optional(),
 
-  language: z.array(z.string()).min(1),
+  language: z.array(languageEnum).min(1),
 
-  genre: z.array(z.enum(Genre)).min(1),
+  genre: z.array(genreEnum).min(1),
 
   tags: z.array(z.string()).default([]),
 
-  ageRating: z.string().optional(),
+  ageRating: ageRatingEnum.optional(),
 
   duration: z.coerce.number().positive("Duration must be greater than 0"),
 });

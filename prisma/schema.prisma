@@ -77,7 +77,7 @@ model Content {
   genre Genre[]
   tags  String[]
 
-  ageRating String?
+  ageRating AgeRating?
 
   type ContentType
 

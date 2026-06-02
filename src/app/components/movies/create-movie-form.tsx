@@ -5,25 +5,23 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Genre } from "../../../../generated/prisma/enums";
+import { Genre, Language, AgeRating } from "../../../../generated/prisma/enums";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dropzone } from "@/components/ui/dropzone";
+
 import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
+import { useCreateMovie } from "@/hooks/use-movie";
+
 import {
   createMovieSchema,
   type CreateMovieInput,
 } from "@/validation/movie.validation";
 
-import { useCreateMovie } from "@/hooks/use-movie";
-
-const GENRES = Object.values(Genre);
-
 export function CreateMovieForm() {
   const router = useRouter();
-
   const [tagInput, setTagInput] = useState("");
 
   const [uploading, setUploading] = useState({
@@ -33,6 +31,8 @@ export function CreateMovieForm() {
   });
 
   const { mutate, isPending } = useCreateMovie();
+  const uploadMutation = useUploadMedia();
+  const deleteMutation = useDeleteMedia();
 
   const {
     register,
@@ -48,7 +48,7 @@ export function CreateMovieForm() {
       thumbnailUrl: "",
       bannerUrl: "",
       videoUrl: "",
-      ageRating: "",
+      ageRating: undefined,
       duration: 0,
       language: [],
       genre: [],
@@ -56,38 +56,36 @@ export function CreateMovieForm() {
     },
   });
 
+  // ---------------- WATCH ----------------
   const genres = watch("genre");
+  const languages = watch("language");
   const tags = watch("tags");
 
   const thumbnailUrl = watch("thumbnailUrl");
   const bannerUrl = watch("bannerUrl");
   const videoUrl = watch("videoUrl");
-  const uploadMutation = useUploadMedia();
-  const deleteMutation = useDeleteMedia();
-  // ---------------- UPLOAD HANDLERS ----------------
 
+  // ---------------- ENUM LISTS ----------------
+  const GENRES = Object.values(Genre);
+  const LANGUAGES = Object.values(Language);
+  const AGE_RATINGS = Object.values(AgeRating);
+
+  // ---------------- UPLOAD ----------------
   const uploadThumbnail = async (file: File) => {
     setUploading((p) => ({ ...p, thumbnail: true }));
-
     try {
       const res = await uploadMutation.mutateAsync(file);
-
-      setValue("thumbnailUrl", res.url, {
-        shouldValidate: true,
-      });
+      setValue("thumbnailUrl", res.url, { shouldValidate: true });
     } finally {
       setUploading((p) => ({ ...p, thumbnail: false }));
     }
   };
+
   const uploadBanner = async (file: File) => {
     setUploading((p) => ({ ...p, banner: true }));
-
     try {
       const res = await uploadMutation.mutateAsync(file);
-
-      setValue("bannerUrl", res.url, {
-        shouldValidate: true,
-      });
+      setValue("bannerUrl", res.url, { shouldValidate: true });
     } finally {
       setUploading((p) => ({ ...p, banner: false }));
     }
@@ -95,51 +93,39 @@ export function CreateMovieForm() {
 
   const uploadVideo = async (file: File) => {
     setUploading((p) => ({ ...p, video: true }));
-
     try {
       const res = await uploadMutation.mutateAsync(file);
-
-      setValue("videoUrl", res.url, {
-        shouldValidate: true,
-      });
+      setValue("videoUrl", res.url, { shouldValidate: true });
     } finally {
       setUploading((p) => ({ ...p, video: false }));
     }
   };
-  // ---------------- DELETE ----------------
 
+  // ---------------- DELETE ----------------
   const deleteThumbnail = async () => {
     const url = watch("thumbnailUrl");
     if (!url) return;
-
     await deleteMutation.mutateAsync(url);
-
     setValue("thumbnailUrl", "");
   };
 
   const deleteBanner = async () => {
     const url = watch("bannerUrl");
     if (!url) return;
-
     await deleteMutation.mutateAsync(url);
-
     setValue("bannerUrl", "");
   };
 
   const deleteVideo = async () => {
     const url = watch("videoUrl");
     if (!url) return;
-
     await deleteMutation.mutateAsync(url);
-
     setValue("videoUrl", "");
   };
 
-  // ---------------- GENRE ----------------
-
+  // ---------------- GENRE TOGGLE ----------------
   const toggleGenre = (genre: Genre) => {
     const exists = genres.includes(genre);
-
     setValue(
       "genre",
       exists ? genres.filter((g) => g !== genre) : [...genres, genre],
@@ -147,12 +133,20 @@ export function CreateMovieForm() {
     );
   };
 
-  // ---------------- TAGS ----------------
+  // ---------------- LANGUAGE TOGGLE ----------------
+  const toggleLanguage = (lang: Language) => {
+    const exists = languages.includes(lang);
+    setValue(
+      "language",
+      exists ? languages.filter((l) => l !== lang) : [...languages, lang],
+      { shouldValidate: true },
+    );
+  };
 
+  // ---------------- TAGS ----------------
   const addTag = () => {
     const trimmed = tagInput.trim();
     if (!trimmed || tags.includes(trimmed)) return;
-
     setValue("tags", [...tags, trimmed]);
     setTagInput("");
   };
@@ -165,7 +159,6 @@ export function CreateMovieForm() {
   };
 
   // ---------------- SUBMIT ----------------
-
   const onSubmit = (data: CreateMovieInput) => {
     mutate(data, {
       onSuccess: () => router.push("/admin/movies"),
@@ -186,47 +179,31 @@ export function CreateMovieForm() {
       <Input placeholder="Description" {...register("description")} />
 
       {/* THUMBNAIL */}
-      <div className="space-y-2">
-        <h3 className="font-medium">Thumbnail</h3>
-
-        <Dropzone
-          type="image"
-          previewUrl={thumbnailUrl}
-          isUploading={uploading.thumbnail}
-          onUpload={uploadThumbnail}
-          onDelete={deleteThumbnail}
-        />
-
-        {errors.thumbnailUrl && (
-          <p className="text-sm text-red-500">{errors.thumbnailUrl.message}</p>
-        )}
-      </div>
+      <Dropzone
+        type="image"
+        previewUrl={thumbnailUrl}
+        isUploading={uploading.thumbnail}
+        onUpload={uploadThumbnail}
+        onDelete={deleteThumbnail}
+      />
 
       {/* BANNER */}
-      <div className="space-y-2">
-        <h3 className="font-medium">Banner</h3>
-
-        <Dropzone
-          type="image"
-          previewUrl={bannerUrl}
-          isUploading={uploading.banner}
-          onUpload={uploadBanner}
-          onDelete={deleteBanner}
-        />
-      </div>
+      <Dropzone
+        type="image"
+        previewUrl={bannerUrl}
+        isUploading={uploading.banner}
+        onUpload={uploadBanner}
+        onDelete={deleteBanner}
+      />
 
       {/* VIDEO */}
-      <div className="space-y-2">
-        <h3 className="font-medium">Video</h3>
-
-        <Dropzone
-          type="video"
-          previewUrl={videoUrl}
-          isUploading={uploading.video}
-          onUpload={uploadVideo}
-          onDelete={deleteVideo}
-        />
-      </div>
+      <Dropzone
+        type="video"
+        previewUrl={videoUrl}
+        isUploading={uploading.video}
+        onUpload={uploadVideo}
+        onDelete={deleteVideo}
+      />
 
       {/* RELEASE YEAR */}
       <Input
@@ -245,19 +222,44 @@ export function CreateMovieForm() {
         {...register("duration")}
       />
 
-      {/* AGE RATING */}
-      <Input placeholder="Age Rating" {...register("ageRating")} />
+      {/* AGE RATING (FIXED) */}
+      <div className="space-y-2">
+        <h3 className="font-medium">Age Rating</h3>
 
-      {/* LANGUAGE */}
-      <Input
-        placeholder="Languages (comma separated)"
-        onBlur={(e) =>
-          setValue(
-            "language",
-            e.target.value.split(",").map((x) => x.trim()),
-          )
-        }
-      />
+        <select
+          className="w-full border rounded px-3 py-2"
+          {...register("ageRating")}
+        >
+          <option value="">Select Age Rating</option>
+          {AGE_RATINGS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+
+        {errors.ageRating && (
+          <p className="text-sm text-red-500">{errors.ageRating.message}</p>
+        )}
+      </div>
+
+      {/* LANGUAGE (FIXED) */}
+      <div className="space-y-2">
+        <h3 className="font-medium">Languages</h3>
+
+        <div className="flex flex-wrap gap-2">
+          {LANGUAGES.map((l) => (
+            <Badge
+              key={l}
+              onClick={() => toggleLanguage(l)}
+              variant={languages.includes(l) ? "default" : "outline"}
+              className="cursor-pointer"
+            >
+              {l}
+            </Badge>
+          ))}
+        </div>
+      </div>
 
       {/* GENRES */}
       <div className="space-y-2">
@@ -287,7 +289,6 @@ export function CreateMovieForm() {
             onChange={(e) => setTagInput(e.target.value)}
             placeholder="Add tag"
           />
-
           <Button type="button" onClick={addTag}>
             Add
           </Button>
