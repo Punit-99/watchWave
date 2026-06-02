@@ -2,130 +2,139 @@
 
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useGetSeriesById } from "@/hooks/use-series";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
-import { useMovie } from "@/hooks/use-movie";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-export default function MovieDetailPage() {
+export default function SeriesDetail() {
   const params = useParams();
   const id = params.id as string;
-
-  const { data, isLoading, isError } = useMovie(id);
-
-  const movie = data?.data;
+  const { data, isLoading, error } = useGetSeriesById(id);
 
   if (isLoading) {
+    return <div className="rounded-xl border p-6">Loading series...</div>;
+  }
+
+  if (error) {
     return (
-      <div className="container mx-auto p-6 space-y-4">
-        <Skeleton className="h-[300px] w-full rounded-xl" />
-        <Skeleton className="h-10 w-60" />
-        <Skeleton className="h-24 w-full" />
+      <div className="rounded-xl border p-6 text-destructive">
+        Failed to load series
       </div>
     );
   }
 
-  if (isError) {
-    return <div className="container mx-auto p-6">Failed to load movie.</div>;
+  // ✅ IMPORTANT FIX: always unwrap correctly
+  const series = data?.data;
+
+  if (!series) {
+    return <div className="rounded-xl border p-6">Series not found</div>;
   }
 
-  if (!movie) {
-    return <div className="container mx-auto p-6">Movie not found.</div>;
-  }
+  // ✅ safe seasons extraction
+  const seasons = series.series?.[0]?.seasons ?? [];
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="space-y-6">
       {/* Banner */}
-      <div className="relative h-[400px] overflow-hidden rounded-2xl">
+      <div className="relative h-64 w-full overflow-hidden rounded-xl border">
         <Image
-          src={movie.bannerUrl}
-          alt={movie.title}
+          src={series.bannerUrl}
+          alt={series.title}
           fill
           className="object-cover"
         />
-
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-
-        <div className="absolute bottom-8 left-8 flex gap-6">
-          <div className="relative h-56 w-40 overflow-hidden rounded-xl border">
-            <Image
-              src={movie.thumbnailUrl}
-              alt={movie.title}
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          <div className="flex flex-col justify-end">
-            <h1 className="text-4xl font-bold">{movie.title}</h1>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {movie.genre?.map((genre: string) => (
-                <Badge key={genre}>{genre}</Badge>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Content */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardContent className="p-6">
-            <h2 className="mb-4 text-xl font-semibold">Description</h2>
-
-            <p className="leading-7 text-muted-foreground">
-              {movie.description}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="space-y-4 p-6">
-            <div>
-              <p className="text-sm text-muted-foreground">Release Year</p>
-              <p className="font-semibold">{movie.releaseYear}</p>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Type</p>
-              <p className="font-semibold">{movie.type}</p>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground">Age Rating</p>
-              <Badge variant="secondary">{movie.ageRating}</Badge>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">Languages</p>
-
-              <div className="flex flex-wrap gap-2">
-                {movie.language?.map((lang: string) => (
-                  <Badge key={lang} variant="outline">
-                    {lang}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tags */}
+      {/* Info */}
       <Card>
-        <CardContent className="p-6">
-          <h2 className="mb-4 text-xl font-semibold">Tags</h2>
+        <CardHeader>
+          <CardTitle className="text-2xl">{series.title}</CardTitle>
+          <p className="text-muted-foreground">{series.description}</p>
+        </CardHeader>
+
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {series.genre?.map((g) => (
+              <Badge key={g}>{g}</Badge>
+            ))}
+          </div>
 
           <div className="flex flex-wrap gap-2">
-            {movie.tags?.map((tag: string) => (
-              <Badge key={tag} variant="secondary">
-                {tag}
+            {series.language?.map((l) => (
+              <Badge key={l} variant="secondary">
+                {l}
               </Badge>
             ))}
           </div>
+
+          <div className="text-sm text-muted-foreground">
+            <p>Release Year: {series.releaseYear}</p>
+            <p>Age Rating: {series.ageRating}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Seasons */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Seasons</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          {seasons.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No seasons available
+            </p>
+          ) : (
+            <Accordion type="single" collapsible className="w-full">
+              {seasons.map((season) => (
+                <AccordionItem key={season.id} value={season.id}>
+                  <AccordionTrigger>
+                    Season {season.seasonNumber}
+                  </AccordionTrigger>
+
+                  <AccordionContent>
+                    <div className="space-y-3">
+                      {season.episodes?.map((ep) => (
+                        <div
+                          key={ep.id}
+                          className="flex items-center justify-between rounded-md border p-3"
+                        >
+                          <div>
+                            <p className="font-medium">
+                              E{ep.episodeNumber}. {ep.title}
+                            </p>
+
+                            <p className="text-xs text-muted-foreground">
+                              {ep.description}
+                            </p>
+
+                            <p className="text-xs text-muted-foreground">
+                              {ep.duration} min
+                            </p>
+                          </div>
+
+                          <video
+                            src={ep.videoUrl}
+                            controls
+                            className="h-14 w-28 rounded-md"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </CardContent>
       </Card>
     </div>
