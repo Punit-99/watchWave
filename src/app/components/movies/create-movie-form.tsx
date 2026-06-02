@@ -161,7 +161,9 @@ export function CreateMovieForm() {
   // ---------------- SUBMIT ----------------
   const onSubmit = (data: CreateMovieInput) => {
     mutate(data, {
-      onSuccess: () => router.push("/admin/movies"),
+      onSuccess: () => {
+        router.push("/admin/movies");
+      },
     });
   };
 
