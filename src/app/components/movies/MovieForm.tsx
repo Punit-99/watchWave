@@ -38,7 +38,7 @@ export function MovieForm({
   const [tagInput, setTagInput] = useState("");
 
   const [uploading, setUploading] = useState({
-    thumbnail: false,
+    poster: false,
     banner: false,
     video: false,
   });
@@ -106,11 +106,11 @@ export function MovieForm({
   const AGE_RATINGS = Object.values(AgeRating);
 
   // ---------------- UPLOAD LOGIC (same as yours) ----------------
-  const uploadThumbnail = async (file: File) => {
-    setUploading((p) => ({ ...p, thumbnail: true }));
+  const uploadPoster = async (file: File) => {
+    setUploading((p) => ({ ...p, poster: true }));
     const res = await uploadMutation.mutateAsync(file);
     setValue("posterUrl", res.url, { shouldValidate: true });
-    setUploading((p) => ({ ...p, thumbnail: false }));
+    setUploading((p) => ({ ...p, poster: false }));
   };
 
   const uploadBanner = async (file: File) => {

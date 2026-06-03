@@ -44,6 +44,7 @@ export default function MovieTable() {
   }
 
   const movies = data?.data ?? [];
+ 
   const pagination = data?.pagination;
 
   const totalPages = pagination?.totalPages ?? 1;

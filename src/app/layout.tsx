@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Toaster } from "./components/ui/sonner";
+import { ThemeProvider } from "./components/ui/theme-provider";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -22,9 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" suppressHydrationWarning className={poppins.variable}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <ThemeProvider>{children}</ThemeProvider>
+        </Providers>
         <Toaster />
       </body>
     </html>
