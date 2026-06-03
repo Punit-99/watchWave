@@ -11,7 +11,7 @@ export async function DELETE(
   return deleteMovieController(req, { id });
 }
 
-export async function PUT(
+export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {

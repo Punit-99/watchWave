@@ -15,13 +15,17 @@ import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
 
 import {
   createMovieSchema,
+  updateMovieSchema,
   type CreateMovieInput,
+  type UpdateMovieInput,
 } from "@/validation/movie.validation";
+
+type MovieFormData = CreateMovieInput | UpdateMovieInput;
 
 type MovieFormProps = {
   mode: "create" | "edit";
   initialData?: Partial<CreateMovieInput>;
-  onSubmit: (data: CreateMovieInput) => void;
+  onSubmit: (data: MovieFormData) => void;
   isPending?: boolean;
 };
 
@@ -49,43 +53,49 @@ export function MovieForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<CreateMovieInput>({
-    resolver: zodResolver(createMovieSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      thumbnailUrl: "",
-      bannerUrl: "",
-      videoUrl: "",
-      ageRating: undefined,
-      duration: 0,
-      language: [],
-      genre: [],
-      tags: [],
-    },
+  } = useForm<MovieFormData>({
+    resolver: zodResolver(
+      mode === "create" ? createMovieSchema : updateMovieSchema,
+    ),
   });
-
   useEffect(() => {
-    if (!initialData) return;
+    if (mode === "edit" && initialData) {
+      reset({
+        title: initialData.title,
+        description: initialData.description,
+        thumbnailUrl: initialData.thumbnailUrl,
+        bannerUrl: initialData.bannerUrl,
+        videoUrl: initialData.videoUrl,
+        ageRating: initialData.ageRating,
+        duration: initialData.duration,
+        language: initialData.language,
+        genre: initialData.genre,
+        tags: initialData.tags,
+        releaseYear: initialData.releaseYear,
+      });
 
-    reset({
-      title: initialData.title ?? "",
-      description: initialData.description ?? "",
-      thumbnailUrl: initialData.thumbnailUrl ?? "",
-      bannerUrl: initialData.bannerUrl ?? "",
-      videoUrl: initialData.videoUrl ?? "",
-      ageRating: initialData.ageRating,
-      duration: initialData.duration ?? 0,
-      language: initialData.language ?? [],
-      genre: initialData.genre ?? [],
-      tags: initialData.tags ?? [],
-      releaseYear: initialData.releaseYear,
-    });
-  }, [initialData, reset]);
+      return;
+    }
 
-  const genres = watch("genre");
-  const languages = watch("language");
-  const tags = watch("tags");
+    if (mode === "create") {
+      reset({
+        title: "",
+        description: "",
+        thumbnailUrl: "",
+        bannerUrl: "",
+        videoUrl: "",
+        ageRating: undefined,
+        duration: undefined,
+        language: [],
+        genre: [],
+        tags: [],
+        releaseYear: undefined,
+      });
+    }
+  }, [mode, initialData, reset]);
+  const genres = watch("genre") ?? [];
+  const languages = watch("language") ?? [];
+  const tags = watch("tags") ?? [];
 
   const thumbnailUrl = watch("thumbnailUrl");
   const bannerUrl = watch("bannerUrl");
@@ -205,8 +215,8 @@ export function MovieForm({
       )}
 
       <Input placeholder="Description" {...register("description")} />
-      {errors.duration && (
-        <p className="text-sm text-red-500">{errors.duration.message}</p>
+      {errors.description && (
+        <p className="text-sm text-red-500">{errors.description.message}</p>
       )}
 
       {/* DURATION */}
@@ -215,8 +225,15 @@ export function MovieForm({
         placeholder="Duration (minutes)"
         {...register("duration")}
       />
+      {errors.duration && (
+        <p className="text-sm text-red-500">{errors.duration.message}</p>
+      )}
 
-      <Input placeholder="Release Year" {...register("releaseYear")} />
+      <Input
+        type="number"
+        placeholder="Release Year"
+        {...register("releaseYear")}
+      />
       {errors.releaseYear && (
         <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
       )}
@@ -246,8 +263,13 @@ export function MovieForm({
       />
 
       {/* AGE */}
-      <select {...register("ageRating")}>
+      <select
+        {...register("ageRating", {
+          setValueAs: (value) => (value === "" ? undefined : value),
+        })}
+      >
         <option value="">Select Age Rating</option>
+
         {AGE_RATINGS.map((r) => (
           <option key={r} value={r}>
             {r}

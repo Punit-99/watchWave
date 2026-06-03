@@ -1,3 +1,4 @@
+import { removeUndefined } from "@/utils/remove-undefined";
 import { prisma } from "../lib/prisma";
 import {
   createMovieSchema,
@@ -124,7 +125,7 @@ export async function deleteMovieController(
   }
 }
 
-// update
+// update : PATCH
 export async function updateMovieController(
   req: Request,
   params: { id: string },
@@ -153,28 +154,48 @@ export async function updateMovieController(
       );
     }
 
+    const contentUpdateData = removeUndefined({
+      title: data.title,
+      description: data.description,
+      thumbnailUrl: data.thumbnailUrl,
+      bannerUrl: data.bannerUrl,
+      releaseYear: data.releaseYear,
+      language: data.language,
+      genre: data.genre,
+      tags: data.tags,
+      ageRating: data.ageRating,
+    });
+
+    const movieUpdateData = removeUndefined({
+      duration: data.duration,
+      videoUrl: data.videoUrl,
+    });
+
+    if (
+      Object.keys(contentUpdateData).length === 0 &&
+      Object.keys(movieUpdateData).length === 0
+    ) {
+      return Response.json(
+        {
+          success: false,
+          message: "No fields provided for update",
+        },
+        { status: 400 },
+      );
+    }
+
     const updatedMovie = await prisma.content.update({
       where: {
         id: params.id,
       },
       data: {
-        title: data.title,
-        description: data.description,
-        thumbnailUrl: data.thumbnailUrl,
-        bannerUrl: data.bannerUrl,
-        releaseYear: data.releaseYear,
-        language: data.language,
-        genre: data.genre,
-        tags: data.tags,
-        ageRating: data.ageRating,
-        isPublished: data.isPublished,
+        ...contentUpdateData,
 
-        movie: {
-          update: {
-            duration: data.duration,
-            videoUrl: data.videoUrl,
+        ...(Object.keys(movieUpdateData).length > 0 && {
+          movie: {
+            update: movieUpdateData,
           },
-        },
+        }),
       },
       include: {
         movie: true,
@@ -198,6 +219,8 @@ export async function updateMovieController(
         { status: 400 },
       );
     }
+
+    console.error(error);
 
     return Response.json(
       {

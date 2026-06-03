@@ -14,9 +14,7 @@ import type {
   UpdateMovieInput,
 } from "@/validation/movie.validation";
 
-// =====================
 // CREATE MOVIE
-// =====================
 export function useCreateMovie() {
   return useMutation({
     mutationFn: async (data) => {
@@ -33,9 +31,7 @@ export function useCreateMovie() {
   });
 }
 
-// =====================
 // GET ALL MOVIES (PAGINATED)
-// =====================
 export function useGetAllMovies(page = 1, limit = 10) {
   return useQuery<GetMoviesResponse>({
     queryKey: ["movies", page, limit],
@@ -44,9 +40,7 @@ export function useGetAllMovies(page = 1, limit = 10) {
   });
 }
 
-// =====================
 // DELETE MOVIE
-// =====================
 export function useDeleteMovie() {
   const queryClient = useQueryClient();
 
@@ -70,9 +64,7 @@ export function useDeleteMovie() {
   });
 }
 
-// =====================
 // GET MOVIE BY ID
-// =====================
 export function useGetMovieById(id: string) {
   return useQuery({
     queryKey: ["movie", id],
@@ -81,8 +73,9 @@ export function useGetMovieById(id: string) {
   });
 }
 
-// Update
+// UPATE MOVIE
 export function useUpdateMovie() {
+  console.log("useUpdateMovie called");
   const queryClient = useQueryClient();
 
   return useMutation({

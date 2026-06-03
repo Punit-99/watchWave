@@ -21,7 +21,6 @@ export async function getAllMovies(
   limit = 10,
 ): Promise<GetMoviesResponse> {
   const { data } = await api.get(`/movies?page=${page}&limit=${limit}`);
-
   return GetMoviesResponseSchema.parse(data);
 }
 
