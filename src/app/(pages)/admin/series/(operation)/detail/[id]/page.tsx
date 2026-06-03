@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useGetSeriesById } from "@/hooks/use-series";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -17,86 +17,127 @@ import {
 export default function SeriesDetail() {
   const params = useParams();
   const id = params.id as string;
+
   const { data, isLoading, error } = useGetSeriesById(id);
 
   if (isLoading) {
-    return <div className="rounded-xl border p-6">Loading series...</div>;
+    return (
+      <div className="rounded-xl border p-6 text-sm text-muted-foreground">
+        Loading series...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border p-6 text-destructive">
+      <div className="rounded-xl border p-6 text-sm text-destructive">
         Failed to load series
       </div>
     );
   }
 
-  // ✅ IMPORTANT FIX: always unwrap correctly
   const series = data?.data;
 
   if (!series) {
-    return <div className="rounded-xl border p-6">Series not found</div>;
+    return (
+      <div className="rounded-xl border p-6 text-sm">Series not found</div>
+    );
   }
 
-  // ✅ safe seasons extraction
-  const seasons = series.series?.[0]?.seasons ?? [];
+  const seriesRoot = series.series?.[0];
+  const seasons = seriesRoot?.seasons ?? [];
 
   return (
-    <div className="space-y-6">
-      {/* Banner */}
-      <div className="relative h-64 w-full overflow-hidden rounded-xl border">
+    <div className="space-y-10 pb-10">
+      {/* ================= HERO ================= */}
+      <div className="relative h-[360px] w-full overflow-hidden rounded-2xl border">
         <Image
-          src={series.bannerUrl}
+          src={series.bannerUrl || ""}
           alt={series.title}
           fill
           className="object-cover"
         />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* ================= POSTER + INFO ================= */}
+        <div className="absolute bottom-0 flex gap-6 p-6 text-white">
+          {/* POSTER */}
+          <div className="h-[220px] w-[150px] shrink-0 overflow-hidden rounded-xl border border-white/20 shadow-xl">
+            <Image
+              src={series.posterUrl || series.thumbnailUrl || ""}
+              alt={series.title}
+              width={150}
+              height={220}
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          {/* INFO */}
+          <div className="flex flex-col justify-end">
+            <h1 className="text-3xl font-bold">{series.title}</h1>
+
+            <p className="mt-2 max-w-2xl text-sm text-white/80 line-clamp-3">
+              {series.description}
+            </p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {series.genre?.map((g) => (
+                <Badge
+                  key={g}
+                  className="bg-white/10 text-white border-white/20"
+                >
+                  {g}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Info */}
+      {/* ================= DETAILS ================= */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">{series.title}</CardTitle>
-          <p className="text-muted-foreground">{series.description}</p>
-        </CardHeader>
-
-        <CardContent className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {series.genre?.map((g) => (
-              <Badge key={g}>{g}</Badge>
-            ))}
+        <CardContent className="space-y-5 pt-6">
+          <div>
+            <p className="text-xs text-muted-foreground mb-2">Languages</p>
+            <div className="flex flex-wrap gap-2">
+              {series.language?.map((l) => (
+                <Badge key={l} variant="secondary">
+                  {l}
+                </Badge>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {series.language?.map((l) => (
-              <Badge key={l} variant="secondary">
-                {l}
-              </Badge>
-            ))}
-          </div>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="rounded-lg border p-3">
+              <p className="text-xs text-muted-foreground">Release Year</p>
+              <p className="font-medium">{series.releaseYear}</p>
+            </div>
 
-          <div className="text-sm text-muted-foreground">
-            <p>Release Year: {series.releaseYear}</p>
-            <p>Age Rating: {series.ageRating}</p>
+            <div className="rounded-lg border p-3">
+              <p className="text-xs text-muted-foreground">Age Rating</p>
+              <p className="font-medium">{series.ageRating}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Seasons */}
+      {/* ================= SEASONS ================= */}
       <Card>
-        <CardHeader>
-          <CardTitle>Seasons</CardTitle>
-        </CardHeader>
-
-        <CardContent>
+        <CardContent className="pt-6">
           {seasons.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No seasons available
             </p>
           ) : (
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible className="space-y-2">
               {seasons.map((season) => (
-                <AccordionItem key={season.id} value={season.id}>
+                <AccordionItem
+                  key={season.id}
+                  value={season.id}
+                  className="border rounded-xl px-3"
+                >
                   <AccordionTrigger>
                     Season {season.seasonNumber}
                   </AccordionTrigger>
@@ -106,14 +147,31 @@ export default function SeriesDetail() {
                       {season.episodes?.map((ep) => (
                         <div
                           key={ep.id}
-                          className="flex items-center justify-between rounded-md border p-3"
+                          className="flex gap-4 rounded-lg border p-3 hover:bg-muted/40 transition"
                         >
-                          <div>
+                          <div className="h-16 w-28 overflow-hidden rounded-md border">
+                            {ep.thumbnailUrl ? (
+                              <Image
+                                src={ep.thumbnailUrl}
+                                alt={ep.title}
+                                width={120}
+                                height={70}
+                                className="object-cover"
+                              />
+                            ) : (
+                              <video
+                                src={ep.videoUrl}
+                                className="h-full w-full object-cover"
+                              />
+                            )}
+                          </div>
+
+                          <div className="flex flex-1 flex-col justify-center">
                             <p className="font-medium">
                               E{ep.episodeNumber}. {ep.title}
                             </p>
 
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground line-clamp-2">
                               {ep.description}
                             </p>
 
@@ -121,12 +179,6 @@ export default function SeriesDetail() {
                               {ep.duration} min
                             </p>
                           </div>
-
-                          <video
-                            src={ep.videoUrl}
-                            controls
-                            className="h-14 w-28 rounded-md"
-                          />
                         </div>
                       ))}
                     </div>
