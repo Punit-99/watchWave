@@ -33,7 +33,7 @@ export const createSeriesSchema = z.object({
 
   description: z.string().min(1, "Description is required"),
 
-  thumbnailUrl: z.string().url().optional().or(z.literal("")),
+  posterIUrl: z.string().url().optional().or(z.literal("")),
 
   bannerUrl: z.string().url().optional().or(z.literal("")),
 
@@ -108,7 +108,7 @@ export const SeriesSchema = z.object({
   title: z.string(),
   description: z.string(),
 
-  thumbnailUrl: z.string().url(),
+  posterUrl: z.string().url(),
   bannerUrl: z.string().url(),
 
   releaseYear: z.number(),
