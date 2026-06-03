@@ -3,8 +3,8 @@ import {
   createSeriesSchema,
   updateSeriesSchema,
 } from "../validation/series.validation";
-import { ZodError } from "zod";
 
+import { ZodError } from "zod";
 // Create
 export async function createSeriesController(req: Request) {
   try {
@@ -142,7 +142,7 @@ export async function deleteSeriesController(
   }
 }
 
-// Update
+// PATCH /series/:id
 export async function updateSeriesController(
   req: Request,
   params: { id: string },
@@ -169,22 +169,24 @@ export async function updateSeriesController(
 
     const updatedSeries = await prisma.content.update({
       where: { id: params.id },
-      data: {
-        title: data.title,
-        description: data.description,
-        thumbnailUrl: data.thumbnailUrl,
-        bannerUrl: data.bannerUrl,
-        releaseYear: data.releaseYear,
-        language: data.language,
-        genre: data.genre,
-        tags: data.tags,
-        ageRating: data.ageRating,
 
-        series: {
-          update: {
-            seasons: data.seasons
-              ? {
-                  deleteMany: {}, // 🔥 simple reset approach (can optimize later)
+      data: {
+        // ✅ Only update if field exists
+        title: data.title ?? undefined,
+        description: data.description ?? undefined,
+        thumbnailUrl: data.thumbnailUrl ?? undefined,
+        bannerUrl: data.bannerUrl ?? undefined,
+        releaseYear: data.releaseYear ?? undefined,
+        language: data.language ?? undefined,
+        genre: data.genre ?? undefined,
+        tags: data.tags ?? undefined,
+        ageRating: data.ageRating ?? undefined,
+
+        series: data.seasons
+          ? {
+              update: {
+                seasons: {
+                  deleteMany: {}, // ⚠️ only runs if seasons provided
 
                   create: data.seasons.map((season) => ({
                     seasonNumber: season.seasonNumber,
@@ -201,11 +203,12 @@ export async function updateSeriesController(
                         })) || [],
                     },
                   })),
-                }
-              : undefined,
-          },
-        },
+                },
+              },
+            }
+          : undefined,
       },
+
       include: {
         series: {
           include: {

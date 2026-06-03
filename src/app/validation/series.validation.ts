@@ -4,7 +4,6 @@ import { z } from "zod";
 const genreEnum = z.enum(Object.values(Genre) as [string, ...string[]]);
 const languageEnum = z.enum(Object.values(Language) as [string, ...string[]]);
 const ageRatingEnum = z.enum(Object.values(AgeRating) as [string, ...string[]]);
-
 // ======================
 // CREATE
 // ======================
@@ -32,18 +31,13 @@ export const seasonCreateSchema = z.object({
 export const createSeriesSchema = z.object({
   title: z.string().min(1, "Title is required"),
 
-  description: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
 
   thumbnailUrl: z.string().url().optional().or(z.literal("")),
 
   bannerUrl: z.string().url().optional().or(z.literal("")),
 
-  releaseYear: z.coerce
-    .number()
-    .int()
-    .min(1900)
-    .max(new Date().getFullYear())
-    .optional(),
+  releaseYear: z.coerce.number().int().min(1900).max(new Date().getFullYear()),
 
   language: z.array(languageEnum).min(1),
 
@@ -51,7 +45,7 @@ export const createSeriesSchema = z.object({
 
   tags: z.array(z.string()).default([]),
 
-  ageRating: ageRatingEnum.optional(),
+  ageRating: ageRatingEnum,
 
   seasons: z.array(seasonCreateSchema).min(1),
 });
@@ -64,29 +58,7 @@ export type CreateEpisodeInput = z.infer<typeof episodeCreateSchema>;
 // UPDATE
 // ======================
 
-export const updateSeriesSchema = z.object({
-  title: z.string().min(1).optional(),
-
-  description: z.string().optional(),
-
-  thumbnailUrl: z.string().url().optional(),
-
-  bannerUrl: z.string().url().optional(),
-
-  releaseYear: z.coerce.number().int().optional(),
-
-  language: z.array(languageEnum).optional(),
-
-  genre: z.array(genreEnum).optional(),
-
-  tags: z.array(z.string()).optional(),
-
-  ageRating: ageRatingEnum.optional(),
-
-  totalSeasons: z.coerce.number().int().positive().optional(),
-
-  isPublished: z.boolean().optional(),
-});
+export const updateSeriesSchema = createSeriesSchema.partial();
 
 export type UpdateSeriesInput = z.infer<typeof updateSeriesSchema>;
 

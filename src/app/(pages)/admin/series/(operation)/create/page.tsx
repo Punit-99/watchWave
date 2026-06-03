@@ -1,7 +1,17 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateSeriesForm from "@/components/series/create-series-form";
+
+import { useCreateSeries } from "@/hooks/use-series";
+import { useRouter } from "next/navigation";
+
+import { SeriesForm } from "@/components/series/SeriesForm";
 
 export default function CreateSeriesPage() {
+  const router = useRouter();
+
+  const { mutate, isPending } = useCreateSeries();
+
   return (
     <div className="mx-auto max-w-4xl py-8">
       <Card>
@@ -10,7 +20,19 @@ export default function CreateSeriesPage() {
         </CardHeader>
 
         <CardContent>
-          <CreateSeriesForm />
+          <SeriesForm
+            mode="create"
+            isPending={isPending}
+            onSubmit={(data) => {
+              console.log("PAGE RECEIVED SERIES", data);
+
+              mutate(data, {
+                onSuccess: () => {
+                  router.push("/admin/series");
+                },
+              });
+            }}
+          />
         </CardContent>
       </Card>
     </div>
