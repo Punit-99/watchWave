@@ -142,36 +142,35 @@ export async function deleteSeriesController(
   }
 }
 
-// PATCH /series/:id
 export async function updateSeriesController(
   req: Request,
   params: { id: string },
 ) {
   try {
     const body = await req.json();
-
     const data = updateSeriesSchema.parse(body);
 
-    const existingSeries = await prisma.content.findUnique({
+    const content = await prisma.content.findUnique({
       where: { id: params.id },
       include: { series: true },
     });
 
-    if (!existingSeries || !existingSeries.series) {
+    if (!content || !content.series.length) {
       return Response.json(
-        {
-          success: false,
-          message: "Series not found",
-        },
+        { success: false, message: "Series not found" },
         { status: 404 },
       );
     }
 
-    const updatedSeries = await prisma.content.update({
+    const series = content.series[0];
+
+    // =========================
+    // UPDATE CONTENT (PATCH SAFE)
+    // =========================
+    const updatedContent = await prisma.content.update({
       where: { id: params.id },
 
       data: {
-        // ✅ Only update if field exists
         title: data.title ?? undefined,
         description: data.description ?? undefined,
         thumbnailUrl: data.thumbnailUrl ?? undefined,
@@ -181,34 +180,46 @@ export async function updateSeriesController(
         genre: data.genre ?? undefined,
         tags: data.tags ?? undefined,
         ageRating: data.ageRating ?? undefined,
-
-        series: data.seasons
-          ? {
-              update: {
-                seasons: {
-                  deleteMany: {}, // ⚠️ only runs if seasons provided
-
-                  create: data.seasons.map((season) => ({
-                    seasonNumber: season.seasonNumber,
-
-                    episodes: {
-                      create:
-                        season.episodes?.map((ep) => ({
-                          episodeNumber: ep.episodeNumber,
-                          title: ep.title,
-                          description: ep.description,
-                          duration: ep.duration,
-                          videoUrl: ep.videoUrl,
-                          thumbnailUrl: ep.thumbnailUrl,
-                        })) || [],
-                    },
-                  })),
-                },
-              },
-            }
-          : undefined,
       },
+    });
 
+    // =========================
+    // UPDATE SERIES PROPERLY
+    // =========================
+    if (data.seasons) {
+      await prisma.series.update({
+        where: {
+          id: series.id,
+        },
+        data: {
+          seasons: {
+            deleteMany: {},
+
+            create: data.seasons.map((season) => ({
+              seasonNumber: season.seasonNumber,
+
+              episodes: {
+                create:
+                  season.episodes?.map((ep) => ({
+                    episodeNumber: ep.episodeNumber,
+                    title: ep.title,
+                    description: ep.description,
+                    duration: ep.duration,
+                    videoUrl: ep.videoUrl,
+                    thumbnailUrl: ep.thumbnailUrl,
+                  })) || [],
+              },
+            })),
+          },
+        },
+      });
+    }
+
+    // =========================
+    // RETURN FULL UPDATED DATA
+    // =========================
+    const finalData = await prisma.content.findUnique({
+      where: { id: params.id },
       include: {
         series: {
           include: {
@@ -225,7 +236,7 @@ export async function updateSeriesController(
     return Response.json(
       {
         success: true,
-        data: updatedSeries,
+        data: finalData,
       },
       { status: 200 },
     );
