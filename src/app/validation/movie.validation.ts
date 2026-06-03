@@ -10,7 +10,7 @@ export const createMovieSchema = z.object({
 
   description: z.string().min(1, "Description is required"),
 
-  posterIUrl: z
+  posterUrl: z
     .string()
     .url("Poster URL must be a valid URL")
     .optional()
@@ -59,7 +59,7 @@ export const MovieSchema = z.object({
   title: z.string(),
   description: z.string(),
 
-  posterIUrl: z.string().url(),
+  posterUrl: z.string().url(),
   bannerUrl: z.string().url(),
 
   releaseYear: z.number(),
