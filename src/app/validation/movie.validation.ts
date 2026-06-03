@@ -9,26 +9,41 @@ const ageRatingEnum = z.enum(Object.values(AgeRating) as [string, ...string[]]);
 export const createMovieSchema = z.object({
   title: z.string().min(1, "Title is required"),
 
-  description: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
 
-  thumbnailUrl: z.string().url().optional().or(z.literal("")),
-  bannerUrl: z.string().url().optional().or(z.literal("")),
-  videoUrl: z.string().url().optional().or(z.literal("")),
+  thumbnailUrl: z
+    .string()
+    .url("Thumbnail URL must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+
+  bannerUrl: z
+    .string()
+    .url("Banner URL must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+
+  videoUrl: z
+    .string()
+    .min(1, "Video URL is required")
+    .url("Video URL must be a valid URL"),
 
   releaseYear: z.coerce
     .number()
-    .int()
-    .min(1900)
-    .max(new Date().getFullYear())
-    .optional(),
+    .int("Release year must be a whole number")
+    .min(1900, "Release year must be after 1900")
+    .max(
+      new Date().getFullYear(),
+      `Release year cannot be greater than ${new Date().getFullYear()}`,
+    ),
 
-  language: z.array(languageEnum).min(1),
+  language: z.array(languageEnum).min(1, "Select at least one language"),
 
-  genre: z.array(genreEnum).min(1),
+  genre: z.array(genreEnum).min(1, "Select at least one genre"),
 
   tags: z.array(z.string()).default([]),
 
-  ageRating: ageRatingEnum.optional(),
+  ageRating: ageRatingEnum,
 
   duration: z.coerce.number().positive("Duration must be greater than 0"),
 });
