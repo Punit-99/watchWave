@@ -18,7 +18,7 @@ export async function createMovieController(req: Request) {
         title: data.title,
         description: data.description,
 
-        thumbnailUrl: data.thumbnailUrl,
+        posterUrl: data.posterUrl,
         bannerUrl: data.bannerUrl,
 
         releaseYear: data.releaseYear,
@@ -157,7 +157,7 @@ export async function updateMovieController(
     const contentUpdateData = removeUndefined({
       title: data.title,
       description: data.description,
-      thumbnailUrl: data.thumbnailUrl,
+      posterUrl: data.posterUrl,
       bannerUrl: data.bannerUrl,
       releaseYear: data.releaseYear,
       language: data.language,

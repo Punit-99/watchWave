@@ -7,9 +7,86 @@ datasource db {
   provider = "postgresql"
 }
 
-// ======================
-// ENUMS
-// ======================
+model Content {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  posterUrl   String?
+  bannerUrl   String?
+  releaseYear Int?
+  language    String[]
+  genre       Genre[]
+  tags        String[]
+  ageRating   AgeRating?
+  type        ContentType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  movie       Movie?
+  series      Series?
+}
+
+model Movie {
+  id        String  @id @default(cuid())
+  contentId String  @unique
+  duration  Int
+  videoUrl  String?
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+}
+
+model Series {
+  id           String   @id @default(cuid())
+  contentId    String   @unique
+  totalSeasons Int      @default(1)
+  seasons      Season[]
+  content      Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+}
+
+model Season {
+  id           String    @id @default(cuid())
+  seriesId     String
+  seasonNumber Int
+  createdAt    DateTime  @default(now())
+  episodes     Episode[]
+  series       Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, seasonNumber])
+}
+
+model Episode {
+  id            String   @id @default(cuid())
+  seasonId      String
+  title         String
+  description   String?
+  episodeNumber Int
+  duration      Int
+  videoUrl      String?
+  thumbnailUrl  String?
+  createdAt     DateTime @default(now())
+  season        Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, episodeNumber])
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          UserRole       @default(USER)
+  image         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
 enum ContentType {
   MOVIE
@@ -51,134 +128,11 @@ enum Language {
   CHINESE
   OTHER
 }
+
 enum AgeRating {
   G
   PG
   PG13
   R
   NC17
-}
-
-// ======================
-// CONTENT
-// ======================
-
-model Content {
-  id String @id @default(cuid())
-
-  title        String
-  description  String?
-  thumbnailUrl String?
-  bannerUrl    String?
-
-  releaseYear Int?
-  language    String[]
-
-  genre Genre[]
-  tags  String[]
-
-  ageRating AgeRating?
-
-  type ContentType
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  movie  Movie?
-  series Series[]
-}
-
-model Movie {
-  id String @id @default(cuid())
-
-  contentId String  @unique
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
-
-  duration Int
-
-  videoUrl String?
-}
-
-model Series {
-  id String @id @default(cuid())
-
-  contentId String
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
-
-  totalSeasons Int @default(1)
-
-  seasons Season[]
-
-  @@unique([contentId])
-}
-
-model Season {
-  id String @id @default(cuid())
-
-  seriesId String
-  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-
-  seasonNumber Int
-
-  episodes Episode[]
-
-  createdAt DateTime @default(now())
-
-  @@unique([seriesId, seasonNumber])
-}
-
-model Episode {
-  id String @id @default(cuid())
-
-  seasonId String
-  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-
-  title String
-
-  description String?
-
-  episodeNumber Int
-
-  duration Int
-
-  videoUrl String?
-
-  thumbnailUrl String?
-
-  createdAt DateTime @default(now())
-
-  @@unique([seasonId, episodeNumber])
-}
-
-// ======================
-// USER AUTH (JWT)
-// ======================
-
-model User {
-  id String @id @default(cuid())
-
-  name     String
-  email    String @unique
-  password String
-
-  refreshTokens RefreshToken[]
-
-  role UserRole @default(USER)
-
-  image String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model RefreshToken {
-  id    String @id @default(cuid())
-  token String @unique
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  expiresAt DateTime
-
-  createdAt DateTime @default(now())
 }

@@ -37,7 +37,6 @@ export default function SeriesDetail() {
   }
 
   const series = data?.data;
-
   if (!series) {
     return (
       <div className="rounded-xl border p-6 text-sm">Series not found</div>
