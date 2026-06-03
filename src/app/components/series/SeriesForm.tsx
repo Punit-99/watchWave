@@ -40,7 +40,7 @@ export function SeriesForm({
   const [tagInput, setTagInput] = useState("");
 
   const [uploading, setUploading] = useState({
-    thumbnail: false,
+    poster: false,
     banner: false,
   });
 
@@ -73,7 +73,7 @@ export function SeriesForm({
     reset({
       title: "",
       description: "",
-      thumbnailUrl: "",
+      posterUrl: "",
       bannerUrl: "",
       releaseYear: undefined,
       language: [],
@@ -89,21 +89,21 @@ export function SeriesForm({
   const genres = watch("genre") ?? [];
   const tags = watch("tags") ?? [];
 
-  const thumbnailUrl = watch("thumbnailUrl");
+  const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
 
   // ======================
   // UPLOADS
   // ======================
-  const uploadThumbnail = async (file: File) => {
-    setUploading((p) => ({ ...p, thumbnail: true }));
+  const uploadPoster = async (file: File) => {
+    setUploading((p) => ({ ...p, poster: true }));
     const res = await uploadMutation.mutateAsync(file);
 
-    setValue("thumbnailUrl", res.url, {
+    setValue("posterUrl", res.url, {
       shouldValidate: true,
     });
 
-    setUploading((p) => ({ ...p, thumbnail: false }));
+    setUploading((p) => ({ ...p, poster: false }));
   };
 
   const uploadBanner = async (file: File) => {
@@ -117,11 +117,11 @@ export function SeriesForm({
     setUploading((p) => ({ ...p, banner: false }));
   };
 
-  const deleteThumbnail = async () => {
-    if (!thumbnailUrl) return;
-    await deleteMutation.mutateAsync(thumbnailUrl);
+  const deletePoster = async () => {
+    if (!posterUrl) return;
+    await deleteMutation.mutateAsync(posterUrl);
 
-    setValue("thumbnailUrl", "", { shouldValidate: true });
+    setValue("posterUrl", "", { shouldValidate: true });
   };
 
   const deleteBanner = async () => {
@@ -190,10 +190,10 @@ export function SeriesForm({
       {/* THUMBNAIL */}
       <Dropzone
         type="image"
-        previewUrl={thumbnailUrl}
-        isUploading={uploading.thumbnail}
-        onUpload={uploadThumbnail}
-        onDelete={deleteThumbnail}
+        previewUrl={posterUrl}
+        isUploading={uploading.poster}
+        onUpload={uploadPoster}
+        onDelete={deletePoster}
       />
 
       {/* BANNER */}

@@ -37,7 +37,7 @@ export default function EditMoviePage() {
             initialData={{
               title: movie.title,
               description: movie.description,
-              thumbnailUrl: movie.thumbnailUrl,
+              posterUrl: movie.posterUrl,
               bannerUrl: movie.bannerUrl,
               videoUrl: movie.movie.videoUrl,
               releaseYear: movie.releaseYear,

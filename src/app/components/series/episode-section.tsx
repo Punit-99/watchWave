@@ -51,7 +51,7 @@ export function EpisodeSection({
   const thumbnailUrl = watch(thumbnailPath);
   const videoUrl = watch(videoPath);
 
-  const uploadThumbnail = async (file: File) => {
+  const uploadPoster = async (file: File) => {
     setUploading((p) => ({ ...p, thumbnail: true }));
 
     try {
@@ -79,7 +79,7 @@ export function EpisodeSection({
     }
   };
 
-  const deleteThumbnail = async () => {
+  const deletePoster = async () => {
     if (!thumbnailUrl) return;
 
     await deleteMutation.mutateAsync(thumbnailUrl);
@@ -151,8 +151,8 @@ export function EpisodeSection({
           type="image"
           previewUrl={thumbnailUrl}
           isUploading={uploading.thumbnail}
-          onUpload={uploadThumbnail}
-          onDelete={deleteThumbnail}
+          onUpload={uploadPoster}
+          onDelete={deletePoster}
         />
       </div>
 

@@ -64,7 +64,7 @@ export default function SeriesDetail() {
           {/* POSTER */}
           <div className="h-[220px] w-[150px] shrink-0 overflow-hidden rounded-xl border border-white/20 shadow-xl">
             <Image
-              src={series.posterUrl || series.thumbnailUrl || ""}
+              src={series.posterUrl || ""}
               alt={series.title}
               width={150}
               height={220}

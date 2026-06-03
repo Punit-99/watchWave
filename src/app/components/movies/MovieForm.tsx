@@ -63,7 +63,7 @@ export function MovieForm({
       reset({
         title: initialData.title,
         description: initialData.description,
-        thumbnailUrl: initialData.thumbnailUrl,
+        posterUrl: initialData.posterUrl,
         bannerUrl: initialData.bannerUrl,
         videoUrl: initialData.videoUrl,
         ageRating: initialData.ageRating,
@@ -81,7 +81,7 @@ export function MovieForm({
       reset({
         title: "",
         description: "",
-        thumbnailUrl: "",
+        posterUrl: "",
         bannerUrl: "",
         videoUrl: "",
         ageRating: undefined,
@@ -97,7 +97,7 @@ export function MovieForm({
   const languages = watch("language") ?? [];
   const tags = watch("tags") ?? [];
 
-  const thumbnailUrl = watch("thumbnailUrl");
+  const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
   const videoUrl = watch("videoUrl");
 
@@ -109,7 +109,7 @@ export function MovieForm({
   const uploadThumbnail = async (file: File) => {
     setUploading((p) => ({ ...p, thumbnail: true }));
     const res = await uploadMutation.mutateAsync(file);
-    setValue("thumbnailUrl", res.url, { shouldValidate: true });
+    setValue("posterUrl", res.url, { shouldValidate: true });
     setUploading((p) => ({ ...p, thumbnail: false }));
   };
 
@@ -159,14 +159,14 @@ export function MovieForm({
     );
   };
 
-  const deleteThumbnail = async () => {
-    const url = watch("thumbnailUrl");
+  const deletePoster = async () => {
+    const url = watch("posterUrl");
 
     if (!url) return;
 
     await deleteMutation.mutateAsync(url);
 
-    setValue("thumbnailUrl", "", {
+    setValue("posterUrl", "", {
       shouldValidate: true,
     });
   };
@@ -240,10 +240,10 @@ export function MovieForm({
       {/* UPLOADS */}
       <Dropzone
         type="image"
-        previewUrl={thumbnailUrl}
-        isUploading={uploading.thumbnail}
-        onUpload={uploadThumbnail}
-        onDelete={deleteThumbnail}
+        previewUrl={posterUrl}
+        isUploading={uploading.poster}
+        onUpload={uploadPoster}
+        onDelete={deletePoster}
       />
 
       <Dropzone

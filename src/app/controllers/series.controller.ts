@@ -17,7 +17,7 @@ export async function createSeriesController(req: Request) {
         title: data.title,
         description: data.description,
 
-        thumbnailUrl: data.thumbnailUrl,
+        posterUrl: data.posterUrl,
         bannerUrl: data.bannerUrl,
 
         releaseYear: data.releaseYear,
@@ -173,7 +173,7 @@ export async function updateSeriesController(
       data: {
         title: data.title ?? undefined,
         description: data.description ?? undefined,
-        thumbnailUrl: data.thumbnailUrl ?? undefined,
+        posterUrl: data.posterUrl ?? undefined,
         bannerUrl: data.bannerUrl ?? undefined,
         releaseYear: data.releaseYear ?? undefined,
         language: data.language ?? undefined,

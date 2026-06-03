@@ -60,7 +60,7 @@ export default function MovieDetailPage() {
           {/* POSTER */}
           <div className="relative h-[240px] w-[160px] overflow-hidden rounded-xl border border-white/20 shadow-xl">
             <Image
-              src={movie.thumbnailUrl || ""}
+              src={movie.posterUrl || ""}
               alt={movie.title}
               fill
               className="object-cover"

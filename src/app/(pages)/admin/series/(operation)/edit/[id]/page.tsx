@@ -40,7 +40,7 @@ export default function SeriesEditPage() {
             initialData={{
               title: series.title,
               description: series.description,
-              thumbnailUrl: series.thumbnailUrl,
+              posterUrl: series.posterUrl,
               bannerUrl: series.bannerUrl,
               releaseYear: series.releaseYear,
               language: series.language as string[],
