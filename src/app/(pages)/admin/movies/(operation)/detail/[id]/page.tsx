@@ -7,13 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useMovie } from "@/hooks/use-movie";
+import { useGetMovieById } from "@/hooks/use-movie";
 
 export default function MovieDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const { data, isLoading, isError } = useMovie(id);
+  const { data, isLoading, isError } = useGetMovieById(id);
 
   const movie = data?.data;
 

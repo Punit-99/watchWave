@@ -37,26 +37,30 @@ export type CreateMovieInput = z.infer<typeof createMovieSchema>;
 
 // Update
 export const updateMovieSchema = z.object({
-  title: z.string().min(1).optional(),
+  title: z.string().min(1, "Title is required").optional(),
 
   description: z.string().optional(),
 
-  thumbnailUrl: z.string().url().optional(),
-  bannerUrl: z.string().url().optional(),
+  thumbnailUrl: z.string().url().optional().or(z.literal("")),
+  bannerUrl: z.string().url().optional().or(z.literal("")),
+  videoUrl: z.string().url().optional().or(z.literal("")),
 
-  releaseYear: z.coerce.number().int().optional(),
+  releaseYear: z.coerce
+    .number()
+    .int()
+    .min(1900)
+    .max(new Date().getFullYear())
+    .optional(),
 
-  language: z.array(z.string()).optional(),
+  language: z.array(languageEnum).optional(),
 
-  genre: z.array(z.nativeEnum(Genre)).optional(),
+  genre: z.array(genreEnum).optional(),
 
   tags: z.array(z.string()).optional(),
 
-  ageRating: z.string().optional(),
+  ageRating: ageRatingEnum.optional(),
 
   duration: z.coerce.number().positive().optional(),
-
-  videoUrl: z.string().url().optional(),
 
   isPublished: z.boolean().optional(),
 });
@@ -94,6 +98,7 @@ export const MovieSchema = z.object({
   }),
 });
 
+// pagination
 export const PaginationSchema = z.object({
   page: z.number(),
   limit: z.number(),
@@ -101,11 +106,19 @@ export const PaginationSchema = z.object({
   totalPages: z.number(),
 });
 
+// response
 export const GetMoviesResponseSchema = z.object({
   success: z.boolean(),
   data: z.array(MovieSchema),
   pagination: PaginationSchema.optional(),
 });
+
+export const GetMovieResponseSchema = z.object({
+  success: z.boolean(),
+  data: MovieSchema,
+});
+
+export type GetMovieResponse = z.infer<typeof GetMovieResponseSchema>;
 
 export type Movie = z.infer<typeof MovieSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;

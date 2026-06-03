@@ -1,8 +1,13 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { CreateMovieForm } from "@/components/movies/create-movie-form";
+import { MovieForm } from "@/components/movies/MovieForm";
+import { useCreateMovie } from "@/hooks/use-movie";
 
 export default function CreateMoviePage() {
+  const { mutate, isPending } = useCreateMovie();
+
   return (
     <div className="mx-auto max-w-4xl py-8">
       <Card>
@@ -11,7 +16,14 @@ export default function CreateMoviePage() {
         </CardHeader>
 
         <CardContent>
-          <CreateMovieForm />
+          <MovieForm
+            mode="create"
+            isPending={isPending}
+            onSubmit={(data) => {
+              console.log("PAGE RECEIVED", data);
+              mutate(data);
+            }}
+          />
         </CardContent>
       </Card>
     </div>

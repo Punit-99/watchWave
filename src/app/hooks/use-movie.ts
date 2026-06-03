@@ -5,33 +5,30 @@ import {
   deleteMovie,
   getAllMovies,
   getMovieById,
+  updateMovie,
 } from "@/lib/api/movie.api";
 
 import { appToast } from "@/lib/toast";
-import type { GetMoviesResponse } from "@/validation/movie.validation";
+import type {
+  GetMoviesResponse,
+  UpdateMovieInput,
+} from "@/validation/movie.validation";
 
 // =====================
 // CREATE MOVIE
 // =====================
 export function useCreateMovie() {
-  const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: createMovie,
-
-    onSuccess: async () => {
-      appToast.created("Movie");
-
-      await queryClient.invalidateQueries({
-        queryKey: ["movies"],
-        exact: false, // 🔥 IMPORTANT FIX
-      });
+    mutationFn: async (data) => {
+      return createMovie(data);
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to create movie",
-      );
+    onSuccess: async () => {
+      console.log("SUCCESS");
+    },
+
+    onError: (error) => {
+      console.log("ERROR", error);
     },
   });
 }
@@ -76,10 +73,27 @@ export function useDeleteMovie() {
 // =====================
 // GET MOVIE BY ID
 // =====================
-export function useMovie(id: string) {
+export function useGetMovieById(id: string) {
   return useQuery({
     queryKey: ["movie", id],
     queryFn: () => getMovieById(id),
     enabled: !!id,
+  });
+}
+
+// Update
+export function useUpdateMovie() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateMovieInput }) =>
+      updateMovie(id, data),
+
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
+      queryClient.invalidateQueries({
+        queryKey: ["movie", variables.id],
+      });
+    },
   });
 }
