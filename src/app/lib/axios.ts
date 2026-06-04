@@ -10,7 +10,12 @@ const api = axios.create({
 let refreshPromise: Promise<any> | null = null;
 let isLoggingOut = false;
 
-const noRefreshEndpoints = ["/auth/login", "/auth/register", "/auth/logout"];
+const noRefreshEndpoints = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/logout",
+  "/auth/me",
+];
 
 function forceLogout() {
   if (isLoggingOut) return;

@@ -25,15 +25,13 @@ export default function LoginForm() {
   const onSubmit = (data: LoginInput) => {
     mutate(data, {
       onSuccess: (res) => {
-        const user = res?.data;
-        useAuthStore.getState().setUser(user);
-        console.log("GETTED USER:", useAuthStore.getState().user);
+        useAuthStore.setState({
+          user: res.data,
+          authFailed: false,
+          authChecked: true,
+        });
 
-        if (user.role === "ADMIN") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/");
-        }
+        router.push(res.data.role === "ADMIN" ? "/admin/dashboard" : "/");
       },
       onError: (err) => {
         console.log(err);

@@ -12,6 +12,7 @@ export default function GuestGuard({
 }: {
   children: React.ReactNode;
 }) {
+  console.log("GuestGuard mounted");
   const router = useRouter();
 
   const user = useAuthStore((state) => state.user);

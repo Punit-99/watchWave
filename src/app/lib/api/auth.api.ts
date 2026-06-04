@@ -21,7 +21,8 @@ export async function logout() {
 }
 
 export async function getMe() {
-  console.log("AI HIT");
+  console.log("GET_ME_CALLED");
+
   const res = await api.get("/auth/me");
 
   return res.data.data;

@@ -23,7 +23,7 @@ export default function AuthPage() {
 
           <TabsContent value="register" className="mt-4">
             <GuestGuard>
-              <LoginForm />
+              <RegisterForm />
             </GuestGuard>
           </TabsContent>
         </Tabs>
