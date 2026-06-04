@@ -14,11 +14,12 @@ export function useRegister() {
   });
 }
 
-export function useMe() {
+export function useMe(enabled = true) {
   return useQuery({
     queryKey: ["me"],
     queryFn: getMe,
     retry: false,
+    enabled,
   });
 }
 

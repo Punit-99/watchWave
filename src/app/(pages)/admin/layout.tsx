@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import AdminGuard from "@/components/guards/AdminGuard";
 
 const menuItems = [
   {
@@ -98,7 +99,7 @@ export default function AdminLayout({
 
         {/* Main content */}
         <main className="flex-1 p-6 md:p-8 bg-background transition-colors">
-          {children}
+          <AdminGuard>{children}</AdminGuard>
         </main>
       </div>
     </SidebarProvider>

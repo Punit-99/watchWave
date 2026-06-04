@@ -1,27 +1,41 @@
-import { NextResponse } from "next/server";
+// app/api/auth/refresh/route.ts
+
 import { cookies } from "next/headers";
-import { refreshService } from "@/services/auth/auth.service";
+import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
+
+import { verifyRefreshToken, generateAccessToken } from "@/lib/jwt";
 
 export async function POST() {
   try {
     const cookieStore = await cookies();
+
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!refreshToken) {
-      return NextResponse.json(
-        { success: false, message: "No refresh token" },
-        { status: 401 },
-      );
+      throw new Error();
     }
 
-    const result = await refreshService(refreshToken);
+    const payload = verifyRefreshToken(refreshToken);
+
+    const storedToken = await prisma.refreshToken.findFirst({
+      where: {
+        token: refreshToken,
+      },
+    });
+
+    if (!storedToken) {
+      throw new Error();
+    }
+
+    const accessToken = generateAccessToken(payload.userId, payload.role);
 
     const response = NextResponse.json({
       success: true,
-      message: "Token refreshed",
     });
 
-    response.cookies.set("accessToken", result.accessToken, {
+    response.cookies.set("accessToken", accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -30,10 +44,14 @@ export async function POST() {
     });
 
     return response;
-  } catch (error: any) {
+  } catch {
     return NextResponse.json(
-      { success: false, message: error.message },
-      { status: 401 },
+      {
+        success: false,
+      },
+      {
+        status: 401,
+      },
     );
   }
 }

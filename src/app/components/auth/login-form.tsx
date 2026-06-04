@@ -8,10 +8,12 @@ import { useLogin } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "../ui/password-input";
+import { useAuthStore } from "@/lib/store/auth.store";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const { mutate, isPending } = useLogin();
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -23,7 +25,15 @@ export default function LoginForm() {
   const onSubmit = (data: LoginInput) => {
     mutate(data, {
       onSuccess: (res) => {
-        console.log("login success", res);
+        const user = res?.data;
+        useAuthStore.getState().setUser(user);
+        console.log("GETTED USER:", useAuthStore.getState().user);
+
+        if (user.role === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
       },
       onError: (err) => {
         console.log(err);

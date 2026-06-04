@@ -3,6 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/login-form";
 import RegisterForm from "@/components/auth/register-form";
+import GuestGuard from "@/components/guards/GuestGuard";
 
 export default function AuthPage() {
   return (
@@ -15,11 +16,15 @@ export default function AuthPage() {
           </TabsList>
 
           <TabsContent value="login" className="mt-4">
-            <LoginForm />
+            <GuestGuard>
+              <LoginForm />
+            </GuestGuard>
           </TabsContent>
 
           <TabsContent value="register" className="mt-4">
-            <RegisterForm />
+            <GuestGuard>
+              <LoginForm />
+            </GuestGuard>
           </TabsContent>
         </Tabs>
       </div>

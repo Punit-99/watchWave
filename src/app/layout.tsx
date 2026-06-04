@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./components/ui/theme-provider";
+import { AuthProvider } from "./components/auth/auth-provider";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -26,7 +27,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={poppins.variable}>
       <body>
         <Providers>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ThemeProvider>
         </Providers>
         <Toaster />
       </body>
