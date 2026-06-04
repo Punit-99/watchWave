@@ -6,8 +6,8 @@ import RegisterForm from "@/components/auth/register-form";
 
 export default function AuthPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md rounded-2xl border bg-white p-6 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-md rounded-2xl border  p-6 shadow-sm">
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
