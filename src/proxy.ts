@@ -14,8 +14,8 @@ async function getPayload(token: string) {
 }
 
 export async function proxy(req: NextRequest) {
-  console.log("Middleware running for:", req.nextUrl.pathname);
-  const token = req.cookies.get("accessToken")?.value;
+  const accessToken = req.cookies.get("accessToken")?.value;
+  const refreshToken = req.cookies.get("refreshToken")?.value;
 
   const { pathname } = req.nextUrl;
 
@@ -28,9 +28,9 @@ export async function proxy(req: NextRequest) {
     pathname.startsWith("/watch");
 
   // -------------------------
-  // NOT LOGGED IN
+  // NO TOKENS AT ALL
   // -------------------------
-  if (!token) {
+  if (!accessToken && !refreshToken) {
     if (isAdminPage || isUserPage) {
       return NextResponse.redirect(new URL("/auth", req.url));
     }
@@ -39,46 +39,38 @@ export async function proxy(req: NextRequest) {
   }
 
   // -------------------------
-  // VERIFY TOKEN
+  // ACCESS TOKEN EXISTS
   // -------------------------
-  const payload = await getPayload(token);
+  if (accessToken) {
+    const payload = await getPayload(accessToken);
 
-  if (!payload) {
-    const response = NextResponse.redirect(new URL("/auth", req.url));
+    if (payload) {
+      const role = payload.role as string;
 
-    response.cookies.delete("accessToken");
-    response.cookies.delete("refreshToken");
+      if (isAuthPage) {
+        if (role === "ADMIN") {
+          return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+        }
 
-    return response;
-  }
+        return NextResponse.redirect(new URL("/", req.url));
+      }
 
-  const role = payload.role as string;
+      if (role === "USER" && isAdminPage) {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
 
-  // -------------------------
-  // LOGGED IN → BLOCK AUTH
-  // -------------------------
-  if (isAuthPage) {
-    if (role === "ADMIN") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+      if (role === "ADMIN" && isUserPage) {
+        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+      }
+
+      return NextResponse.next();
     }
-
-    return NextResponse.redirect(new URL("/", req.url));
   }
 
   // -------------------------
-  // USER → BLOCK ADMIN
+  // ACCESS INVALID BUT REFRESH EXISTS
+  // LET CLIENT REFRESH
   // -------------------------
-  if (role === "USER" && isAdminPage) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  // -------------------------
-  // ADMIN → BLOCK USER AREA
-  // -------------------------
-  if (role === "ADMIN" && isUserPage) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-  }
-
   return NextResponse.next();
 }
 

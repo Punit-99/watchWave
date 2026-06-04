@@ -7,14 +7,14 @@ const api = axios.create({
   withCredentials: true,
 });
 
-let refreshPromise: Promise<any> | null = null;
+let refreshPromise: Promise<unknown> | null = null;
 let isLoggingOut = false;
 
 const noRefreshEndpoints = [
   "/auth/login",
   "/auth/register",
   "/auth/logout",
-  "/auth/me",
+  // "/auth/me",
 ];
 
 function forceLogout() {
@@ -22,9 +22,7 @@ function forceLogout() {
 
   isLoggingOut = true;
 
-  queryClient.removeQueries({
-    queryKey: ["me"],
-  });
+  queryClient.clear();
 
   useAuthStore.getState().logout();
 
