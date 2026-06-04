@@ -1,33 +1,83 @@
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { loginSchema, registerSchema } from "@/validation/auth.validation";
-import { loginService, registerService } from "@/services/auth/auth.service";
+import { prisma } from "@/lib/prisma";
 
+import { generateAccessToken, generateRefreshToken } from "@/lib/jwt";
+
+import {
+  loginSchema,
+  registerSchema,
+  type LoginInput,
+  type RegisterInput,
+} from "@/validation/auth.validation";
+
+const REFRESH_EXPIRES_IN_DAYS = 7;
+
+// ------------------------
 // REGISTER
+// ------------------------
 export async function registerController(req: Request) {
   try {
     const body = await req.json();
-    const validatedData = registerSchema.parse(body);
+    const data: RegisterInput = registerSchema.parse(body);
 
-    const result = await registerService(validatedData);
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new Error("User already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        image: true,
+        createdAt: true,
+      },
+    });
+
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
+
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt: new Date(
+          Date.now() + REFRESH_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000,
+        ),
+      },
+    });
 
     const response = NextResponse.json(
       {
         success: true,
         message: "User registered successfully",
-        data: result.user,
+        data: user,
       },
       { status: 201 },
     );
 
-    response.cookies.set("accessToken", result.accessToken, {
+    response.cookies.set("accessToken", accessToken, {
       httpOnly: true,
-      secure: false, // ✅ IMPORTANT for POSTMAN/local dev
+      secure: false,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 15,
     });
 
-    response.cookies.set("refreshToken", result.refreshToken, {
+    response.cookies.set("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -44,24 +94,57 @@ export async function registerController(req: Request) {
   }
 }
 
+// ------------------------
 // LOGIN
+// ------------------------
 export async function loginController(req: Request) {
   try {
     const body = await req.json();
-    const validatedData = loginSchema.parse(body);
+    const data: LoginInput = loginSchema.parse(body);
 
-    const result = await loginService(validatedData);
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isMatch = await bcrypt.compare(data.password, user.password);
+
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    }
+
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
+
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt: new Date(
+          Date.now() + REFRESH_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000,
+        ),
+      },
+    });
 
     const response = NextResponse.json(
       {
         success: true,
         message: "Login successful",
-        data: result.user,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          image: user.image,
+        },
       },
       { status: 200 },
     );
 
-    response.cookies.set("accessToken", result.accessToken, {
+    response.cookies.set("accessToken", accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -69,7 +152,7 @@ export async function loginController(req: Request) {
       maxAge: 60 * 15,
     });
 
-    response.cookies.set("refreshToken", result.refreshToken, {
+    response.cookies.set("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
