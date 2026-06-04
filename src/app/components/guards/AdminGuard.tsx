@@ -1,5 +1,3 @@
-// components/guards/AdminGuard.tsx
-
 "use client";
 
 import { useEffect } from "react";
@@ -16,7 +14,11 @@ export default function AdminGuard({
 
   const user = useAuthStore((state) => state.user);
 
+  const authChecked = useAuthStore((state) => state.authChecked);
+
   useEffect(() => {
+    if (!authChecked) return;
+
     if (!user) {
       router.replace("/auth");
       return;
@@ -25,11 +27,19 @@ export default function AdminGuard({
     if (user.role !== "ADMIN") {
       router.replace("/");
     }
-  }, [user, router]);
+  }, [user, authChecked, router]);
 
-  if (!user) return null;
+  if (!authChecked) {
+    return null;
+  }
 
-  if (user.role !== "ADMIN") return null;
+  if (!user) {
+    return null;
+  }
+
+  if (user.role !== "ADMIN") {
+    return null;
+  }
 
   return <>{children}</>;
 }

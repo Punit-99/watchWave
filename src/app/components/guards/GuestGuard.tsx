@@ -1,5 +1,3 @@
-// components/guards/GuestGuard.tsx
-
 "use client";
 
 import { useEffect } from "react";
@@ -12,12 +10,15 @@ export default function GuestGuard({
 }: {
   children: React.ReactNode;
 }) {
-  console.log("GuestGuard mounted");
   const router = useRouter();
 
   const user = useAuthStore((state) => state.user);
 
+  const authChecked = useAuthStore((state) => state.authChecked);
+
   useEffect(() => {
+    if (!authChecked) return;
+
     if (!user) return;
 
     if (user.role === "ADMIN") {
@@ -25,9 +26,15 @@ export default function GuestGuard({
     } else {
       router.replace("/");
     }
-  }, [user, router]);
+  }, [user, authChecked, router]);
 
-  if (user) return null;
+  if (!authChecked) {
+    return null;
+  }
+
+  if (user) {
+    return null;
+  }
 
   return <>{children}</>;
 }
