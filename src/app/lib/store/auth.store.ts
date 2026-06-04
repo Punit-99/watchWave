@@ -11,11 +11,9 @@ type User = {
 type AuthState = {
   user: User | null;
   authChecked: boolean;
-  authFailed: boolean;
 
   setUser: (user: User | null) => void;
   setAuthChecked: (value: boolean) => void;
-  setAuthFailed: (value: boolean) => void;
 
   logout: () => void;
 };
@@ -23,24 +21,20 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   authChecked: false,
-  authFailed: false,
 
-  setUser: (user) => set({ user }),
+  setUser: (user) =>
+    set({
+      user,
+    }),
 
   setAuthChecked: (value) =>
     set({
       authChecked: value,
     }),
 
-  setAuthFailed: (value) =>
-    set({
-      authFailed: value,
-    }),
-
   logout: () =>
     set({
       user: null,
       authChecked: true,
-      authFailed: true,
     }),
 }));

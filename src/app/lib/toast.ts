@@ -13,4 +13,6 @@ export const appToast = {
   uploadFailed: () => toast.error("Upload failed"),
 
   error: (message: string) => toast.error(message),
+
+  logoutSuccess: () => toast.success("Logged out successfully"),
 };

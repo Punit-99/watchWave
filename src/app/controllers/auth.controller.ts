@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 import { generateAccessToken, generateRefreshToken } from "@/lib/jwt";
 
@@ -167,4 +168,39 @@ export async function loginController(req: Request) {
       { status: 400 },
     );
   }
+}
+
+// Logout controller
+
+export async function logoutController() {
+  const cookieStore = await cookies();
+
+  const refreshToken = cookieStore.get("refreshToken")?.value;
+
+  if (refreshToken) {
+    await prisma.refreshToken.deleteMany({
+      where: {
+        token: refreshToken,
+      },
+    });
+  }
+
+  const response = NextResponse.json({
+    success: true,
+    message: "Logged out successfully",
+  });
+
+  response.cookies.set("accessToken", "", {
+    httpOnly: true,
+    path: "/",
+    maxAge: 0,
+  });
+
+  response.cookies.set("refreshToken", "", {
+    httpOnly: true,
+    path: "/",
+    maxAge: 0,
+  });
+
+  return response;
 }

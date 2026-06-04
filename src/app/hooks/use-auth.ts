@@ -15,8 +15,6 @@ export function useRegister() {
 }
 
 export function useMe(enabled = true) {
-  console.log("useMe mounted", enabled);
-
   return useQuery({
     queryKey: ["me"],
     queryFn: getMe,

@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
 import { LayoutDashboard, Film, Tv } from "lucide-react";
@@ -18,6 +19,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LogoutButton } from "@/components/ui/logout";
 
 const menuItems = [
   {
@@ -94,6 +96,9 @@ export default function AdminLayout({
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+          <SidebarFooter>
+            <LogoutButton />
+          </SidebarFooter>
         </Sidebar>
 
         {/* Main content */}
