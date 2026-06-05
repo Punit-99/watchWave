@@ -1,13 +1,30 @@
-import { Button } from "@/components/ui/button";
+import { HeroCarousel } from "@/components/ui/hero-carousel";
 
-export default function Home() {
+const movies = [
+  {
+    id: "1",
+    title: "Interstellar",
+    description: "A team of explorers travel through a wormhole in space.",
+    backdrop: "https://images.unsplash.com/photo-1534447677768-be436bb09401",
+  },
+  {
+    id: "2",
+    title: "The Dark Knight",
+    description: "Batman faces his greatest challenge.",
+    backdrop: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+  },
+  {
+    id: "3",
+    title: "Inception",
+    description: "A thief who steals corporate secrets through dream-sharing.",
+    backdrop: "https://images.unsplash.com/photo-1493246318656-5bfd4cfb29b8",
+  },
+];
+
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center ">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Hello WatchWave 👋</h1>
-
-        <Button className="px-6 py-2">Get Started</Button>
-      </div>
-    </main>
+    <div className="container mx-auto py-6">
+      {/* <HeroCarousel items={movies} limit={5} /> */}
+    </div>
   );
 }

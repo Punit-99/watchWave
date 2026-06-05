@@ -5,21 +5,24 @@ import { useAuthStore } from "@/lib/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/ui/logout";
 
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
-
+  console.log("user", user);
   if (!user) return null;
 
   return (
     <main className="min-h-screen">
       {/* Hero */}
       <section className="relative h-[320px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background" />
+        {/* Background Layers */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background" />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.25),transparent_40%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.25),transparent_40%)]" />
 
-        <div className="container mx-auto flex h-full flex-col items-center justify-center px-4 text-center">
+        {/* Content */}
+        <div className="container relative z-10 mx-auto flex h-full flex-col items-center justify-center px-4 text-center">
           <Avatar className="h-32 w-32 border-4 border-background shadow-2xl">
             <AvatarImage src={user.image ?? ""} />
             <AvatarFallback className="text-3xl">
@@ -38,9 +41,14 @@ export default function ProfilePage() {
 
           <Badge className="mt-4">{user.role}</Badge>
 
-          <div className="mt-6 flex gap-3">
-            <Button>Edit Profile</Button>
-            <Button variant="secondary">Change Password</Button>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Button type="button">Edit Profile</Button>
+
+            <Button type="button" variant="secondary">
+              Change Password
+            </Button>
+
+            <LogoutButton />
           </div>
         </div>
       </section>

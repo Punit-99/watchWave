@@ -25,7 +25,7 @@ export function LogoutButton() {
   };
 
   return (
-    <Button variant="outline" onClick={handleLogout} disabled={isPending}>
+    <Button variant="destructive" onClick={handleLogout} disabled={isPending}>
       <LogOut className="mr-2 h-4 w-4" />
       {isPending ? "Logging out..." : "Logout"}
     </Button>
