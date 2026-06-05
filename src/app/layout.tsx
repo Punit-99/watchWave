@@ -5,6 +5,7 @@ import Providers from "./providers";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { AuthProvider } from "./components/auth/auth-provider";
+import { Navbar } from "./components/ui/navbar";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
