@@ -8,7 +8,7 @@ import { useRegister } from "@/hooks/use-auth";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import PasswordInput from "../ui/password-input";
+import PasswordInput from "./password-input";
 
 export default function RegisterForm() {
   const { mutate, isPending } = useRegister();

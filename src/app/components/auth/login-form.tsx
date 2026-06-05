@@ -7,7 +7,7 @@ import { useLogin } from "@/hooks/use-auth";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import PasswordInput from "../ui/password-input";
+import PasswordInput from "./password-input";
 import { useAuthStore } from "@/lib/store/auth.store";
 import { useRouter } from "next/navigation";
 

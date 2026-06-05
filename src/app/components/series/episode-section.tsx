@@ -11,7 +11,7 @@ import { CreateSeriesInput } from "@/validation/series.validation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dropzone } from "@/components/ui/dropzone";
+import { Dropzone } from "@/components/common/dropzone";
 
 import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
 

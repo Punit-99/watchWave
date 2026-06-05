@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import MovieTable from "@/components/ui/movie-table";
+import MovieTable from "@/components/movies/movie-table";
 import Link from "next/link";
 
 export default function MoviesPage() {

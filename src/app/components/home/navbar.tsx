@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { useAuthStore } from "@/lib/store/auth.store";
 import { useRouter } from "next/navigation";
 

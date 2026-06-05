@@ -9,7 +9,7 @@ import { Genre, Language, AgeRating } from "../../../../generated/prisma/enums";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Dropzone } from "@/components/ui/dropzone";
+import { Dropzone } from "@/components/common/dropzone";
 
 import { SeasonSection } from "./season-section";
 

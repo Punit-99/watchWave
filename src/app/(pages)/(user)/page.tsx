@@ -1,4 +1,4 @@
-import { HeroCarousel } from "@/components/ui/hero-carousel";
+import { HeroCarousel } from "@/components/home/hero-carousel";
 
 const movies = [
   {

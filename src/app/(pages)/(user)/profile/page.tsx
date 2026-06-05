@@ -5,7 +5,7 @@ import { useAuthStore } from "@/lib/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { LogoutButton } from "@/components/ui/logout";
+import { LogoutButton } from "@/components/auth/logout";
 
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);

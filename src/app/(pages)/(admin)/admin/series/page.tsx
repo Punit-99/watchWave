@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import SeriesTable from "@/components/ui/series-table";
+import SeriesTable from "@/components/series/series-table";
 import Link from "next/link";
 
 export default function SeriesPage() {

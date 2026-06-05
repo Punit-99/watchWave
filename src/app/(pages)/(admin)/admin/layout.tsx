@@ -18,8 +18,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { LogoutButton } from "@/components/ui/logout";
+import { ThemeToggle } from "@/components/common/theme-toggle";
+import { LogoutButton } from "@/components/auth/logout";
 
 const menuItems = [
   {

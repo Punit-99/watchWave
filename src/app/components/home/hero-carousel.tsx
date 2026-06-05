@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/carousel";
 
 import Link from "next/link";
-import { Button } from "./button";
+import { Button } from "../ui/button";
 import Autoplay from "embla-carousel-autoplay";
 
 // import type { HeroCarouselItem } from "@/types/movie";
