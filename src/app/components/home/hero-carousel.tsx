@@ -14,8 +14,26 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import Autoplay from "embla-carousel-autoplay";
 
-// import type { HeroCarouselItem } from "@/types/movie";
-
+const slidecs = [
+  {
+    id: "1",
+    title: "Interstellar",
+    description: "A team of explorers travel through a wormhole in space.",
+    backdrop: "https://images.unsplash.com/photo-1534447677768-be436bb09401",
+  },
+  {
+    id: "2",
+    title: "The Dark Knight",
+    description: "Batman faces his greatest challenge.",
+    backdrop: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+  },
+  {
+    id: "3",
+    title: "Inception",
+    description: "A thief who steals corporate secrets through dream-sharing.",
+    backdrop: "https://images.unsplash.com/photo-1493246318656-5bfd4cfb29b8",
+  },
+];
 type HeroCarouselProps = {
   items: HeroCarouselItem[];
   limit?: number;
@@ -28,8 +46,8 @@ export type HeroCarouselItem = {
   backdrop: string;
 };
 
-export function HeroCarousel({ items, limit = 5 }: HeroCarouselProps) {
-  const slides = items.slice(0, limit);
+export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
+  const slides = slidecs.slice(0, limit);
 
   return (
     <Carousel
