@@ -51,7 +51,7 @@ export function MovieForm({
   const uploadMutation = useUploadMedia();
   const deleteMutation = useDeleteMedia();
 
-  type MovieFormData = UpdateMovieInput;
+  type MovieFormData = CreateMovieInput | UpdateMovieInput;
 
   const {
     register,
@@ -60,7 +60,7 @@ export function MovieForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<MovieFormData>({
+  } = useForm<any>({
     resolver: zodResolver(
       mode === "create"
         ? createMovieSchema
@@ -102,9 +102,10 @@ export function MovieForm({
       });
     }
   }, [mode, initialData, reset]);
-  const genres = watch("genre") ?? [];
-  const languages = watch("language") ?? [];
-  const tags = watch("tags") ?? [];
+
+  const tags = (watch("tags") ?? []) as string[];
+  const genres = (watch("genre") ?? []) as Genre[];
+  const languages = (watch("language") ?? []) as Language[];
 
   const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
@@ -139,9 +140,12 @@ export function MovieForm({
   // ---------------- TOGGLES (same logic) ----------------
   const toggleGenre = (genre: Genre) => {
     const exists = genres.includes(genre);
+
     setValue(
       "genre",
-      exists ? genres.filter((g) => g !== genre) : [...genres, genre],
+      exists
+        ? genres.filter((g: Genre) => g !== genre)
+        : [...genres, genre],
       { shouldValidate: true },
     );
   };
@@ -150,7 +154,7 @@ export function MovieForm({
     const exists = languages.includes(lang);
     setValue(
       "language",
-      exists ? languages.filter((l) => l !== lang) : [...languages, lang],
+      exists ? languages.filter((l: Language) => l !== lang) : [...languages, lang],
       { shouldValidate: true },
     );
   };
@@ -164,7 +168,7 @@ export function MovieForm({
   const removeTag = (tag: string) => {
     setValue(
       "tags",
-      tags.filter((t) => t !== tag),
+      tags.filter((t: string) => t !== tag),
     );
   };
 
@@ -221,16 +225,19 @@ export function MovieForm({
         }
       )}
       className="space-y-8"
-    >
-      {/* TITLE */}
+    >{/* TITLE */}
       <Input placeholder="Movie Title" {...register("title")} />
-      {errors.title && (
-        <p className="text-sm text-red-500">{errors.title.message}</p>
+      {errors.title?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.title.message)}
+        </p>
       )}
 
       <Input placeholder="Description" {...register("description")} />
-      {errors.description && (
-        <p className="text-sm text-red-500">{errors.description.message}</p>
+      {errors.description?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.description.message)}
+        </p>
       )}
 
       {/* DURATION */}
@@ -241,10 +248,13 @@ export function MovieForm({
           valueAsNumber: true,
         })}
       />
-      {errors.duration && (
-        <p className="text-sm text-red-500">{errors.duration.message}</p>
+      {errors.duration?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.duration.message)}
+        </p>
       )}
 
+      {/* RELEASE YEAR */}
       <Input
         type="number"
         placeholder="Release Year"
@@ -252,33 +262,11 @@ export function MovieForm({
           valueAsNumber: true,
         })}
       />
-      {errors.releaseYear && (
-        <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
+      {errors.releaseYear?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.releaseYear.message)}
+        </p>
       )}
-      {/* UPLOADS */}
-      <Dropzone
-        type="image"
-        previewUrl={posterUrl}
-        isUploading={uploading.poster}
-        onUpload={uploadPoster}
-        onDelete={deletePoster}
-      />
-
-      <Dropzone
-        type="image"
-        previewUrl={bannerUrl}
-        isUploading={uploading.banner}
-        onUpload={uploadBanner}
-        onDelete={deleteBanner}
-      />
-
-      <Dropzone
-        type="video"
-        previewUrl={videoUrl}
-        isUploading={uploading.video}
-        onUpload={uploadVideo}
-        onDelete={deleteVideo}
-      />
 
       {/* AGE */}
       <select
@@ -294,8 +282,11 @@ export function MovieForm({
           </option>
         ))}
       </select>
-      {errors.ageRating && (
-        <p className="text-sm text-red-500">{errors.ageRating.message}</p>
+
+      {errors.ageRating?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.ageRating.message)}
+        </p>
       )}
 
       {/* LANGUAGES */}
@@ -310,9 +301,10 @@ export function MovieForm({
           </Badge>
         ))}
       </div>
-      {errors.language && (
+
+      {errors.language?.message && (
         <p className="text-sm text-red-500">
-          {errors.language.message?.toString()}
+          {String(errors.language.message)}
         </p>
       )}
 
@@ -328,20 +320,25 @@ export function MovieForm({
           </Badge>
         ))}
       </div>
-      {errors.genre && (
+
+      {errors.genre?.message && (
         <p className="text-sm text-red-500">
-          {errors.genre.message?.toString()}
+          {String(errors.genre.message)}
         </p>
       )}
 
-      {/* TAGS */}
-      <Input value={tagInput} onChange={(e) => setTagInput(e.target.value)} />
+      {/* TAGS INPUT */}
+      <Input
+        value={tagInput}
+        onChange={(e) => setTagInput(e.target.value)}
+      />
+
       <Button type="button" onClick={addTag}>
         Add
       </Button>
 
       <div>
-        {tags.map((t) => (
+        {tags.map((t: string) => (
           <Badge key={t} onClick={() => removeTag(t)}>
             {t} ✕
           </Badge>

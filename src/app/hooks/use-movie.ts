@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 
 import {
   createMovie,
@@ -30,10 +35,10 @@ export function useCreateMovie() {
 }
 // GET ALL MOVIES (PAGINATED)
 export function useGetAllMovies(page = 1, limit = 10) {
-  return useQuery<GetMoviesResponse>({
+  return useQuery({
     queryKey: ["movies", page, limit],
     queryFn: () => getAllMovies(page, limit),
-    keepPreviousData: true, // 🔥 smooth pagination UX
+    placeholderData: keepPreviousData,
   });
 }
 

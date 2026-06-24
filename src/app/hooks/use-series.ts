@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
 
 import {
   createSeries,
@@ -50,8 +55,7 @@ export function useGetAllSeries(page = 1, limit = 10) {
   return useQuery<GetSeriesResponse>({
     queryKey: ["series", page, limit],
     queryFn: () => getAllSeries(page, limit),
-
-    keepPreviousData: true, // 🔥 smooth pagination
+    placeholderData: keepPreviousData,
   });
 }
 

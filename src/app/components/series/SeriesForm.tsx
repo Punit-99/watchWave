@@ -22,7 +22,7 @@ import {
   type UpdateSeriesInput,
 } from "@/validation/series.validation";
 
-type SeriesFormData = CreateSeriesInput;
+type SeriesFormData = CreateSeriesInput | UpdateSeriesInput;
 
 
 type SeriesFormProps =
@@ -63,7 +63,7 @@ export function SeriesForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<SeriesFormData>({
+  } = useForm<any>({
     resolver: zodResolver(
       mode === "create"
         ? createSeriesSchema
@@ -94,10 +94,10 @@ export function SeriesForm({
     });
   }, [mode, initialData, reset]);
 
-  const seasons = watch("seasons") ?? [];
-  const languages = watch("language") ?? [];
-  const genres = watch("genre") ?? [];
-  const tags = watch("tags") ?? [];
+  const seasons = (watch("seasons") ?? []) as any[];
+  const languages = (watch("language") ?? []) as Language[];
+  const genres = (watch("genre") ?? []) as Genre[];
+  const tags = (watch("tags") ?? []) as string[];
 
   const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
@@ -181,6 +181,11 @@ export function SeriesForm({
     );
   };
 
+  const removeSeason = (index: number) => {
+    const updated = seasons.filter((_, i) => i !== index);
+    setValue("seasons", updated, { shouldValidate: true });
+  };
+
   return (
     <form
       onSubmit={handleSubmit((data) => {
@@ -194,17 +199,32 @@ export function SeriesForm({
     >
       {/* TITLE */}
       <Input placeholder="Series Title" {...register("title")} />
-      {errors.title && (
-        <p className="text-sm text-red-500">{errors.title.message}</p>
+
+      {errors.title?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.title.message)}
+        </p>
       )}
 
       <Input placeholder="Description" {...register("description")} />
+
+      {errors.description?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.description.message)}
+        </p>
+      )}
 
       <Input
         type="number"
         placeholder="Release Year"
         {...register("releaseYear")}
       />
+
+      {errors.releaseYear?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.releaseYear.message)}
+        </p>
+      )}
 
       {/* THUMBNAIL */}
       <Dropzone
@@ -227,12 +247,19 @@ export function SeriesForm({
       {/* AGE RATING */}
       <select {...register("ageRating")}>
         <option value="">Select Age Rating</option>
+
         {Object.values(AgeRating).map((r) => (
           <option key={r} value={r}>
             {r}
           </option>
         ))}
       </select>
+
+      {errors.ageRating?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.ageRating.message)}
+        </p>
+      )}
 
       {/* LANGUAGES */}
       <div className="flex flex-wrap gap-2">
@@ -248,6 +275,12 @@ export function SeriesForm({
         ))}
       </div>
 
+      {errors.language?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.language.message)}
+        </p>
+      )}
+
       {/* GENRES */}
       <div className="flex flex-wrap gap-2">
         {Object.values(Genre).map((g) => (
@@ -261,6 +294,12 @@ export function SeriesForm({
           </Badge>
         ))}
       </div>
+
+      {errors.genre?.message && (
+        <p className="text-sm text-red-500">
+          {String(errors.genre.message)}
+        </p>
+      )}
 
       {/* TAGS */}
       <div className="flex gap-2">
@@ -276,14 +315,14 @@ export function SeriesForm({
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {tags.map((t) => (
+        {tags.map((t: string) => (
           <Badge key={t} onClick={() => removeTag(t)}>
             {t} ✕
           </Badge>
         ))}
       </div>
 
-      {/* SEASONS (UNCHANGED) */}
+      {/* SEASONS */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold">Seasons</h2>
 
@@ -295,6 +334,7 @@ export function SeriesForm({
             register={register}
             setValue={setValue}
             watch={watch}
+            removeSeason={removeSeason}
           />
         ))}
 
