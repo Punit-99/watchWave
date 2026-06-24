@@ -95,7 +95,7 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
                   <Button size="lg">▶ Watch Now</Button>
 
                   <Button variant="secondary" size="lg" asChild>
-                    <Link href={`/movies/${movie.id}`}>Details</Link>
+                    <Link href={`/movies/details/${movie.id}`}>Details</Link>
                   </Button>
                 </div>
               </div>
