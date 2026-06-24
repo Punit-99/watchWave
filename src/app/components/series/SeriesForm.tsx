@@ -22,14 +22,22 @@ import {
   type UpdateSeriesInput,
 } from "@/validation/series.validation";
 
-type SeriesFormData = CreateSeriesInput | UpdateSeriesInput;
+type SeriesFormData = CreateSeriesInput;
 
-type SeriesFormProps = {
-  mode: "create" | "edit";
-  initialData?: Partial<CreateSeriesInput>;
-  onSubmit: (data: SeriesFormData) => void;
-  isPending?: boolean;
-};
+
+type SeriesFormProps =
+  | {
+    mode: "create";
+    initialData?: Partial<CreateSeriesInput>;
+    onSubmit: (data: CreateSeriesInput) => void;
+    isPending?: boolean;
+  }
+  | {
+    mode: "edit";
+    initialData?: Partial<CreateSeriesInput>;
+    onSubmit: (data: UpdateSeriesInput) => void;
+    isPending?: boolean;
+  };
 
 export function SeriesForm({
   mode,
@@ -57,7 +65,9 @@ export function SeriesForm({
     formState: { errors },
   } = useForm<SeriesFormData>({
     resolver: zodResolver(
-      mode === "create" ? createSeriesSchema : updateSeriesSchema,
+      mode === "create"
+        ? createSeriesSchema
+        : updateSeriesSchema
     ),
   });
 
@@ -172,7 +182,16 @@ export function SeriesForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form
+      onSubmit={handleSubmit((data) => {
+        if (mode === "create") {
+          onSubmit(data);
+        } else {
+          onSubmit(data as UpdateSeriesInput);
+        }
+      })}
+      className="space-y-8"
+    >
       {/* TITLE */}
       <Input placeholder="Series Title" {...register("title")} />
       {errors.title && (

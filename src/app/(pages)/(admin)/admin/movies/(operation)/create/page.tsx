@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { MovieForm } from "@/components/movies/MovieForm";
 import { useCreateMovie } from "@/hooks/use-movie";
+import { CreateMovieInput } from "@/validation/movie.validation";
 
 export default function CreateMoviePage() {
   const { mutate, isPending } = useCreateMovie();
@@ -21,7 +22,7 @@ export default function CreateMoviePage() {
             isPending={isPending}
             onSubmit={(data) => {
               console.log("PAGE RECEIVED", data);
-              mutate(data);
+              mutate(data as CreateMovieInput);
             }}
           />
         </CardContent>

@@ -27,7 +27,6 @@ export default function LoginForm() {
       onSuccess: (res) => {
         useAuthStore.setState({
           user: res.data,
-          authFailed: false,
           authChecked: true,
         });
 

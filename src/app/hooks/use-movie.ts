@@ -16,12 +16,10 @@ import type {
 
 // CREATE MOVIE
 export function useCreateMovie() {
-  return useMutation({
-    mutationFn: async (data) => {
-      return createMovie(data);
-    },
+  return useMutation<unknown, Error, CreateMovieInput>({
+    mutationFn: createMovie,
 
-    onSuccess: async () => {
+    onSuccess: () => {
       console.log("SUCCESS");
     },
 
@@ -30,7 +28,6 @@ export function useCreateMovie() {
     },
   });
 }
-
 // GET ALL MOVIES (PAGINATED)
 export function useGetAllMovies(page = 1, limit = 10) {
   return useQuery<GetMoviesResponse>({

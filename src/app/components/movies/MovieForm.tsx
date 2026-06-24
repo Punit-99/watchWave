@@ -20,14 +20,19 @@ import {
   type UpdateMovieInput,
 } from "@/validation/movie.validation";
 
-type MovieFormData = CreateMovieInput | UpdateMovieInput;
-
-type MovieFormProps = {
-  mode: "create" | "edit";
-  initialData?: Partial<CreateMovieInput>;
-  onSubmit: (data: MovieFormData) => void;
-  isPending?: boolean;
-};
+type MovieFormProps =
+  | {
+    mode: "create";
+    initialData?: Partial<CreateMovieInput>;
+    onSubmit: (data: CreateMovieInput) => void;
+    isPending?: boolean;
+  }
+  | {
+    mode: "edit";
+    initialData?: Partial<CreateMovieInput>;
+    onSubmit: (data: UpdateMovieInput) => void;
+    isPending?: boolean;
+  };
 
 export function MovieForm({
   mode,
@@ -46,6 +51,8 @@ export function MovieForm({
   const uploadMutation = useUploadMedia();
   const deleteMutation = useDeleteMedia();
 
+  type MovieFormData = UpdateMovieInput;
+
   const {
     register,
     handleSubmit,
@@ -55,7 +62,9 @@ export function MovieForm({
     formState: { errors },
   } = useForm<MovieFormData>({
     resolver: zodResolver(
-      mode === "create" ? createMovieSchema : updateMovieSchema,
+      mode === "create"
+        ? createMovieSchema
+        : updateMovieSchema
     ),
   });
   useEffect(() => {
@@ -85,11 +94,11 @@ export function MovieForm({
         bannerUrl: "",
         videoUrl: "",
         ageRating: undefined,
-        duration: undefined,
+        duration: 0,
+        releaseYear: new Date().getFullYear(),
         language: [],
         genre: [],
         tags: [],
-        releaseYear: undefined,
       });
     }
   }, [mode, initialData, reset]);
@@ -200,11 +209,16 @@ export function MovieForm({
       onSubmit={handleSubmit(
         (data) => {
           console.log("FORM SUBMITTED", data);
-          onSubmit(data);
+
+          if (mode === "create") {
+            onSubmit(data as CreateMovieInput);
+          } else {
+            onSubmit(data);
+          }
         },
         (errors) => {
           console.log("FORM ERRORS", errors);
-        },
+        }
       )}
       className="space-y-8"
     >
@@ -223,7 +237,9 @@ export function MovieForm({
       <Input
         type="number"
         placeholder="Duration (minutes)"
-        {...register("duration")}
+        {...register("duration", {
+          valueAsNumber: true,
+        })}
       />
       {errors.duration && (
         <p className="text-sm text-red-500">{errors.duration.message}</p>
@@ -232,7 +248,9 @@ export function MovieForm({
       <Input
         type="number"
         placeholder="Release Year"
-        {...register("releaseYear")}
+        {...register("releaseYear", {
+          valueAsNumber: true,
+        })}
       />
       {errors.releaseYear && (
         <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
