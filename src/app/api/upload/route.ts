@@ -16,11 +16,11 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    return new Promise((resolve) => {
+    return new Promise<Response>((resolve) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: "watchwave",
-          resource_type: "auto", // image | video auto detect
+          resource_type: "auto",
         },
         (error, result) => {
           if (error || !result) {
