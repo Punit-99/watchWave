@@ -8,8 +8,10 @@ RUN npm install -g pnpm
 # 1. Copy dependency files first (for caching)
 COPY package.json pnpm-lock.yaml ./
 
-# 2. Install dependencies
-RUN pnpm install
+# 2. Install dependencies  will fix : Only allow trusted packages to run install scripts
+RUN pnpm install --frozen-lockfile
+
+
 
 # 3. Copy prisma schema
 COPY prisma ./prisma
