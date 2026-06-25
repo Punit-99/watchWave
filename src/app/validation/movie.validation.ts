@@ -1,9 +1,9 @@
-import { Genre, Language, AgeRating } from "../../../generated//prisma/enums";
+import { Genre, Language, AgeRating } from "../../../generated/prisma/enums";
 import { z } from "zod";
 
-const genreEnum = z.enum(Object.values(Genre) as [string, ...string[]]);
-const languageEnum = z.enum(Object.values(Language) as [string, ...string[]]);
-const ageRatingEnum = z.enum(Object.values(AgeRating) as [string, ...string[]]);
+const genreEnum = z.nativeEnum(Genre);
+const languageEnum = z.nativeEnum(Language);
+const ageRatingEnum = z.nativeEnum(AgeRating);
 
 export const createMovieSchema = z.object({
   title: z.string().min(1, "Title is required"),

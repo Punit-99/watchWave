@@ -20,19 +20,14 @@ import {
   type UpdateMovieInput,
 } from "@/validation/movie.validation";
 
-type MovieFormProps =
-  | {
-    mode: "create";
-    initialData?: Partial<CreateMovieInput>;
-    onSubmit: (data: CreateMovieInput) => void;
-    isPending?: boolean;
-  }
-  | {
-    mode: "edit";
-    initialData?: Partial<CreateMovieInput>;
-    onSubmit: (data: UpdateMovieInput) => void;
-    isPending?: boolean;
-  };
+type MovieFormData = CreateMovieInput | UpdateMovieInput;
+
+type MovieFormProps = {
+  mode: "create" | "edit";
+  initialData?: Partial<CreateMovieInput>;
+  onSubmit: (data: MovieFormData) => void;
+  isPending?: boolean;
+};
 
 export function MovieForm({
   mode,
@@ -51,8 +46,6 @@ export function MovieForm({
   const uploadMutation = useUploadMedia();
   const deleteMutation = useDeleteMedia();
 
-  type MovieFormData = CreateMovieInput | UpdateMovieInput;
-
   const {
     register,
     handleSubmit,
@@ -60,12 +53,10 @@ export function MovieForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<any>({
+  } = useForm<CreateMovieInput>({
     resolver: zodResolver(
-      mode === "create"
-        ? createMovieSchema
-        : updateMovieSchema
-    ),
+      mode === "create" ? createMovieSchema : updateMovieSchema,
+    ) as any,
   });
   useEffect(() => {
     if (mode === "edit" && initialData) {
@@ -94,18 +85,17 @@ export function MovieForm({
         bannerUrl: "",
         videoUrl: "",
         ageRating: undefined,
-        duration: 0,
-        releaseYear: new Date().getFullYear(),
+        duration: undefined,
         language: [],
         genre: [],
         tags: [],
+        releaseYear: undefined,
       });
     }
   }, [mode, initialData, reset]);
-
-  const tags = (watch("tags") ?? []) as string[];
-  const genres = (watch("genre") ?? []) as Genre[];
-  const languages = (watch("language") ?? []) as Language[];
+  const genres = watch("genre") ?? [];
+  const languages = watch("language") ?? [];
+  const tags = watch("tags") ?? [];
 
   const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
@@ -140,12 +130,9 @@ export function MovieForm({
   // ---------------- TOGGLES (same logic) ----------------
   const toggleGenre = (genre: Genre) => {
     const exists = genres.includes(genre);
-
     setValue(
       "genre",
-      exists
-        ? genres.filter((g: Genre) => g !== genre)
-        : [...genres, genre],
+      exists ? genres.filter((g) => g !== genre) : [...genres, genre],
       { shouldValidate: true },
     );
   };
@@ -154,7 +141,7 @@ export function MovieForm({
     const exists = languages.includes(lang);
     setValue(
       "language",
-      exists ? languages.filter((l: Language) => l !== lang) : [...languages, lang],
+      exists ? languages.filter((l) => l !== lang) : [...languages, lang],
       { shouldValidate: true },
     );
   };
@@ -168,7 +155,7 @@ export function MovieForm({
   const removeTag = (tag: string) => {
     setValue(
       "tags",
-      tags.filter((t: string) => t !== tag),
+      tags.filter((t) => t !== tag),
     );
   };
 
@@ -213,140 +200,194 @@ export function MovieForm({
       onSubmit={handleSubmit(
         (data) => {
           console.log("FORM SUBMITTED", data);
-
-          if (mode === "create") {
-            onSubmit(data as CreateMovieInput);
-          } else {
-            onSubmit(data);
-          }
+          onSubmit(data);
         },
         (errors) => {
           console.log("FORM ERRORS", errors);
-        }
+        },
       )}
-      className="space-y-8"
-    >{/* TITLE */}
-      <Input placeholder="Movie Title" {...register("title")} />
-      {errors.title?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.title.message)}
-        </p>
-      )}
+      className="space-y-6"
+    >
+      {/* TITLE */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Movie Title</label>
+        <Input placeholder="Enter movie title" {...register("title")} />
+        {errors.title && (
+          <p className="text-sm text-red-500">{errors.title.message}</p>
+        )}
+      </div>
 
-      <Input placeholder="Description" {...register("description")} />
-      {errors.description?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.description.message)}
-        </p>
-      )}
+      {/* DESCRIPTION */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Description</label>
+        <Input placeholder="Enter description" {...register("description")} />
+        {errors.description && (
+          <p className="text-sm text-red-500">{errors.description.message}</p>
+        )}
+      </div>
 
-      {/* DURATION */}
-      <Input
-        type="number"
-        placeholder="Duration (minutes)"
-        {...register("duration", {
-          valueAsNumber: true,
-        })}
-      />
-      {errors.duration?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.duration.message)}
-        </p>
-      )}
+      {/* DURATION & RELEASE YEAR */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Duration (minutes)</label>
+          <Input
+            type="number"
+            placeholder="Duration (minutes)"
+            {...register("duration")}
+          />
+          {errors.duration && (
+            <p className="text-sm text-red-500">{errors.duration.message}</p>
+          )}
+        </div>
 
-      {/* RELEASE YEAR */}
-      <Input
-        type="number"
-        placeholder="Release Year"
-        {...register("releaseYear", {
-          valueAsNumber: true,
-        })}
-      />
-      {errors.releaseYear?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.releaseYear.message)}
-        </p>
-      )}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Release Year</label>
+          <Input
+            type="number"
+            placeholder="Release Year"
+            {...register("releaseYear")}
+          />
+          {errors.releaseYear && (
+            <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
+          )}
+        </div>
+      </div>
 
-      {/* AGE */}
-      <select
-        {...register("ageRating", {
-          setValueAs: (value) => (value === "" ? undefined : value),
-        })}
-      >
-        <option value="">Select Age Rating</option>
+      {/* UPLOADS */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Poster Image</label>
+          <Dropzone
+            type="image"
+            previewUrl={posterUrl}
+            isUploading={uploading.poster}
+            onUpload={uploadPoster}
+            onDelete={deletePoster}
+          />
+        </div>
 
-        {AGE_RATINGS.map((r) => (
-          <option key={r} value={r}>
-            {r}
-          </option>
-        ))}
-      </select>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Banner Image</label>
+          <Dropzone
+            type="image"
+            previewUrl={bannerUrl}
+            isUploading={uploading.banner}
+            onUpload={uploadBanner}
+            onDelete={deleteBanner}
+          />
+        </div>
 
-      {errors.ageRating?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.ageRating.message)}
-        </p>
-      )}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Video File</label>
+          <Dropzone
+            type="video"
+            previewUrl={videoUrl}
+            isUploading={uploading.video}
+            onUpload={uploadVideo}
+            onDelete={deleteVideo}
+          />
+        </div>
+      </div>
+
+      {/* AGE RATING */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Age Rating</label>
+        <select
+          className="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          {...register("ageRating", {
+            setValueAs: (value) => (value === "" ? undefined : value),
+          })}
+        >
+          <option value="">Select Age Rating</option>
+          {AGE_RATINGS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+        {errors.ageRating && (
+          <p className="text-sm text-red-500">{errors.ageRating.message}</p>
+        )}
+      </div>
 
       {/* LANGUAGES */}
-      <div>
-        {LANGUAGES.map((l) => (
-          <Badge
-            key={l}
-            onClick={() => toggleLanguage(l)}
-            variant={languages.includes(l) ? "default" : "outline"}
-          >
-            {l}
-          </Badge>
-        ))}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Languages</label>
+        <div className="flex flex-wrap gap-2">
+          {LANGUAGES.map((l) => (
+            <Badge
+              key={l}
+              className="cursor-pointer select-none"
+              onClick={() => toggleLanguage(l)}
+              variant={languages.includes(l) ? "default" : "outline"}
+            >
+              {l}
+            </Badge>
+          ))}
+        </div>
+        {errors.language && (
+          <p className="text-sm text-red-500">
+            {errors.language.message?.toString()}
+          </p>
+        )}
       </div>
-
-      {errors.language?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.language.message)}
-        </p>
-      )}
 
       {/* GENRES */}
-      <div>
-        {GENRES.map((g) => (
-          <Badge
-            key={g}
-            onClick={() => toggleGenre(g)}
-            variant={genres.includes(g) ? "default" : "outline"}
-          >
-            {g}
-          </Badge>
-        ))}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Genres</label>
+        <div className="flex flex-wrap gap-2">
+          {GENRES.map((g) => (
+            <Badge
+              key={g}
+              className="cursor-pointer select-none"
+              onClick={() => toggleGenre(g)}
+              variant={genres.includes(g) ? "default" : "outline"}
+            >
+              {g}
+            </Badge>
+          ))}
+        </div>
+        {errors.genre && (
+          <p className="text-sm text-red-500">
+            {errors.genre.message?.toString()}
+          </p>
+        )}
       </div>
 
-      {errors.genre?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.genre.message)}
-        </p>
-      )}
-
-      {/* TAGS INPUT */}
-      <Input
-        value={tagInput}
-        onChange={(e) => setTagInput(e.target.value)}
-      />
-
-      <Button type="button" onClick={addTag}>
-        Add
-      </Button>
-
-      <div>
-        {tags.map((t: string) => (
-          <Badge key={t} onClick={() => removeTag(t)}>
-            {t} ✕
-          </Badge>
-        ))}
+      {/* TAGS */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Tags</label>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Add a tag"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTag();
+              }
+            }}
+          />
+          <Button type="button" onClick={addTag}>
+            Add
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((t) => (
+            <Badge
+              key={t}
+              className="cursor-pointer select-none"
+              onClick={() => removeTag(t)}
+            >
+              {t} ✕
+            </Badge>
+          ))}
+        </div>
       </div>
 
       {/* SUBMIT */}
-      <Button type="submit" disabled={isPending}>
+      <Button type="submit" className="w-full md:w-auto" disabled={isPending}>
         {mode === "create" ? "Create Movie" : "Update Movie"}
       </Button>
     </form>

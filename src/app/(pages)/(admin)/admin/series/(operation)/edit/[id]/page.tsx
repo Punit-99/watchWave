@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { useGetSeriesById, useUpdateSeries } from "@/hooks/use-series";
 import { SeriesForm } from "@/components/series/SeriesForm";
+import { Genre, Language, AgeRating } from "@/../../generated/prisma/enums";
 
 export default function SeriesEditPage() {
   const { id } = useParams();
@@ -22,9 +23,7 @@ export default function SeriesEditPage() {
   }
 
   const series = data.data;
-
-  // IMPORTANT: your nested structure is inside series[0]
-  const fullSeries = series.series?.[0];
+  const fullSeries = series.series;
 
   return (
     <div className="mx-auto max-w-4xl py-8">
@@ -43,12 +42,10 @@ export default function SeriesEditPage() {
               posterUrl: series.posterUrl,
               bannerUrl: series.bannerUrl,
               releaseYear: series.releaseYear,
-              language: series.language as string[],
-              genre: series.genre as string[],
+              language: series.language as Language[],
+              genre: series.genre as Genre[],
               tags: series.tags,
-              ageRating: series.ageRating as string,
-
-              // 🔥 IMPORTANT FIX (nested structure)
+              ageRating: series.ageRating as AgeRating,
               seasons: fullSeries?.seasons ?? [],
             }}
             onSubmit={(values) => {

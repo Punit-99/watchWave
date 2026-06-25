@@ -155,14 +155,14 @@ export async function updateSeriesController(
       include: { series: true },
     });
 
-    if (!content || !content.series.length) {
+    if (!content || !content.series) {
       return Response.json(
         { success: false, message: "Series not found" },
         { status: 404 },
       );
     }
 
-    const series = content.series[0];
+    const series = content.series;
 
     // =========================
     // UPDATE CONTENT (PATCH SAFE)

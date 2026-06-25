@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { useGetMovieById, useUpdateMovie } from "@/hooks/use-movie";
 import { MovieForm } from "@/components/movies/MovieForm";
+import { Genre, Language, AgeRating } from "@/../../generated/prisma/enums";
 
 export default function EditMoviePage() {
   const { id } = useParams();
@@ -41,10 +42,10 @@ export default function EditMoviePage() {
               bannerUrl: movie.bannerUrl,
               videoUrl: movie.movie.videoUrl,
               releaseYear: movie.releaseYear,
-              language: movie.language as string[],
-              genre: movie.genre as string[],
+              language: movie.language as Language[],
+              genre: movie.genre as Genre[],
               tags: movie.tags,
-              ageRating: movie.ageRating as string,
+              ageRating: movie.ageRating as AgeRating,
               duration: movie.movie.duration,
             }}
             onSubmit={(values) => {

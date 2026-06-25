@@ -43,7 +43,7 @@ export default function SeriesDetail() {
     );
   }
 
-  const seriesRoot = series.series?.[0];
+  const seriesRoot = series.series;
   const seasons = seriesRoot?.seasons ?? [];
 
   return (

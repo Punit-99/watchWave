@@ -79,7 +79,7 @@ export default function SeriesTable() {
                   <TableCell>{item.language.join(", ")}</TableCell>
                   <TableCell>{item.releaseYear}</TableCell>
 
-                  <TableCell>{item.series?.[0]?.totalSeasons ?? 0}</TableCell>
+                  <TableCell>{item.series?.totalSeasons ?? 0}</TableCell>
 
                   <TableCell>
                     <div className="flex justify-end gap-2">

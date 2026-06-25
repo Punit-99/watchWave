@@ -6,6 +6,7 @@ import { useCreateSeries } from "@/hooks/use-series";
 import { useRouter } from "next/navigation";
 
 import { SeriesForm } from "@/components/series/SeriesForm";
+import { CreateSeriesInput } from "@/validation/series.validation";
 
 export default function CreateSeriesPage() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function CreateSeriesPage() {
             onSubmit={(data) => {
               console.log("PAGE RECEIVED SERIES", data);
 
-              mutate(data, {
+              mutate(data as CreateSeriesInput, {
                 onSuccess: () => {
                   router.push("/admin/series");
                 },

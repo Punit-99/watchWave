@@ -24,20 +24,12 @@ import {
 
 type SeriesFormData = CreateSeriesInput | UpdateSeriesInput;
 
-
-type SeriesFormProps =
-  | {
-    mode: "create";
-    initialData?: Partial<CreateSeriesInput>;
-    onSubmit: (data: CreateSeriesInput) => void;
-    isPending?: boolean;
-  }
-  | {
-    mode: "edit";
-    initialData?: Partial<CreateSeriesInput>;
-    onSubmit: (data: UpdateSeriesInput) => void;
-    isPending?: boolean;
-  };
+type SeriesFormProps = {
+  mode: "create" | "edit";
+  initialData?: Partial<CreateSeriesInput>;
+  onSubmit: (data: SeriesFormData) => void;
+  isPending?: boolean;
+};
 
 export function SeriesForm({
   mode,
@@ -63,12 +55,10 @@ export function SeriesForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<any>({
+  } = useForm<CreateSeriesInput>({
     resolver: zodResolver(
-      mode === "create"
-        ? createSeriesSchema
-        : updateSeriesSchema
-    ),
+      mode === "create" ? createSeriesSchema : updateSeriesSchema,
+    ) as any,
   });
 
   // ======================
@@ -94,10 +84,10 @@ export function SeriesForm({
     });
   }, [mode, initialData, reset]);
 
-  const seasons = (watch("seasons") ?? []) as any[];
-  const languages = (watch("language") ?? []) as Language[];
-  const genres = (watch("genre") ?? []) as Genre[];
-  const tags = (watch("tags") ?? []) as string[];
+  const seasons = watch("seasons") ?? [];
+  const languages = watch("language") ?? [];
+  const genres = watch("genre") ?? [];
+  const tags = watch("tags") ?? [];
 
   const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
@@ -187,143 +177,160 @@ export function SeriesForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => {
-        if (mode === "create") {
-          onSubmit(data);
-        } else {
-          onSubmit(data as UpdateSeriesInput);
-        }
-      })}
-      className="space-y-8"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* TITLE */}
-      <Input placeholder="Series Title" {...register("title")} />
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Series Title</label>
+        <Input placeholder="Enter series title" {...register("title")} />
+        {errors.title && (
+          <p className="text-sm text-red-500">{errors.title.message}</p>
+        )}
+      </div>
 
-      {errors.title?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.title.message)}
-        </p>
-      )}
+      {/* DESCRIPTION */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Description</label>
+        <Input placeholder="Enter description" {...register("description")} />
+        {errors.description && (
+          <p className="text-sm text-red-500">{errors.description.message}</p>
+        )}
+      </div>
 
-      <Input placeholder="Description" {...register("description")} />
+      {/* RELEASE YEAR */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Release Year</label>
+        <Input
+          type="number"
+          placeholder="Release Year"
+          {...register("releaseYear")}
+        />
+        {errors.releaseYear && (
+          <p className="text-sm text-red-500">{errors.releaseYear.message}</p>
+        )}
+      </div>
 
-      {errors.description?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.description.message)}
-        </p>
-      )}
+      {/* UPLOADS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Poster Image</label>
+          <Dropzone
+            type="image"
+            previewUrl={posterUrl}
+            isUploading={uploading.poster}
+            onUpload={uploadPoster}
+            onDelete={deletePoster}
+          />
+        </div>
 
-      <Input
-        type="number"
-        placeholder="Release Year"
-        {...register("releaseYear")}
-      />
-
-      {errors.releaseYear?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.releaseYear.message)}
-        </p>
-      )}
-
-      {/* THUMBNAIL */}
-      <Dropzone
-        type="image"
-        previewUrl={posterUrl}
-        isUploading={uploading.poster}
-        onUpload={uploadPoster}
-        onDelete={deletePoster}
-      />
-
-      {/* BANNER */}
-      <Dropzone
-        type="image"
-        previewUrl={bannerUrl}
-        isUploading={uploading.banner}
-        onUpload={uploadBanner}
-        onDelete={deleteBanner}
-      />
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Banner Image</label>
+          <Dropzone
+            type="image"
+            previewUrl={bannerUrl}
+            isUploading={uploading.banner}
+            onUpload={uploadBanner}
+            onDelete={deleteBanner}
+          />
+        </div>
+      </div>
 
       {/* AGE RATING */}
-      <select {...register("ageRating")}>
-        <option value="">Select Age Rating</option>
-
-        {Object.values(AgeRating).map((r) => (
-          <option key={r} value={r}>
-            {r}
-          </option>
-        ))}
-      </select>
-
-      {errors.ageRating?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.ageRating.message)}
-        </p>
-      )}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Age Rating</label>
+        <select
+          className="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          {...register("ageRating")}
+        >
+          <option value="">Select Age Rating</option>
+          {Object.values(AgeRating).map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+        {errors.ageRating && (
+          <p className="text-sm text-red-500">{errors.ageRating.message}</p>
+        )}
+      </div>
 
       {/* LANGUAGES */}
-      <div className="flex flex-wrap gap-2">
-        {Object.values(Language).map((l) => (
-          <Badge
-            key={l}
-            className="cursor-pointer"
-            variant={languages.includes(l) ? "default" : "outline"}
-            onClick={() => toggleLanguage(l)}
-          >
-            {l}
-          </Badge>
-        ))}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Languages</label>
+        <div className="flex flex-wrap gap-2">
+          {Object.values(Language).map((l) => (
+            <Badge
+              key={l}
+              className="cursor-pointer select-none"
+              variant={languages.includes(l) ? "default" : "outline"}
+              onClick={() => toggleLanguage(l)}
+            >
+              {l}
+            </Badge>
+          ))}
+        </div>
+        {errors.language && (
+          <p className="text-sm text-red-500">
+            {errors.language.message?.toString()}
+          </p>
+        )}
       </div>
-
-      {errors.language?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.language.message)}
-        </p>
-      )}
 
       {/* GENRES */}
-      <div className="flex flex-wrap gap-2">
-        {Object.values(Genre).map((g) => (
-          <Badge
-            key={g}
-            className="cursor-pointer"
-            variant={genres.includes(g) ? "default" : "outline"}
-            onClick={() => toggleGenre(g)}
-          >
-            {g}
-          </Badge>
-        ))}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Genres</label>
+        <div className="flex flex-wrap gap-2">
+          {Object.values(Genre).map((g) => (
+            <Badge
+              key={g}
+              className="cursor-pointer select-none"
+              variant={genres.includes(g) ? "default" : "outline"}
+              onClick={() => toggleGenre(g)}
+            >
+              {g}
+            </Badge>
+          ))}
+        </div>
+        {errors.genre && (
+          <p className="text-sm text-red-500">
+            {errors.genre.message?.toString()}
+          </p>
+        )}
       </div>
-
-      {errors.genre?.message && (
-        <p className="text-sm text-red-500">
-          {String(errors.genre.message)}
-        </p>
-      )}
 
       {/* TAGS */}
-      <div className="flex gap-2">
-        <Input
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          placeholder="Add tag"
-        />
-
-        <Button type="button" onClick={addTag}>
-          Add
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {tags.map((t: string) => (
-          <Badge key={t} onClick={() => removeTag(t)}>
-            {t} ✕
-          </Badge>
-        ))}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Tags</label>
+        <div className="flex gap-2">
+          <Input
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            placeholder="Add tag"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTag();
+              }
+            }}
+          />
+          <Button type="button" onClick={addTag}>
+            Add
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((t) => (
+            <Badge
+              key={t}
+              className="cursor-pointer select-none"
+              onClick={() => removeTag(t)}
+            >
+              {t} ✕
+            </Badge>
+          ))}
+        </div>
       </div>
 
       {/* SEASONS */}
-      <div className="space-y-4">
+      <div className="space-y-4 pt-4 border-t">
         <h2 className="text-xl font-bold">Seasons</h2>
 
         {seasons.map((_, index) => (

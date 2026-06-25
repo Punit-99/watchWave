@@ -17,6 +17,7 @@ import { appToast } from "@/lib/toast";
 import type {
   GetMoviesResponse,
   UpdateMovieInput,
+  CreateMovieInput,
 } from "@/validation/movie.validation";
 
 // CREATE MOVIE
