@@ -2,23 +2,27 @@ FROM node:22-alpine
 
 WORKDIR /src
 
+# Enable pnpm
+RUN npm install -g pnpm
+
 # 1. Copy dependency files first (for caching)
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+# 2. Install dependencies
+RUN pnpm install
 
-# 2. Copy prisma schema BEFORE generate
+# 3. Copy prisma schema
 COPY prisma ./prisma
 
-# 3. Generate Prisma client inside container
+# 4. Generate Prisma client
 RUN npx prisma generate
 
-# 4. Copy rest of the application
+# 5. Copy rest of app
 COPY . .
 
-# 5. Build app
-RUN npm run build
+# 6. Build Next.js app
+RUN pnpm run build
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
