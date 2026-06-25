@@ -1,30 +1,50 @@
 FROM node:22-alpine
 
+# Set working directory inside container
 WORKDIR /src
 
-# Enable pnpm
+# Install pnpm globally inside container
 RUN npm install -g pnpm
 
-# 1. Copy dependency files first (for caching)
+# --------------------------------------------------
+# 1. Copy only dependency files first (for Docker cache optimization)
+#    This allows Docker to reuse this layer if deps don't change
+# --------------------------------------------------
 COPY package.json pnpm-lock.yaml ./
 
-# 2. Install dependencies  will fix : Only allow trusted packages to run install scripts
+# --------------------------------------------------
+# 2. Allow pnpm to run required build scripts (IMPORTANT FIX)
+#    Needed for: prisma, bcrypt, sharp, esbuild, etc.
+# --------------------------------------------------
+RUN pnpm config set ignore-scripts false
+
+# --------------------------------------------------
+# 3. Install dependencies using lockfile (safe & reproducible)
+# --------------------------------------------------
 RUN pnpm install --frozen-lockfile
 
-
-
-# 3. Copy prisma schema
+# --------------------------------------------------
+# 4. Copy Prisma schema before generating client
+# --------------------------------------------------
 COPY prisma ./prisma
 
-# 4. Generate Prisma client
+# --------------------------------------------------
+# 5. Generate Prisma client (required for DB access)
+# --------------------------------------------------
 RUN npx prisma generate
 
-# 5. Copy rest of app
+# --------------------------------------------------
+# 6. Copy full application source code
+# --------------------------------------------------
 COPY . .
 
-# 6. Build Next.js app
+# --------------------------------------------------
+# 7. Build Next.js production app
+# --------------------------------------------------
 RUN pnpm run build
 
+# Expose Next.js port
 EXPOSE 3000
 
+# Start production server
 CMD ["pnpm", "start"]
