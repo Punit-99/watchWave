@@ -1,58 +1,55 @@
-FROM node:22-alpine
+# ── Stage 1: Builder ─────────────────────────────
+FROM node:22-alpine AS builder
 
-# --------------------------------------------------
-# 0. Native build tools for bcrypt + sharp
-# --------------------------------------------------
+# Native build tools required for bcrypt + sharp
 RUN apk add --no-cache python3 make g++ libc6-compat openssl
 
-# --------------------------------------------------
-# 1. Set working directory
-# --------------------------------------------------
 WORKDIR /src
 
-# --------------------------------------------------
-# 2. Install pnpm — pin to match your local v10
-# --------------------------------------------------
 RUN npm install -g pnpm@10
 
-# --------------------------------------------------
-# 3. Copy dependency files first (for Docker caching)
-# --------------------------------------------------
+# Copy lockfile first — layer cache skips install if unchanged
 COPY package.json pnpm-lock.yaml ./
-
-# --------------------------------------------------
-# 4. Install dependencies
-#    onlyBuiltDependencies in package.json handles
-#    the script allowlist — no extra flags needed
-# --------------------------------------------------
 RUN pnpm install --frozen-lockfile
 
-# --------------------------------------------------
-# 5. Copy Prisma schema before generating client
-# --------------------------------------------------
-COPY prisma ./prisma
-
-# --------------------------------------------------
-# 6. Generate Prisma Client
-# --------------------------------------------------
+# Copy source + generate Prisma client (outputs to /src/generated/prisma)
+COPY . .
 RUN npx prisma generate
 
-# --------------------------------------------------
-# 7. Copy full application source code
-# --------------------------------------------------
-COPY . .
-
-# --------------------------------------------------
-# 8. Build Next.js production app
-# --------------------------------------------------
+# Compile TS → JS, output to .next/standalone
 RUN pnpm run build
 
-# --------------------------------------------------
-# 9. Expose Next.js port
-# --------------------------------------------------
+
+# ── Stage 2: Runner ──────────────────────────────
+FROM node:22-alpine AS runner
+
+RUN apk add --no-cache libc6-compat openssl
+
+WORKDIR /src
+
+# Non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser  --system --uid 1001 nextjs
+
+# Next.js compiled output
+COPY --from=builder /src/.next/standalone ./
+COPY --from=builder /src/.next/static     ./.next/static
+
+# Prisma generated client + schema + adapter packages
+COPY --from=builder /src/generated            ./generated
+COPY --from=builder /src/prisma               ./prisma
+COPY --from=builder /src/node_modules/@prisma ./node_modules/@prisma
+
+RUN chown -R nextjs:nodejs /src
+
+USER nextjs
+
+# DATABASE_URL is injected at runtime — never baked into the image
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME="0.0.0.0"
+
 EXPOSE 3000
 
-# --------------------------------------------------
-# 10. Start production server
-# --------------------------------------------------
-CMD ["pnpm", "start"]
+CMD ["node", "server.js"]
