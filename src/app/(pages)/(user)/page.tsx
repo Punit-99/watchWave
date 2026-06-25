@@ -7,7 +7,7 @@ import { HeroCarousel } from "@/components/home/hero-carousel";
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto px-4 py-6">
+    <div className="space-y-8">
       <HeroCarousel items={[]} />
 
       <NewReleases />
@@ -18,6 +18,6 @@ export default function HomePage() {
       <TrendingSeries />
 
       <Footer />
-    </main>
+    </div>
   );
 }

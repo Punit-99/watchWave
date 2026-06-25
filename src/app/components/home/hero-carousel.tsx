@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-
 import {
   Carousel,
   CarouselContent,
@@ -9,33 +8,15 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
 import Link from "next/link";
 import { Button } from "../ui/button";
 import Autoplay from "embla-carousel-autoplay";
+import { useGetAllMovies } from "@/hooks/use-movie";
+import { useGetAllSeries } from "@/hooks/use-series";
+import { Badge } from "@/components/ui/badge";
 
-const slidecs = [
-  {
-    id: "1",
-    title: "Interstellar",
-    description: "A team of explorers travel through a wormhole in space.",
-    backdrop: "https://images.unsplash.com/photo-1534447677768-be436bb09401",
-  },
-  {
-    id: "2",
-    title: "The Dark Knight",
-    description: "Batman faces his greatest challenge.",
-    backdrop: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-  },
-  {
-    id: "3",
-    title: "Inception",
-    description: "A thief who steals corporate secrets through dream-sharing.",
-    backdrop: "https://images.unsplash.com/photo-1493246318656-5bfd4cfb29b8",
-  },
-];
 type HeroCarouselProps = {
-  items: HeroCarouselItem[];
+  items?: HeroCarouselItem[];
   limit?: number;
 };
 
@@ -44,10 +25,49 @@ export type HeroCarouselItem = {
   title: string;
   description?: string;
   backdrop: string;
+  type?: "MOVIE" | "SERIES";
 };
 
 export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
-  const slides = slidecs.slice(0, limit);
+  const { data: moviesData, isLoading: moviesLoading } = useGetAllMovies(1, limit);
+  const { data: seriesData, isLoading: seriesLoading } = useGetAllSeries(1, limit);
+
+  const movieItems = (moviesData?.data || []).map((m) => ({
+    id: m.id,
+    title: m.title,
+    description: m.description,
+    backdrop: m.bannerUrl || "/placeholder.jpg",
+    createdAt: m.createdAt,
+    type: "MOVIE" as const,
+  }));
+
+  const seriesItems = (seriesData?.data || []).map((s) => ({
+    id: s.id,
+    title: s.title,
+    description: s.description,
+    backdrop: s.bannerUrl || "/placeholder.jpg",
+    createdAt: s.createdAt,
+    type: "SERIES" as const,
+  }));
+
+  // Combine and sort by createdAt desc
+  const combinedSlides = [...movieItems, ...seriesItems]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, limit);
+
+  const slides = items.length > 0 ? items.slice(0, limit) : combinedSlides;
+  const isLoading = moviesLoading || seriesLoading;
+
+  if (slides.length === 0) {
+    if (isLoading) {
+      return (
+        <div className="h-[450px] md:h-[600px] w-full bg-muted rounded-3xl animate-pulse flex items-center justify-center text-muted-foreground">
+          Loading carousel...
+        </div>
+      );
+    }
+    return null;
+  }
 
   return (
     <Carousel
@@ -62,12 +82,12 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
       className="w-full"
     >
       <CarouselContent>
-        {slides.map((movie) => (
-          <CarouselItem key={movie.id}>
+        {slides.map((item) => (
+          <CarouselItem key={item.id}>
             <div className="relative h-[450px] overflow-hidden rounded-3xl md:h-[600px]">
               <Image
-                src={movie.backdrop}
-                alt={movie.title}
+                src={item.backdrop}
+                alt={item.title}
                 fill
                 priority
                 className="object-cover"
@@ -76,26 +96,35 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
 
               {/* overlays */}
               <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
-
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+
+              {/* Badges on Top-Left */}
+              {item.type && (
+                <div className="absolute left-8 top-8 z-10 flex gap-2 md:left-14 md:top-14">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+                    W ORIGINAL
+                  </Badge>
+                  <Badge variant="secondary" className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+                    {item.type === "MOVIE" ? "MOVIE" : "TV SHOW"}
+                  </Badge>
+                </div>
+              )}
 
               {/* content */}
               <div className="absolute bottom-12 left-8 max-w-xl md:left-14">
                 <h1 className="text-4xl font-bold text-white md:text-6xl">
-                  {movie.title}
+                  {item.title}
                 </h1>
 
-                {movie.description && (
+                {item.description && (
                   <p className="mt-4 line-clamp-3 text-sm text-zinc-300 md:text-base">
-                    {movie.description}
+                    {item.description}
                   </p>
                 )}
 
-                <div className="mt-6 flex gap-3">
-                  <Button size="lg">▶ Watch Now</Button>
-
-                  <Button variant="secondary" size="lg" asChild>
-                    <Link href={`/movies/details/${movie.id}`}>Details</Link>
+                <div className="mt-6">
+                  <Button variant="secondary" size="lg" asChild className="cursor-pointer">
+                    <Link href={`/details/${item.id}`}>Details</Link>
                   </Button>
                 </div>
               </div>
@@ -104,8 +133,8 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious className="left-5" />
-      <CarouselNext className="right-5" />
+      <CarouselPrevious className="left-5 h-12 w-12 border-2 border-white/40 bg-black/50 text-white hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all duration-300 shadow-md" />
+      <CarouselNext className="right-5 h-12 w-12 border-2 border-white/40 bg-black/50 text-white hover:bg-white hover:text-black hover:scale-110 active:scale-95 transition-all duration-300 shadow-md" />
     </Carousel>
   );
 }

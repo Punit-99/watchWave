@@ -1,5 +1,3 @@
-// app/(user)/layout.tsx
-
 import { Navbar } from "@/components/home/navbar";
 
 export default function UserLayout({
@@ -8,9 +6,11 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      {children}
-    </>
+      <main className="flex-1 container mx-auto px-12 py-6">
+        {children}
+      </main>
+    </div>
   );
 }

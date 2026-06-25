@@ -51,6 +51,16 @@ export async function registerController(req: Request) {
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id, user.role);
 
+    // Clean up expired refresh tokens for this user
+    await prisma.refreshToken.deleteMany({
+      where: {
+        userId: user.id,
+        expiresAt: {
+          lt: new Date(),
+        },
+      },
+    });
+
     await prisma.refreshToken.create({
       data: {
         token: refreshToken,
@@ -119,6 +129,16 @@ export async function loginController(req: Request) {
 
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id, user.role);
+
+    // Clean up expired refresh tokens for this user
+    await prisma.refreshToken.deleteMany({
+      where: {
+        userId: user.id,
+        expiresAt: {
+          lt: new Date(),
+        },
+      },
+    });
 
     await prisma.refreshToken.create({
       data: {
