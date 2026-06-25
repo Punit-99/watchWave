@@ -26,6 +26,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # ── Generate Prisma types (required for tsc) ─
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
       # ── Validate ─────────────────────────────────
       - name: Type check
         run: pnpm tsc --noEmit
