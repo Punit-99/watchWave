@@ -5,7 +5,7 @@ WORKDIR /src
 
 # Install pnpm globally inside container
 RUN npm install -g pnpm
-
+ENV PNPM_ENABLE_SCRIPTS=1
 # --------------------------------------------------
 # 1. Copy only dependency files first (for Docker cache optimization)
 #    This allows Docker to reuse this layer if deps don't change
