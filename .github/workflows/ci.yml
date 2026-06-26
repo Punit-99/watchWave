@@ -16,7 +16,7 @@ jobs:
       # ── Node + pnpm store cache ──────────────────
       - uses: pnpm/action-setup@v3
         with:
-          version: latest
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
