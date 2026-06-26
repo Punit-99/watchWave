@@ -201,6 +201,8 @@ export function SeriesForm({
         <label className="text-sm font-medium text-foreground">Release Year</label>
         <Input
           type="number"
+          min="1900"
+          max={new Date().getFullYear()}
           placeholder="Release Year"
           {...register("releaseYear")}
         />

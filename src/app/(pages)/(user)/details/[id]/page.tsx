@@ -92,32 +92,53 @@ export default function ContentDetailPage() {
             </Badge>
           </div>
 
-          <div className="absolute bottom-0 left-0 z-10 max-w-3xl p-8 md:p-12">
-            <h1 className="text-5xl font-bold tracking-tight text-white">
-              {media.title}
-            </h1>
+          <div className="absolute inset-0 z-10 flex items-end p-5 md:p-12 bg-gradient-to-t from-background via-background/60 to-transparent bg-gradient-to-r from-black/90 via-black/40 to-transparent">
+            <div className="flex items-end gap-4 md:gap-8 w-full">
+              {/* Rectangular Poster Image on the left */}
+              {media.posterUrl && (
+                <div className="relative shrink-0 w-[90px] sm:w-[140px] md:w-[180px] aspect-[2/3] overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+                  <Image
+                    src={media.posterUrl}
+                    alt={`${media.title} Poster`}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-w-640px) 90px, (max-w-768px) 140px, 180px"
+                  />
+                </div>
+              )}
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              {media.genre?.map((genre: string) => (
-                <Badge key={genre} variant="secondary">{genre}</Badge>
-              ))}
-            </div>
+              {/* Title, description, badges, button on the right */}
+              <div className="flex-1 min-w-0 space-y-2 md:space-y-4 text-left">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow truncate">
+                  {media.title}
+                </h1>
 
-            <p className="mt-5 text-zinc-300 line-clamp-4 max-w-2xl text-sm md:text-base">
-              {media.description}
-            </p>
+                <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                  {media.genre?.map((genre: string) => (
+                    <Badge key={genre} variant="secondary" className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs">
+                      {genre}
+                    </Badge>
+                  ))}
+                </div>
 
-            <div className="mt-6 flex gap-3">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/95 text-primary-foreground font-semibold cursor-pointer"
-                onClick={() => {
-                  setActiveVideoUrl(media.movie?.videoUrl || "");
-                  setActiveVideoTitle(media.title);
-                }}
-              >
-                ▶ Watch Now
-              </Button>
+                <p className="text-zinc-300 line-clamp-2 sm:line-clamp-3 md:line-clamp-4 max-w-2xl text-[11px] sm:text-xs md:text-sm leading-relaxed drop-shadow-sm">
+                  {media.description}
+                </p>
+
+                <div className="pt-1 md:pt-2">
+                  <Button
+                    size="sm"
+                    className="bg-primary hover:bg-primary/95 text-primary-foreground font-semibold cursor-pointer px-4 md:px-8 md:py-6 md:text-base shadow-lg shadow-primary/20"
+                    onClick={() => {
+                      setActiveVideoUrl(media.movie?.videoUrl || "");
+                      setActiveVideoTitle(media.title);
+                    }}
+                  >
+                    ▶ Watch Now
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -243,20 +264,41 @@ export default function ContentDetailPage() {
           </Badge>
         </div>
 
-        <div className="absolute bottom-0 left-0 z-10 max-w-3xl p-8 md:p-12">
-          <h1 className="text-5xl font-bold tracking-tight text-white">
-            {media.title}
-          </h1>
+        <div className="absolute inset-0 z-10 flex items-end p-5 md:p-12 bg-gradient-to-t from-background via-background/60 to-transparent bg-gradient-to-r from-black/90 via-black/40 to-transparent">
+          <div className="flex items-end gap-4 md:gap-8 w-full">
+            {/* Rectangular Poster Image on the left */}
+            {media.posterUrl && (
+              <div className="relative shrink-0 w-[90px] sm:w-[140px] md:w-[180px] aspect-[2/3] overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+                <Image
+                  src={media.posterUrl}
+                  alt={`${media.title} Poster`}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-w-640px) 90px, (max-w-768px) 140px, 180px"
+                />
+              </div>
+            )}
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {media.genre?.map((genre: string) => (
-              <Badge key={genre} variant="secondary">{genre}</Badge>
-            ))}
+            {/* Title, description, badges on the right */}
+            <div className="flex-1 min-w-0 space-y-2 md:space-y-4 text-left">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow truncate">
+                {media.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                {media.genre?.map((genre: string) => (
+                  <Badge key={genre} variant="secondary" className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs">
+                    {genre}
+                  </Badge>
+                ))}
+              </div>
+
+              <p className="text-zinc-300 line-clamp-2 sm:line-clamp-3 md:line-clamp-4 max-w-2xl text-[11px] sm:text-xs md:text-sm leading-relaxed drop-shadow-sm">
+                {media.description}
+              </p>
+            </div>
           </div>
-
-          <p className="mt-5 text-zinc-300 line-clamp-4 max-w-2xl text-sm md:text-base">
-            {media.description}
-          </p>
         </div>
       </div>
 

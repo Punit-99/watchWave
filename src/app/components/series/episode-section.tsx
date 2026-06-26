@@ -5,7 +5,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { CreateSeriesInput } from "@/validation/series.validation";
 
@@ -38,9 +38,18 @@ export function EpisodeSection({
   const deleteMutation = useDeleteMedia();
 
   const [uploading, setUploading] = useState({
+    poster: false,
+    banner: false,
     thumbnail: false,
     video: false,
   });
+
+  useEffect(() => {
+    setValue(
+      `seasons.${seasonIndex}.episodes.${episodeIndex}.episodeNumber`,
+      episodeIndex + 1,
+    );
+  }, [seasonIndex, episodeIndex, setValue]);
 
   const thumbnailPath =
     `seasons.${seasonIndex}.episodes.${episodeIndex}.thumbnailUrl` as const;
@@ -114,23 +123,14 @@ export function EpisodeSection({
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Input
-          type="number"
-          placeholder="Episode Number"
-          {...register(
-            `seasons.${seasonIndex}.episodes.${episodeIndex}.episodeNumber`,
-          )}
-        />
+      <input
+        type="hidden"
+        {...register(
+          `seasons.${seasonIndex}.episodes.${episodeIndex}.episodeNumber`,
+          { valueAsNumber: true },
+        )}
+      />
 
-        <Input
-          type="number"
-          placeholder="Duration (minutes)"
-          {...register(
-            `seasons.${seasonIndex}.episodes.${episodeIndex}.duration`,
-          )}
-        />
-      </div>
 
       <Input
         placeholder="Episode Title"
@@ -143,7 +143,17 @@ export function EpisodeSection({
           `seasons.${seasonIndex}.episodes.${episodeIndex}.description`,
         )}
       />
-
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground">Duration</label>
+        <Input
+          type="number"
+          min="1"
+          placeholder="Duration (minutes)"
+          {...register(
+            `seasons.${seasonIndex}.episodes.${episodeIndex}.duration`,
+          )}
+        />
+      </div>
       <div className="space-y-2">
         <h5 className="font-medium">Episode Thumbnail</h5>
 

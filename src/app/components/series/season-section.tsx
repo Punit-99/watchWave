@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   Control,
   UseFormRegister,
@@ -40,6 +41,10 @@ export function SeasonSection({
     name: `seasons.${seasonIndex}.episodes`,
   });
 
+  useEffect(() => {
+    setValue(`seasons.${seasonIndex}.seasonNumber`, seasonIndex + 1);
+  }, [seasonIndex, setValue]);
+
   return (
     <section className="space-y-6 rounded-xl border p-6">
       <div className="flex items-center justify-between">
@@ -54,10 +59,9 @@ export function SeasonSection({
         </Button>
       </div>
 
-      <Input
-        type="number"
-        placeholder="Season Number"
-        {...register(`seasons.${seasonIndex}.seasonNumber`)}
+      <input
+        type="hidden"
+        {...register(`seasons.${seasonIndex}.seasonNumber`, { valueAsNumber: true })}
       />
 
       <div className="space-y-8">
