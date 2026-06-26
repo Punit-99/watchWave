@@ -22,11 +22,14 @@ import type {
 
 // CREATE MOVIE
 export function useCreateMovie() {
+  const queryClient = useQueryClient();
+
   return useMutation<unknown, Error, CreateMovieInput>({
     mutationFn: createMovie,
 
     onSuccess: () => {
       console.log("SUCCESS");
+      queryClient.invalidateQueries({ queryKey: ["movies"] });
     },
 
     onError: (error) => {
@@ -85,11 +88,24 @@ export function useUpdateMovie() {
     mutationFn: ({ id, data }: { id: string; data: UpdateMovieInput }) =>
       updateMovie(id, data),
 
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["movies"] });
-      queryClient.invalidateQueries({
-        queryKey: ["movie", variables.id],
-      });
+    onSuccess: async (_, variables) => {
+      appToast.updated("Movie");
+
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["movies"],
+          exact: false,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["movie", variables.id],
+        }),
+      ]);
+    },
+
+    onError: (error: any) => {
+      appToast.error(
+        error?.response?.data?.message ?? "Failed to update movie",
+      );
     },
   });
 }

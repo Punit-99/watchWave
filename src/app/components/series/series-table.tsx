@@ -84,7 +84,7 @@ export default function SeriesTable() {
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="secondary" asChild>
-                        <Link href={`/admin/series/detail/${item.id}`}>
+                        <Link href={`/details/${item.id}`}>
                           View
                         </Link>
                       </Button>

@@ -84,7 +84,7 @@ export default function MovieTable() {
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="secondary" asChild>
-                        <Link href={`/admin/movies/detail/${movie.id}`}>
+                        <Link href={`/details/${movie.id}`}>
                           View
                         </Link>
                       </Button>
