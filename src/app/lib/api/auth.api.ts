@@ -27,3 +27,11 @@ export async function getMe() {
 
   return res.data.data;
 }
+
+export async function updateProfile(data: { name?: string; image?: string | null }) {
+  console.log("UPDATE_PROFILE_CALLED");
+
+  const res = await api.put("/auth/me", data);
+
+  return res.data.data;
+}

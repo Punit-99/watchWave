@@ -4,6 +4,11 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
+import { updateProfileController } from "@/controllers/auth.controller";
+
+export async function PUT(req: Request) {
+  return updateProfileController(req);
+}
 
 export async function GET() {
   try {

@@ -30,6 +30,17 @@ export function Dropzone({
 
   const { getRootProps, getInputProps } = useDropzone({
     multiple: false,
+    accept:
+      type === "image"
+        ? {
+            "image/jpeg": [".jpeg", ".jpg"],
+            "image/png": [".png"],
+            "image/webp": [".webp"],
+          }
+        : {
+            "video/mp4": [".mp4"],
+            "video/x-matroska": [".mkv"],
+          },
     onDrop: (files) => {
       const selected = files[0];
       if (!selected) return;

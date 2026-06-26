@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import PasswordInput from "./password-input";
 import { useAuthStore } from "@/lib/store/auth.store";
 import { useRouter } from "next/navigation";
+import { queryClient } from "@/lib/query-client";
 
 export default function LoginForm() {
   const { mutate, isPending } = useLogin();
@@ -25,6 +26,7 @@ export default function LoginForm() {
   const onSubmit = (data: LoginInput) => {
     mutate(data, {
       onSuccess: (res) => {
+        queryClient.clear();
         useAuthStore.setState({
           user: res.data,
           authChecked: true,
