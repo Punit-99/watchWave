@@ -236,33 +236,55 @@ export function MovieForm({
             <Film className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">General Information</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Title, description, duration, and classification ratings.</p>
+            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">
+              General Information
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Title, description, duration, and classification ratings.
+            </p>
           </div>
         </div>
 
         {/* TITLE */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Movie Title</label>
-          <Input placeholder="e.g. Inception" className="rounded-lg h-10" {...register("title")} />
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Movie Title
+          </label>
+          <Input
+            placeholder="e.g. Inception"
+            className="rounded-lg h-10"
+            {...register("title")}
+          />
           {errors.title && (
-            <p className="text-xs text-red-500 font-medium">{errors.title.message}</p>
+            <p className="text-xs text-red-500 font-medium">
+              {errors.title.message}
+            </p>
           )}
         </div>
 
         {/* DESCRIPTION */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Description</label>
-          <Input placeholder="Enter brief overview of the plot" className="rounded-lg h-10" {...register("description")} />
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Description
+          </label>
+          <Input
+            placeholder="Enter brief overview of the plot"
+            className="rounded-lg h-10"
+            {...register("description")}
+          />
           {errors.description && (
-            <p className="text-xs text-red-500 font-medium">{errors.description.message}</p>
+            <p className="text-xs text-red-500 font-medium">
+              {errors.description.message}
+            </p>
           )}
         </div>
 
         {/* DURATION & RELEASE YEAR */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Duration (minutes)</label>
+            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+              Duration (minutes)
+            </label>
             <Input
               type="number"
               min="1"
@@ -271,12 +293,16 @@ export function MovieForm({
               {...register("duration")}
             />
             {errors.duration && (
-              <p className="text-xs text-red-500 font-medium">{errors.duration.message}</p>
+              <p className="text-xs text-red-500 font-medium">
+                {errors.duration.message}
+              </p>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Release Year</label>
+            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+              Release Year
+            </label>
             <Input
               type="number"
               min="1900"
@@ -286,14 +312,18 @@ export function MovieForm({
               {...register("releaseYear")}
             />
             {errors.releaseYear && (
-              <p className="text-xs text-red-500 font-medium">{errors.releaseYear.message}</p>
+              <p className="text-xs text-red-500 font-medium">
+                {errors.releaseYear.message}
+              </p>
             )}
           </div>
         </div>
 
         {/* AGE RATING */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Age Rating</label>
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Age Rating
+          </label>
           <select
             className="flex h-10 w-full rounded-lg border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             {...register("ageRating", {
@@ -308,7 +338,9 @@ export function MovieForm({
             ))}
           </select>
           {errors.ageRating && (
-            <p className="text-xs text-red-500 font-medium">{errors.ageRating.message}</p>
+            <p className="text-xs text-red-500 font-medium">
+              {errors.ageRating.message}
+            </p>
           )}
         </div>
       </div>
@@ -320,15 +352,21 @@ export function MovieForm({
             <Sliders className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">Media Files</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Upload posters, banners, and high-definition movie files.</p>
+            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">
+              Media Files
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Upload posters, banners, and high-definition movie files.
+            </p>
           </div>
         </div>
 
         {/* UPLOADS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Poster Image</label>
+            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+              Poster Image
+            </label>
             <Dropzone
               type="image"
               previewUrl={posterUrl}
@@ -339,7 +377,9 @@ export function MovieForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Banner Image</label>
+            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+              Banner Image
+            </label>
             <Dropzone
               type="image"
               previewUrl={bannerUrl}
@@ -350,7 +390,9 @@ export function MovieForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Video File</label>
+            <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+              Video File
+            </label>
             <Dropzone
               type="video"
               previewUrl={videoUrl}
@@ -369,14 +411,20 @@ export function MovieForm({
             <Globe className="h-4.5 w-4.5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">Taxonomy & Metadata</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Specify release languages, genres, and searchable tags.</p>
+            <h3 className="text-sm font-semibold tracking-wide uppercase text-zinc-500">
+              Taxonomy & Metadata
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Specify release languages, genres, and searchable tags.
+            </p>
           </div>
         </div>
 
         {/* LANGUAGES */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Available Languages</label>
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Available Languages
+          </label>
           <div className="flex flex-wrap gap-2">
             {LANGUAGES.map((l) => {
               const active = languages.includes(l);
@@ -387,7 +435,7 @@ export function MovieForm({
                     "cursor-pointer select-none py-1.5 px-3 rounded-lg text-xs font-medium transition-all duration-150 border",
                     active
                       ? "bg-zinc-900 text-zinc-50 border-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-sm"
-                      : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-850 dark:text-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
+                      : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-850 dark:text-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200",
                   )}
                   variant="outline"
                   onClick={() => toggleLanguage(l)}
@@ -406,7 +454,9 @@ export function MovieForm({
 
         {/* GENRES */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Primary Genres</label>
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Primary Genres
+          </label>
           <div className="flex flex-wrap gap-2">
             {GENRES.map((g) => {
               const active = genres.includes(g);
@@ -417,7 +467,7 @@ export function MovieForm({
                     "cursor-pointer select-none py-1.5 px-3 rounded-lg text-xs font-medium transition-all duration-150 border",
                     active
                       ? "bg-zinc-900 text-zinc-50 border-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-sm"
-                      : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-850 dark:text-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
+                      : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-850 dark:text-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200",
                   )}
                   variant="outline"
                   onClick={() => toggleGenre(g)}
@@ -436,7 +486,9 @@ export function MovieForm({
 
         {/* TAGS */}
         <div className="space-y-3">
-          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">Searchable Tags</label>
+          <label className="text-xs font-semibold tracking-wide uppercase text-zinc-500">
+            Searchable Tags
+          </label>
           <div className="flex gap-2">
             <Input
               placeholder="e.g. Sci-Fi, Award Winner"
@@ -450,7 +502,12 @@ export function MovieForm({
                 }
               }}
             />
-            <Button type="button" variant="outline" className="h-10 rounded-lg" onClick={addTag}>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-10 rounded-lg"
+              onClick={addTag}
+            >
               Add Tag
             </Button>
           </div>

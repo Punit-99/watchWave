@@ -57,30 +57,54 @@ export default function SeriesTable() {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/30">
             <TableRow className="border-b border-zinc-200 dark:border-zinc-800">
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Title</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Genre</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Language</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Year</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Total Seasons</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6 text-right">Actions</TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Title
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Genre
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Language
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Year
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Total Seasons
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6 text-right">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {seriesList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-muted-foreground"
+                >
                   No series found
                 </TableCell>
               </TableRow>
             ) : (
               seriesList.map((item) => (
-                <TableRow key={item.id} className="hover:bg-zinc-50/40 dark:hover:bg-zinc-900/40 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors">
-                  <TableCell className="font-semibold text-zinc-900 dark:text-zinc-100 py-4 px-6">{item.title}</TableCell>
+                <TableRow
+                  key={item.id}
+                  className="hover:bg-zinc-50/40 dark:hover:bg-zinc-900/40 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors"
+                >
+                  <TableCell className="font-semibold text-zinc-900 dark:text-zinc-100 py-4 px-6">
+                    {item.title}
+                  </TableCell>
                   <TableCell className="py-4 px-6">
                     <div className="flex flex-wrap gap-1.5">
                       {item.genre.slice(0, 2).map((g) => (
-                        <Badge key={g} variant="outline" className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800">
+                        <Badge
+                          key={g}
+                          variant="outline"
+                          className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800"
+                        >
                           {g}
                         </Badge>
                       ))}
@@ -94,7 +118,11 @@ export default function SeriesTable() {
                   <TableCell className="py-4 px-6">
                     <div className="flex flex-wrap gap-1.5">
                       {item.language.slice(0, 2).map((l) => (
-                        <Badge key={l} variant="outline" className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800">
+                        <Badge
+                          key={l}
+                          variant="outline"
+                          className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800"
+                        >
                           {l}
                         </Badge>
                       ))}
@@ -105,24 +133,39 @@ export default function SeriesTable() {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 py-4 px-6">{item.releaseYear}</TableCell>
+                  <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 py-4 px-6">
+                    {item.releaseYear}
+                  </TableCell>
 
                   <TableCell className="py-4 px-6">
-                    <Badge variant="secondary" className="text-[10px] font-mono tracking-wide py-0.5 px-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] font-mono tracking-wide py-0.5 px-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                    >
                       {item.series?.totalSeasons ?? 0} Seasons
                     </Badge>
                   </TableCell>
 
                   <TableCell className="py-4 px-6">
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs" asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-lg text-xs"
+                        asChild
+                      >
                         <Link href={`/details/${item.id}`}>
                           <Eye className="h-3.5 w-3.5 mr-1" />
                           <span>View</span>
                         </Link>
                       </Button>
 
-                      <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs" asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-lg text-xs"
+                        asChild
+                      >
                         <Link href={`/admin/series/edit/${item.id}`}>
                           <Pencil className="h-3.5 w-3.5 mr-1" />
                           <span>Edit</span>

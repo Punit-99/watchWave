@@ -29,8 +29,14 @@ export type HeroCarouselItem = {
 };
 
 export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
-  const { data: moviesData, isLoading: moviesLoading } = useGetAllMovies(1, limit);
-  const { data: seriesData, isLoading: seriesLoading } = useGetAllSeries(1, limit);
+  const { data: moviesData, isLoading: moviesLoading } = useGetAllMovies(
+    1,
+    limit,
+  );
+  const { data: seriesData, isLoading: seriesLoading } = useGetAllSeries(
+    1,
+    limit,
+  );
 
   const movieItems = (moviesData?.data || []).map((m) => ({
     id: m.id,
@@ -52,7 +58,10 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
 
   // Combine and sort by createdAt desc
   const combinedSlides = [...movieItems, ...seriesItems]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .slice(0, limit);
 
   const slides = items.length > 0 ? items.slice(0, limit) : combinedSlides;
@@ -101,10 +110,16 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
               {/* Badges on Top-Left */}
               {item.type && (
                 <div className="absolute left-8 top-8 z-10 flex gap-2 md:left-14 md:top-14">
-                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+                  <Badge
+                    variant="outline"
+                    className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded"
+                  >
                     W ORIGINAL
                   </Badge>
-                  <Badge variant="secondary" className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+                  <Badge
+                    variant="secondary"
+                    className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded"
+                  >
                     {item.type === "MOVIE" ? "MOVIE" : "TV SHOW"}
                   </Badge>
                 </div>
@@ -123,7 +138,12 @@ export function HeroCarousel({ items = [], limit = 5 }: HeroCarouselProps) {
                 )}
 
                 <div className="mt-6">
-                  <Button variant="secondary" size="lg" asChild className="cursor-pointer">
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    asChild
+                    className="cursor-pointer"
+                  >
                     <Link href={`/details/${item.id}`}>Details</Link>
                   </Button>
                 </div>

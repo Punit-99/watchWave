@@ -96,11 +96,17 @@ export default function AuthPage() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="login" className="mt-6 focus-visible:outline-none">
+            <TabsContent
+              value="login"
+              className="mt-6 focus-visible:outline-none"
+            >
               <LoginForm />
             </TabsContent>
 
-            <TabsContent value="register" className="mt-6 focus-visible:outline-none">
+            <TabsContent
+              value="register"
+              className="mt-6 focus-visible:outline-none"
+            >
               <RegisterForm />
             </TabsContent>
           </Tabs>

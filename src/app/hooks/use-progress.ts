@@ -1,5 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProgress, saveProgress, deleteProgress } from "@/lib/api/progress.api";
+import {
+  getProgress,
+  saveProgress,
+  deleteProgress,
+} from "@/lib/api/progress.api";
 
 export function useGetProgress() {
   return useQuery({

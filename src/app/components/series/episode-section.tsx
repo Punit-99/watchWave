@@ -113,7 +113,9 @@ export function EpisodeSection({
     <div className="space-y-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-background p-5 shadow-sm">
       <div className="flex items-center justify-between border-b pb-3 border-zinc-100 dark:border-zinc-900">
         <div className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100">
-          <span className="text-xs font-mono bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 rounded text-muted-foreground font-semibold">EP {episodeIndex + 1}</span>
+          <span className="text-xs font-mono bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 rounded text-muted-foreground font-semibold">
+            EP {episodeIndex + 1}
+          </span>
         </div>
         <Button
           type="button"
@@ -138,41 +140,55 @@ export function EpisodeSection({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Title */}
         <div className="md:col-span-2 space-y-1.5">
-          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">Episode Title</label>
+          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">
+            Episode Title
+          </label>
           <Input
             placeholder="e.g. Chapter One: The Vanishing of Will Byers"
             className="rounded-lg h-9"
-            {...register(`seasons.${seasonIndex}.episodes.${episodeIndex}.title`)}
+            {...register(
+              `seasons.${seasonIndex}.episodes.${episodeIndex}.title`,
+            )}
           />
         </div>
 
         {/* Duration */}
         <div className="space-y-1.5">
-          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">Duration (mins)</label>
+          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">
+            Duration (mins)
+          </label>
           <Input
             type="number"
             min="1"
             placeholder="e.g. 50"
             className="rounded-lg h-9"
-            {...register(`seasons.${seasonIndex}.episodes.${episodeIndex}.duration`)}
+            {...register(
+              `seasons.${seasonIndex}.episodes.${episodeIndex}.duration`,
+            )}
           />
         </div>
       </div>
 
       {/* Description */}
       <div className="space-y-1.5">
-        <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">Description</label>
+        <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">
+          Description
+        </label>
         <Input
           placeholder="Enter a brief summary of the episode"
           className="rounded-lg h-9"
-          {...register(`seasons.${seasonIndex}.episodes.${episodeIndex}.description`)}
+          {...register(
+            `seasons.${seasonIndex}.episodes.${episodeIndex}.description`,
+          )}
         />
       </div>
 
       {/* Media uploads grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
         <div className="space-y-2">
-          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">Episode Thumbnail</label>
+          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">
+            Episode Thumbnail
+          </label>
           <Dropzone
             type="image"
             previewUrl={thumbnailUrl}
@@ -183,7 +199,9 @@ export function EpisodeSection({
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">Episode Video File</label>
+          <label className="text-[10px] font-bold tracking-wide uppercase text-zinc-500">
+            Episode Video File
+          </label>
           <Dropzone
             type="video"
             previewUrl={videoUrl}

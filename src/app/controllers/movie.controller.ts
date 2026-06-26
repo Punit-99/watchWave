@@ -112,7 +112,9 @@ export async function deleteMovieController(
         deletePromises.push(deleteFromCloudinary(movie.bannerUrl, "image"));
       }
       if (movie.movie.videoUrl) {
-        deletePromises.push(deleteFromCloudinary(movie.movie.videoUrl, "video"));
+        deletePromises.push(
+          deleteFromCloudinary(movie.movie.videoUrl, "video"),
+        );
       }
       await Promise.allSettled(deletePromises);
     } catch (cloudinaryError) {
@@ -228,14 +230,18 @@ export async function updateMovieController(
         existingMovie.posterUrl &&
         existingMovie.posterUrl !== data.posterUrl
       ) {
-        deletePromises.push(deleteFromCloudinary(existingMovie.posterUrl, "image"));
+        deletePromises.push(
+          deleteFromCloudinary(existingMovie.posterUrl, "image"),
+        );
       }
       if (
         data.bannerUrl !== undefined &&
         existingMovie.bannerUrl &&
         existingMovie.bannerUrl !== data.bannerUrl
       ) {
-        deletePromises.push(deleteFromCloudinary(existingMovie.bannerUrl, "image"));
+        deletePromises.push(
+          deleteFromCloudinary(existingMovie.bannerUrl, "image"),
+        );
       }
       if (
         data.videoUrl !== undefined &&
@@ -248,7 +254,10 @@ export async function updateMovieController(
       }
       await Promise.allSettled(deletePromises);
     } catch (cloudinaryError) {
-      console.error("Cloudinary cleanup error during movie update:", cloudinaryError);
+      console.error(
+        "Cloudinary cleanup error during movie update:",
+        cloudinaryError,
+      );
     }
 
     return Response.json(

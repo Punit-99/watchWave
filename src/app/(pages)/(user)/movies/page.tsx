@@ -27,7 +27,9 @@ export default function MoviePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground">Movies</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        Movies
+      </h1>
 
       {movies.length === 0 ? (
         <p className="text-muted-foreground text-sm">No movies found.</p>

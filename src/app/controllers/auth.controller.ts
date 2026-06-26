@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-import { generateAccessToken, generateRefreshToken, verifyAccessToken } from "@/lib/jwt";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+} from "@/lib/jwt";
 
 import {
   loginSchema,
@@ -271,4 +275,3 @@ export async function updateProfileController(req: Request) {
     );
   }
 }
-

@@ -46,7 +46,7 @@ export default function MovieTable() {
   }
 
   const movies = data?.data ?? [];
- 
+
   const pagination = data?.pagination;
 
   const totalPages = pagination?.totalPages ?? 1;
@@ -58,30 +58,54 @@ export default function MovieTable() {
         <Table>
           <TableHeader className="bg-zinc-50/50 dark:bg-zinc-900/30">
             <TableRow className="border-b border-zinc-200 dark:border-zinc-800">
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Title</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Genre</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Language</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Age Rating</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">Release Year</TableHead>
-              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6 text-right">Actions</TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Title
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Genre
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Language
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Age Rating
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6">
+                Release Year
+              </TableHead>
+              <TableHead className="font-semibold text-xs tracking-wider uppercase text-zinc-500 dark:text-zinc-400 py-3 px-6 text-right">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {movies.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-muted-foreground"
+                >
                   No movies found
                 </TableCell>
               </TableRow>
             ) : (
               movies.map((movie) => (
-                <TableRow key={movie.id} className="hover:bg-zinc-50/40 dark:hover:bg-zinc-900/40 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors">
-                  <TableCell className="font-semibold text-zinc-900 dark:text-zinc-100 py-4 px-6">{movie.title}</TableCell>
+                <TableRow
+                  key={movie.id}
+                  className="hover:bg-zinc-50/40 dark:hover:bg-zinc-900/40 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors"
+                >
+                  <TableCell className="font-semibold text-zinc-900 dark:text-zinc-100 py-4 px-6">
+                    {movie.title}
+                  </TableCell>
                   <TableCell className="py-4 px-6">
                     <div className="flex flex-wrap gap-1.5">
                       {movie.genre.slice(0, 2).map((g) => (
-                        <Badge key={g} variant="outline" className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800">
+                        <Badge
+                          key={g}
+                          variant="outline"
+                          className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800"
+                        >
                           {g}
                         </Badge>
                       ))}
@@ -95,7 +119,11 @@ export default function MovieTable() {
                   <TableCell className="py-4 px-6">
                     <div className="flex flex-wrap gap-1.5">
                       {movie.language.slice(0, 2).map((l) => (
-                        <Badge key={l} variant="outline" className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800">
+                        <Badge
+                          key={l}
+                          variant="outline"
+                          className="text-[10px] font-medium tracking-wide py-0 px-2 border-zinc-200 dark:border-zinc-800"
+                        >
                           {l}
                         </Badge>
                       ))}
@@ -108,25 +136,40 @@ export default function MovieTable() {
                   </TableCell>
                   <TableCell className="py-4 px-6">
                     {movie.ageRating ? (
-                      <Badge variant="secondary" className="text-[10px] font-mono tracking-wide py-0.5 px-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] font-mono tracking-wide py-0.5 px-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
+                      >
                         {movie.ageRating}
                       </Badge>
                     ) : (
                       <span className="text-xs text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 py-4 px-6">{movie.releaseYear}</TableCell>
+                  <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 py-4 px-6">
+                    {movie.releaseYear}
+                  </TableCell>
 
                   <TableCell className="py-4 px-6">
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs" asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-lg text-xs"
+                        asChild
+                      >
                         <Link href={`/details/${movie.id}`}>
                           <Eye className="h-3.5 w-3.5 mr-1" />
                           <span>View</span>
                         </Link>
                       </Button>
 
-                      <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs" asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-lg text-xs"
+                        asChild
+                      >
                         <Link href={`/admin/movies/edit/${movie.id}`}>
                           <Pencil className="h-3.5 w-3.5 mr-1" />
                           <span>Edit</span>

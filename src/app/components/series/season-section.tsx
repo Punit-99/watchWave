@@ -69,7 +69,9 @@ export function SeasonSection({
 
       <input
         type="hidden"
-        {...register(`seasons.${seasonIndex}.seasonNumber`, { valueAsNumber: true })}
+        {...register(`seasons.${seasonIndex}.seasonNumber`, {
+          valueAsNumber: true,
+        })}
       />
 
       <div className="space-y-6">

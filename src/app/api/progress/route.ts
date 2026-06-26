@@ -40,7 +40,7 @@ export async function GET() {
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to fetch progress" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (!userId) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -61,12 +61,14 @@ export async function POST(req: Request) {
     if (!contentId || watchedTime === undefined || duration === undefined) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // If remaining time is less than or equal to 30 seconds, or 95% complete, remove it
-    const isCompleted = duration - watchedTime <= 30 || (duration > 0 && watchedTime / duration > 0.95);
+    const isCompleted =
+      duration - watchedTime <= 30 ||
+      (duration > 0 && watchedTime / duration > 0.95);
 
     if (isCompleted) {
       // Delete watch progress if it exists
@@ -119,7 +121,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to save progress" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -130,7 +132,7 @@ export async function DELETE(req: Request) {
     if (!userId) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -140,7 +142,7 @@ export async function DELETE(req: Request) {
     if (!contentId) {
       return NextResponse.json(
         { success: false, message: "Missing contentId" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -160,7 +162,7 @@ export async function DELETE(req: Request) {
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || "Failed to delete progress" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

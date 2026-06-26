@@ -26,7 +26,15 @@ const trimText = (text?: string, maxLength: number = 80) => {
   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 };
 
-export function MediaCard({ id, title, image, type, description, progress, onRemoveProgress }: MediaCardProps) {
+export function MediaCard({
+  id,
+  title,
+  image,
+  type,
+  description,
+  progress,
+  onRemoveProgress,
+}: MediaCardProps) {
   const href = `/details/${id}`;
 
   return (

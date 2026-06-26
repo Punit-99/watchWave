@@ -6,7 +6,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    
+
     if (!id) {
       return Response.json(
         { success: false, message: "Invalid ID" },
@@ -40,10 +40,7 @@ export async function GET(
       );
     }
 
-    return Response.json(
-      { success: true, data: content },
-      { status: 200 },
-    );
+    return Response.json({ success: true, data: content }, { status: 200 });
   } catch (error: any) {
     return Response.json(
       { success: false, message: error.message || "Failed to fetch content" },

@@ -101,14 +101,35 @@ export function VideoPlayer({
     return () => {
       clearInterval(saveInterval);
     };
-  }, [contentId, contentType, isPlaying, title, image, description, episodeId, episodeNumber, seasonNumber, episodeTitle]);
+  }, [
+    contentId,
+    contentType,
+    isPlaying,
+    title,
+    image,
+    description,
+    episodeId,
+    episodeNumber,
+    seasonNumber,
+    episodeTitle,
+  ]);
 
   // Save progress on unmount
   useEffect(() => {
     return () => {
       saveCurrentProgress();
     };
-  }, [contentId, contentType, title, image, description, episodeId, episodeNumber, seasonNumber, episodeTitle]);
+  }, [
+    contentId,
+    contentType,
+    title,
+    image,
+    description,
+    episodeId,
+    episodeNumber,
+    seasonNumber,
+    episodeTitle,
+  ]);
 
   // Auto-hide controls timer
   useEffect(() => {
@@ -146,7 +167,6 @@ export function VideoPlayer({
     }
   }, [isPlaying]);
 
-
   const togglePlay = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -155,18 +175,24 @@ export function VideoPlayer({
       video.pause();
       setIsPlaying(false);
     } else {
-      video.play().then(() => {
-        setIsPlaying(true);
-      }).catch((err) => {
-        console.error("Playback failed: ", err);
-      });
+      video
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.error("Playback failed: ", err);
+        });
     }
   };
 
   const skip = (seconds: number) => {
     const video = videoRef.current;
     if (!video) return;
-    video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + seconds));
+    video.currentTime = Math.max(
+      0,
+      Math.min(video.duration, video.currentTime + seconds),
+    );
   };
 
   const handleTimeUpdate = () => {
@@ -238,11 +264,14 @@ export function VideoPlayer({
     if (!container) return;
 
     if (!document.fullscreenElement) {
-      container.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-      }).catch((err) => {
-        console.error("Fullscreen failed: ", err);
-      });
+      container
+        .requestFullscreen()
+        .then(() => {
+          setIsFullscreen(true);
+        })
+        .catch((err) => {
+          console.error("Fullscreen failed: ", err);
+        });
     } else {
       document.exitFullscreen().then(() => {
         setIsFullscreen(false);
@@ -294,7 +323,6 @@ export function VideoPlayer({
     if (volume < 0.5) return <Volume1 className="h-5 w-5" />;
     return <Volume2 className="h-5 w-5" />;
   };
-
 
   // Handle Keyboard Shortcuts
   useEffect(() => {
@@ -382,8 +410,9 @@ export function VideoPlayer({
 
       {/* Control Overlays */}
       <div
-        className={`absolute inset-0 z-10 flex flex-col justify-between bg-gradient-to-t from-black/80 via-black/10 to-black/60 p-4 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+        className={`absolute inset-0 z-10 flex flex-col justify-between bg-gradient-to-t from-black/80 via-black/10 to-black/60 p-4 transition-opacity duration-300 ${
+          showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
         {/* Top Header */}
         <div className="flex items-center justify-between">
@@ -434,8 +463,9 @@ export function VideoPlayer({
               onChange={handleSeek}
               className="w-full h-1.5 rounded-lg bg-zinc-700/50 appearance-none cursor-pointer accent-primary focus:outline-none transition-all hover:h-2"
               style={{
-                background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${(currentTime / (duration || 1)) * 100
-                  }%, rgba(82, 82, 91, 0.4) ${(currentTime / (duration || 1)) * 100}%, rgba(82, 82, 91, 0.4) 100%)`,
+                background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${
+                  (currentTime / (duration || 1)) * 100
+                }%, rgba(82, 82, 91, 0.4) ${(currentTime / (duration || 1)) * 100}%, rgba(82, 82, 91, 0.4) 100%)`,
               }}
             />
             <span className="text-xs font-medium text-zinc-300 select-none">
@@ -453,7 +483,11 @@ export function VideoPlayer({
                 onClick={togglePlay}
                 className="text-white hover:text-primary hover:bg-white/10 rounded-full"
               >
-                {isPlaying ? <Pause className="h-5 w-5 fill-current" /> : <Play className="h-5 w-5 fill-current" />}
+                {isPlaying ? (
+                  <Pause className="h-5 w-5 fill-current" />
+                ) : (
+                  <Play className="h-5 w-5 fill-current" />
+                )}
               </Button>
 
               <Button
@@ -495,8 +529,9 @@ export function VideoPlayer({
                   onChange={handleVolumeChange}
                   className="w-0 overflow-hidden group-hover/volume:w-20 transition-all duration-300 h-1 rounded bg-zinc-700 appearance-none cursor-pointer accent-primary"
                   style={{
-                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${(isMuted ? 0 : volume) * 100
-                      }%, rgba(82, 82, 91, 0.4) ${(isMuted ? 0 : volume) * 100}%, rgba(82, 82, 91, 0.4) 100%)`,
+                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${
+                      (isMuted ? 0 : volume) * 100
+                    }%, rgba(82, 82, 91, 0.4) ${(isMuted ? 0 : volume) * 100}%, rgba(82, 82, 91, 0.4) 100%)`,
                   }}
                 />
               </div>
@@ -537,8 +572,11 @@ export function VideoPlayer({
                             handleSpeedChange(speed);
                             setShowSpeedMenu(false);
                           }}
-                          className={`w-full text-left text-xs px-3 py-1.5 rounded-md hover:bg-white/10 transition cursor-pointer ${playbackSpeed === speed ? "text-primary font-bold" : "text-zinc-300"
-                            }`}
+                          className={`w-full text-left text-xs px-3 py-1.5 rounded-md hover:bg-white/10 transition cursor-pointer ${
+                            playbackSpeed === speed
+                              ? "text-primary font-bold"
+                              : "text-zinc-300"
+                          }`}
                         >
                           {speed === 1 ? "Normal" : `${speed}x`}
                         </button>
@@ -565,7 +603,11 @@ export function VideoPlayer({
                 className="text-white hover:text-primary hover:bg-white/10 rounded-full"
                 title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
               >
-                {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                {isFullscreen ? (
+                  <Minimize className="h-5 w-5" />
+                ) : (
+                  <Maximize className="h-5 w-5" />
+                )}
               </Button>
             </div>
           </div>

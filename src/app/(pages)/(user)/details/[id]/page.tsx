@@ -27,16 +27,24 @@ export default function ContentDetailPage() {
   const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(null);
 
   const playNextEpisode = () => {
-    if (!data?.success || data?.data?.type !== "SERIES" || !activeEpisodeId) return;
+    if (!data?.success || data?.data?.type !== "SERIES" || !activeEpisodeId)
+      return;
     const seasons = data.data.series?.seasons ?? [];
     const flatEpisodes = seasons.flatMap((s: any) =>
-      (s.episodes ?? []).map((ep: any) => ({ ...ep, seasonNumber: s.seasonNumber }))
+      (s.episodes ?? []).map((ep: any) => ({
+        ...ep,
+        seasonNumber: s.seasonNumber,
+      })),
     );
-    const currentIndex = flatEpisodes.findIndex((ep: any) => ep.id === activeEpisodeId);
+    const currentIndex = flatEpisodes.findIndex(
+      (ep: any) => ep.id === activeEpisodeId,
+    );
     if (currentIndex !== -1 && currentIndex + 1 < flatEpisodes.length) {
       const nextEp = flatEpisodes[currentIndex + 1];
       setActiveVideoUrl(nextEp.videoUrl || "");
-      setActiveVideoTitle(`${data.data.title} - S${nextEp.seasonNumber} E${nextEp.episodeNumber}: ${nextEp.title}`);
+      setActiveVideoTitle(
+        `${data.data.title} - S${nextEp.seasonNumber} E${nextEp.episodeNumber}: ${nextEp.title}`,
+      );
       setActiveEpisodeId(nextEp.id);
     } else {
       setActiveVideoUrl(null);
@@ -63,7 +71,9 @@ export default function ContentDetailPage() {
 
   const media = data.data;
   const progressList = progressData?.data || [];
-  const contentProgress = progressList.find((p: any) => p.contentId === media.id);
+  const contentProgress = progressList.find(
+    (p: any) => p.contentId === media.id,
+  );
 
   if (media.type === "MOVIE") {
     return (
@@ -83,10 +93,16 @@ export default function ContentDetailPage() {
 
           {/* Badges on Top-Left */}
           <div className="absolute left-6 top-6 z-10 flex gap-2 md:left-12 md:top-12">
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded animate-fade-in">
+            <Badge
+              variant="outline"
+              className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded animate-fade-in"
+            >
               W ORIGINAL
             </Badge>
-            <Badge variant="secondary" className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+            <Badge
+              variant="secondary"
+              className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded"
+            >
               MOVIE
             </Badge>
           </div>
@@ -115,7 +131,11 @@ export default function ContentDetailPage() {
 
                 <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
                   {media.genre?.map((genre: string) => (
-                    <Badge key={genre} variant="secondary" className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs">
+                    <Badge
+                      key={genre}
+                      variant="secondary"
+                      className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs"
+                    >
                       {genre}
                     </Badge>
                   ))}
@@ -147,9 +167,7 @@ export default function ContentDetailPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <CardContent className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">
-                  About this title
-                </h2>
+                <h2 className="mb-4 text-xl font-semibold">About this title</h2>
                 <p className="leading-8 text-muted-foreground">
                   {media.description}
                 </p>
@@ -161,7 +179,10 @@ export default function ContentDetailPage() {
                 <MetaItem label="Release Year" value={media.releaseYear} />
                 <MetaItem label="Type" value="Movie" />
                 <MetaItem label="Age Rating" value={media.ageRating} />
-                <MetaItem label="Duration" value={`${media.movie?.duration} minutes`} />
+                <MetaItem
+                  label="Duration"
+                  value={`${media.movie?.duration} minutes`}
+                />
 
                 <div>
                   <p className="mb-2 text-xs text-muted-foreground">
@@ -255,10 +276,16 @@ export default function ContentDetailPage() {
 
         {/* Badges on Top-Left */}
         <div className="absolute left-6 top-6 z-10 flex gap-2 md:left-12 md:top-12">
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded animate-fade-in">
+          <Badge
+            variant="outline"
+            className="bg-primary/10 text-primary border-primary/25 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded animate-fade-in"
+          >
             W ORIGINAL
           </Badge>
-          <Badge variant="secondary" className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded">
+          <Badge
+            variant="secondary"
+            className="bg-zinc-800/80 text-zinc-100 border border-zinc-700/50 hover:bg-zinc-800/80 font-bold text-[10px] py-0.5 px-2 tracking-wider rounded"
+          >
             TV SHOW
           </Badge>
         </div>
@@ -287,7 +314,11 @@ export default function ContentDetailPage() {
 
               <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
                 {media.genre?.map((genre: string) => (
-                  <Badge key={genre} variant="secondary" className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs">
+                  <Badge
+                    key={genre}
+                    variant="secondary"
+                    className="bg-white/15 hover:bg-white/20 text-white backdrop-blur-sm border-none text-[10px] md:text-xs"
+                  >
                     {genre}
                   </Badge>
                 ))}
@@ -307,9 +338,7 @@ export default function ContentDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardContent className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">
-                  About this title
-                </h2>
+                <h2 className="mb-4 text-xl font-semibold">About this title</h2>
                 <p className="leading-8 text-muted-foreground">
                   {media.description}
                 </p>
@@ -319,7 +348,9 @@ export default function ContentDetailPage() {
             {/* SEASONS & EPISODES */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">Seasons & Episodes</h2>
+                <h2 className="mb-4 text-xl font-semibold">
+                  Seasons & Episodes
+                </h2>
                 {seasons.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No seasons available
@@ -343,7 +374,9 @@ export default function ContentDetailPage() {
                                 key={ep.id}
                                 onClick={() => {
                                   setActiveVideoUrl(ep.videoUrl || "");
-                                  setActiveVideoTitle(`${media.title} - S${season.seasonNumber} E${ep.episodeNumber}: ${ep.title}`);
+                                  setActiveVideoTitle(
+                                    `${media.title} - S${season.seasonNumber} E${ep.episodeNumber}: ${ep.title}`,
+                                  );
                                   setActiveEpisodeId(ep.id);
                                 }}
                                 className="group flex gap-4 rounded-lg border p-3 hover:bg-muted/40 transition cursor-pointer"
@@ -474,7 +507,7 @@ export default function ContentDetailPage() {
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
-                    }))
+                    })),
                   )
                   .find((e: any) => e.id === activeEpisodeId)?.episodeNumber
               }
@@ -486,7 +519,7 @@ export default function ContentDetailPage() {
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
-                    }))
+                    })),
                   )
                   .find((e: any) => e.id === activeEpisodeId)?.seasonNumber
               }
@@ -498,13 +531,13 @@ export default function ContentDetailPage() {
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
-                    }))
+                    })),
                   )
                   .find((e: any) => e.id === activeEpisodeId)?.title
               }
               startTime={
                 contentProgress?.episodeId === activeEpisodeId
-                  ? contentProgress?.watchedTime ?? 0
+                  ? (contentProgress?.watchedTime ?? 0)
                   : 0
               }
               onEnded={playNextEpisode}
