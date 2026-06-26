@@ -5,6 +5,7 @@ import {
   updateMovieSchema,
 } from "../validation/movie.validation";
 import { ZodError } from "zod";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 // create
 export async function createMovieController(req: Request) {
@@ -100,6 +101,23 @@ export async function deleteMovieController(
         id: params.id,
       },
     });
+
+    // Clean up assets in Cloudinary
+    try {
+      const deletePromises = [];
+      if (movie.posterUrl) {
+        deletePromises.push(deleteFromCloudinary(movie.posterUrl, "image"));
+      }
+      if (movie.bannerUrl) {
+        deletePromises.push(deleteFromCloudinary(movie.bannerUrl, "image"));
+      }
+      if (movie.movie.videoUrl) {
+        deletePromises.push(deleteFromCloudinary(movie.movie.videoUrl, "video"));
+      }
+      await Promise.allSettled(deletePromises);
+    } catch (cloudinaryError) {
+      console.error("Cloudinary cleanup error:", cloudinaryError);
+    }
 
     return Response.json(
       {
@@ -201,6 +219,37 @@ export async function updateMovieController(
         movie: true,
       },
     });
+
+    // Clean up replaced files in Cloudinary
+    try {
+      const deletePromises = [];
+      if (
+        data.posterUrl !== undefined &&
+        existingMovie.posterUrl &&
+        existingMovie.posterUrl !== data.posterUrl
+      ) {
+        deletePromises.push(deleteFromCloudinary(existingMovie.posterUrl, "image"));
+      }
+      if (
+        data.bannerUrl !== undefined &&
+        existingMovie.bannerUrl &&
+        existingMovie.bannerUrl !== data.bannerUrl
+      ) {
+        deletePromises.push(deleteFromCloudinary(existingMovie.bannerUrl, "image"));
+      }
+      if (
+        data.videoUrl !== undefined &&
+        existingMovie.movie.videoUrl &&
+        existingMovie.movie.videoUrl !== data.videoUrl
+      ) {
+        deletePromises.push(
+          deleteFromCloudinary(existingMovie.movie.videoUrl, "video"),
+        );
+      }
+      await Promise.allSettled(deletePromises);
+    } catch (cloudinaryError) {
+      console.error("Cloudinary cleanup error during movie update:", cloudinaryError);
+    }
 
     return Response.json(
       {

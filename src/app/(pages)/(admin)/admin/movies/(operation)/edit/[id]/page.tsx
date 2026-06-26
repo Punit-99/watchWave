@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 import { useGetMovieById, useUpdateMovie } from "@/hooks/use-movie";
 import { MovieForm } from "@/components/movies/MovieForm";
@@ -15,7 +16,11 @@ export default function EditMoviePage() {
   const { mutate, isPending } = useUpdateMovie();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!data?.data) {

@@ -64,7 +64,10 @@ export default function AdminLayout({
               <SidebarGroupContent>
                 <SidebarMenu className="mt-3 space-y-1">
                   {menuItems.map((item) => {
-                    const active = pathname === item.href;
+                    const active =
+                      item.href === "/admin/dashboard"
+                        ? pathname === item.href
+                        : pathname.startsWith(item.href);
                     const Icon = item.icon;
 
                     return (

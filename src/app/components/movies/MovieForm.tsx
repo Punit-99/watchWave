@@ -101,6 +101,25 @@ export function MovieForm({
   const bannerUrl = watch("bannerUrl");
   const videoUrl = watch("videoUrl");
 
+  const title = watch("title");
+  const description = watch("description");
+  const duration = watch("duration");
+  const releaseYear = watch("releaseYear");
+  const ageRating = watch("ageRating");
+
+  const isFormValid =
+    (title?.trim() ?? "").length > 0 &&
+    (description?.trim() ?? "").length > 0 &&
+    Number(duration) > 0 &&
+    Number(releaseYear) >= 1900 &&
+    Number(releaseYear) <= new Date().getFullYear() &&
+    (posterUrl?.trim() ?? "").length > 0 &&
+    (bannerUrl?.trim() ?? "").length > 0 &&
+    (videoUrl?.trim() ?? "").length > 0 &&
+    !!ageRating &&
+    languages.length > 0 &&
+    genres.length > 0;
+
   const GENRES = Object.values(Genre);
   const LANGUAGES = Object.values(Language);
   const AGE_RATINGS = Object.values(AgeRating);
@@ -390,7 +409,17 @@ export function MovieForm({
       </div>
 
       {/* SUBMIT */}
-      <Button type="submit" className="w-full md:w-auto" disabled={isPending}>
+      <Button
+        type="submit"
+        className="w-full md:w-auto"
+        disabled={
+          isPending ||
+          uploading.poster ||
+          uploading.banner ||
+          uploading.video ||
+          !isFormValid
+        }
+      >
         {mode === "create" ? "Create Movie" : "Update Movie"}
       </Button>
     </form>

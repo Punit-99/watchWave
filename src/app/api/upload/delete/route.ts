@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import cloudinary from "@/lib/cloudinary";
+import cloudinary, { extractPublicId } from "@/lib/cloudinary";
 
 export async function DELETE(req: Request) {
   try {
@@ -13,13 +13,25 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const result = await cloudinary.uploader.destroy(publicId, {
-      resource_type: "image", // default safe
+    const actualPublicId = extractPublicId(publicId) || publicId;
+
+    // Deduce resource type (image or video) from URL or extension
+    const isVideo =
+      publicId.includes("/video/") ||
+      publicId.endsWith(".mp4") ||
+      publicId.endsWith(".mkv") ||
+      publicId.endsWith(".webm") ||
+      publicId.endsWith(".mov");
+
+    const resourceType = isVideo ? "video" : "image";
+
+    const result = await cloudinary.uploader.destroy(actualPublicId, {
+      resource_type: resourceType,
     });
 
     return NextResponse.json({
       success: true,
-      result,               
+      result,
     });
   } catch (error) {
     return NextResponse.json(

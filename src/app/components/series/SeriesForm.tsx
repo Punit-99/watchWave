@@ -1,20 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Genre, Language, AgeRating } from "../../../../generated/prisma/enums";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dropzone } from "@/components/common/dropzone";
-
 import { SeasonSection } from "./season-section";
-
 import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
-
 import {
   createSeriesSchema,
   updateSeriesSchema,
@@ -23,7 +18,6 @@ import {
 } from "@/validation/series.validation";
 
 type SeriesFormData = CreateSeriesInput | UpdateSeriesInput;
-
 type SeriesFormProps = {
   mode: "create" | "edit";
   initialData?: Partial<CreateSeriesInput>;
@@ -91,6 +85,38 @@ export function SeriesForm({
 
   const posterUrl = watch("posterUrl");
   const bannerUrl = watch("bannerUrl");
+
+  const title = watch("title");
+  const description = watch("description");
+  const releaseYear = watch("releaseYear");
+  const ageRating = watch("ageRating");
+
+  const areSeasonsValid =
+    seasons.length > 0 &&
+    seasons.every(
+      (season) =>
+        season.episodes &&
+        season.episodes.length > 0 &&
+        season.episodes.every(
+          (episode) =>
+            (episode.title?.trim() ?? "").length > 0 &&
+            Number(episode.duration) > 0 &&
+            (episode.videoUrl?.trim() ?? "").length > 0 &&
+            (episode.thumbnailUrl?.trim() ?? "").length > 0,
+        ),
+    );
+
+  const isFormValid =
+    (title?.trim() ?? "").length > 0 &&
+    (description?.trim() ?? "").length > 0 &&
+    Number(releaseYear) >= 1900 &&
+    Number(releaseYear) <= new Date().getFullYear() &&
+    (posterUrl?.trim() ?? "").length > 0 &&
+    (bannerUrl?.trim() ?? "").length > 0 &&
+    !!ageRating &&
+    languages.length > 0 &&
+    genres.length > 0 &&
+    areSeasonsValid;
 
   // ======================
   // UPLOADS
@@ -374,7 +400,13 @@ export function SeriesForm({
       </div>
 
       {/* SUBMIT */}
-      <Button type="submit" disabled={isPending} className="w-full">
+      <Button
+        type="submit"
+        disabled={
+          isPending || uploading.poster || uploading.banner || !isFormValid
+        }
+        className="w-full"
+      >
         {mode === "create" ? "Create Series" : "Update Series"}
       </Button>
     </form>

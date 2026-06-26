@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 import { useGetSeriesById, useUpdateSeries } from "@/hooks/use-series";
 import { SeriesForm } from "@/components/series/SeriesForm";
@@ -15,7 +16,11 @@ export default function SeriesEditPage() {
   const { mutate, isPending } = useUpdateSeries();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!data?.data) {

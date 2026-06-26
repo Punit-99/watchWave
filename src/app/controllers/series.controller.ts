@@ -5,6 +5,7 @@ import {
 } from "../validation/series.validation";
 
 import { ZodError } from "zod";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 // Create
 export async function createSeriesController(req: Request) {
   try {
@@ -105,7 +106,17 @@ export async function deleteSeriesController(
   try {
     const series = await prisma.content.findUnique({
       where: { id: params.id },
-      include: { series: true },
+      include: {
+        series: {
+          include: {
+            seasons: {
+              include: {
+                episodes: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!series || !series.series) {
@@ -121,6 +132,40 @@ export async function deleteSeriesController(
     await prisma.content.delete({
       where: { id: params.id },
     });
+
+    // Clean up assets in Cloudinary
+    try {
+      const deletePromises = [];
+      if (series.posterUrl) {
+        deletePromises.push(deleteFromCloudinary(series.posterUrl, "image"));
+      }
+      if (series.bannerUrl) {
+        deletePromises.push(deleteFromCloudinary(series.bannerUrl, "image"));
+      }
+
+      if (series.series.seasons) {
+        for (const season of series.series.seasons) {
+          if (season.episodes) {
+            for (const episode of season.episodes) {
+              if (episode.thumbnailUrl) {
+                deletePromises.push(
+                  deleteFromCloudinary(episode.thumbnailUrl, "image"),
+                );
+              }
+              if (episode.videoUrl) {
+                deletePromises.push(
+                  deleteFromCloudinary(episode.videoUrl, "video"),
+                );
+              }
+            }
+          }
+        }
+      }
+
+      await Promise.allSettled(deletePromises);
+    } catch (cloudinaryError) {
+      console.error("Cloudinary cleanup error:", cloudinaryError);
+    }
 
     return Response.json(
       {
@@ -152,7 +197,17 @@ export async function updateSeriesController(
 
     const content = await prisma.content.findUnique({
       where: { id: params.id },
-      include: { series: true },
+      include: {
+        series: {
+          include: {
+            seasons: {
+              include: {
+                episodes: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!content || !content.series) {
@@ -167,7 +222,7 @@ export async function updateSeriesController(
     // =========================
     // UPDATE CONTENT (PATCH SAFE)
     // =========================
-    const updatedContent = await prisma.content.update({
+    await prisma.content.update({
       where: { id: params.id },
 
       data: {
@@ -183,34 +238,214 @@ export async function updateSeriesController(
       },
     });
 
-    // =========================
-    // UPDATE SERIES PROPERLY
-    // =========================
+    // =====================================
+    // DIFFERENTIAL SYNC & CLOUDINARY CLEANUP
+    // =====================================
     if (data.seasons) {
-      await prisma.series.update({
-        where: {
-          id: series.id,
-        },
-        data: {
-          seasons: {
-            deleteMany: {},
+      const existingSeasons = series.seasons || [];
+      const incomingSeasons = data.seasons;
 
-            create: data.seasons.map((season) => ({
-              seasonNumber: season.seasonNumber,
+      const deletePromises: Promise<any>[] = [];
 
+      // 1. Identify deleted seasons and their episodes
+      const incomingSeasonNumbers = new Set(
+        incomingSeasons.map((s) => s.seasonNumber),
+      );
+      const seasonsToDelete = existingSeasons.filter(
+        (s) => !incomingSeasonNumbers.has(s.seasonNumber),
+      );
+
+      for (const season of seasonsToDelete) {
+        if (season.episodes) {
+          for (const episode of season.episodes) {
+            if (episode.videoUrl) {
+              deletePromises.push(
+                deleteFromCloudinary(episode.videoUrl, "video"),
+              );
+            }
+            if (episode.thumbnailUrl) {
+              deletePromises.push(
+                deleteFromCloudinary(episode.thumbnailUrl, "image"),
+              );
+            }
+          }
+        }
+      }
+
+      // 2. Identify deleted episodes or updated media from remaining seasons
+      for (const incomingSeason of incomingSeasons) {
+        const existingSeason = existingSeasons.find(
+          (s) => s.seasonNumber === incomingSeason.seasonNumber,
+        );
+
+        if (existingSeason && existingSeason.episodes) {
+          const incomingEpisodeNumbers = new Set(
+            incomingSeason.episodes?.map((e) => e.episodeNumber) || [],
+          );
+
+          // Episode deleted
+          const episodesToDelete = existingSeason.episodes.filter(
+            (e) => !incomingEpisodeNumbers.has(e.episodeNumber),
+          );
+          for (const episode of episodesToDelete) {
+            if (episode.videoUrl) {
+              deletePromises.push(
+                deleteFromCloudinary(episode.videoUrl, "video"),
+              );
+            }
+            if (episode.thumbnailUrl) {
+              deletePromises.push(
+                deleteFromCloudinary(episode.thumbnailUrl, "image"),
+              );
+            }
+          }
+
+          // Episode media updated
+          if (incomingSeason.episodes) {
+            for (const incomingEpisode of incomingSeason.episodes) {
+              const existingEpisode = existingSeason.episodes.find(
+                (e) => e.episodeNumber === incomingEpisode.episodeNumber,
+              );
+              if (existingEpisode) {
+                if (
+                  existingEpisode.videoUrl &&
+                  existingEpisode.videoUrl !== incomingEpisode.videoUrl
+                ) {
+                  deletePromises.push(
+                    deleteFromCloudinary(existingEpisode.videoUrl, "video"),
+                  );
+                }
+                if (
+                  existingEpisode.thumbnailUrl &&
+                  existingEpisode.thumbnailUrl !== incomingEpisode.thumbnailUrl
+                ) {
+                  deletePromises.push(
+                    deleteFromCloudinary(existingEpisode.thumbnailUrl, "image"),
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Sync replaced series poster/banner
+      if (
+        data.posterUrl !== undefined &&
+        content.posterUrl &&
+        content.posterUrl !== data.posterUrl
+      ) {
+        deletePromises.push(deleteFromCloudinary(content.posterUrl, "image"));
+      }
+      if (
+        data.bannerUrl !== undefined &&
+        content.bannerUrl &&
+        content.bannerUrl !== data.bannerUrl
+      ) {
+        deletePromises.push(deleteFromCloudinary(content.bannerUrl, "image"));
+      }
+
+      // Delete from Cloudinary
+      try {
+        await Promise.allSettled(deletePromises);
+      } catch (cloudinaryError) {
+        console.error(
+          "Cloudinary cleanup error during series update:",
+          cloudinaryError,
+        );
+      }
+
+      // 3. Database Modifications
+      if (seasonsToDelete.length > 0) {
+        await prisma.season.deleteMany({
+          where: {
+            id: { in: seasonsToDelete.map((s) => s.id) },
+          },
+        });
+      }
+
+      for (const incomingSeason of incomingSeasons) {
+        const existingSeason = existingSeasons.find(
+          (s) => s.seasonNumber === incomingSeason.seasonNumber,
+        );
+
+        if (existingSeason) {
+          // Delete episodes that are no longer present
+          const incomingEpisodeNumbers = new Set(
+            incomingSeason.episodes?.map((e) => e.episodeNumber) || [],
+          );
+          const episodesToDelete = existingSeason.episodes.filter(
+            (e) => !incomingEpisodeNumbers.has(e.episodeNumber),
+          );
+
+          if (episodesToDelete.length > 0) {
+            await prisma.episode.deleteMany({
+              where: {
+                id: { in: episodesToDelete.map((e) => e.id) },
+              },
+            });
+          }
+
+          // Create/update remaining episodes
+          if (incomingSeason.episodes) {
+            for (const incomingEpisode of incomingSeason.episodes) {
+              const existingEpisode = existingSeason.episodes.find(
+                (e) => e.episodeNumber === incomingEpisode.episodeNumber,
+              );
+
+              if (existingEpisode) {
+                await prisma.episode.update({
+                  where: { id: existingEpisode.id },
+                  data: {
+                    title: incomingEpisode.title,
+                    description: incomingEpisode.description ?? null,
+                    duration: incomingEpisode.duration,
+                    videoUrl: incomingEpisode.videoUrl,
+                    thumbnailUrl: incomingEpisode.thumbnailUrl,
+                  },
+                });
+              } else {
+                await prisma.episode.create({
+                  data: {
+                    seasonId: existingSeason.id,
+                    episodeNumber: incomingEpisode.episodeNumber,
+                    title: incomingEpisode.title,
+                    description: incomingEpisode.description ?? null,
+                    duration: incomingEpisode.duration,
+                    videoUrl: incomingEpisode.videoUrl,
+                    thumbnailUrl: incomingEpisode.thumbnailUrl,
+                  },
+                });
+              }
+            }
+          }
+        } else {
+          // Create new season and episodes
+          await prisma.season.create({
+            data: {
+              seriesId: series.id,
+              seasonNumber: incomingSeason.seasonNumber,
               episodes: {
                 create:
-                  season.episodes?.map((ep) => ({
+                  incomingSeason.episodes?.map((ep) => ({
                     episodeNumber: ep.episodeNumber,
                     title: ep.title,
-                    description: ep.description,
+                    description: ep.description ?? null,
                     duration: ep.duration,
                     videoUrl: ep.videoUrl,
                     thumbnailUrl: ep.thumbnailUrl,
                   })) || [],
               },
-            })),
-          },
+            },
+          });
+        }
+      }
+
+      // Update totalSeasons count on Series
+      await prisma.series.update({
+        where: { id: series.id },
+        data: {
+          totalSeasons: incomingSeasons.length,
         },
       });
     }
