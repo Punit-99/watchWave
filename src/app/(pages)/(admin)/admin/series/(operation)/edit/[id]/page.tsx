@@ -17,7 +17,7 @@ export default function SeriesEditPage() {
   if (isLoading) {
     return (
       <div className="flex h-[50vh] items-center justify-center text-muted-foreground animate-pulse">
-        Loading...
+        Loading Series Details...
       </div>
     );
   }

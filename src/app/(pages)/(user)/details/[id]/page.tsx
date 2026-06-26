@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Play } from "lucide-react";
@@ -30,7 +29,7 @@ export default function ContentDetailPage() {
   const playNextEpisode = () => {
     if (!data?.success || data?.data?.type !== "SERIES" || !activeEpisodeId) return;
     const seasons = data.data.series?.seasons ?? [];
-    const flatEpisodes = seasons.flatMap((s: any) => 
+    const flatEpisodes = seasons.flatMap((s: any) =>
       (s.episodes ?? []).map((ep: any) => ({ ...ep, seasonNumber: s.seasonNumber }))
     );
     const currentIndex = flatEpisodes.findIndex((ep: any) => ep.id === activeEpisodeId);
@@ -49,7 +48,7 @@ export default function ContentDetailPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground animate-pulse">
-        Loading...
+        Loading Entertainment...
       </div>
     );
   }
@@ -362,7 +361,7 @@ export default function ContentDetailPage() {
                                       No Image
                                     </div>
                                   )}
-                                  
+
                                   {/* Play Icon Hover Overlay */}
                                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <Play className="h-5 w-5 text-white fill-current" />

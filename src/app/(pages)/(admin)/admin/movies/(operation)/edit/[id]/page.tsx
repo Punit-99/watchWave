@@ -17,7 +17,7 @@ export default function EditMoviePage() {
   if (isLoading) {
     return (
       <div className="flex h-[50vh] items-center justify-center text-muted-foreground animate-pulse">
-        Loading...
+        Loading Movie Details...
       </div>
     );
   }
