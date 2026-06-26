@@ -41,9 +41,10 @@ export async function GET(
     }
 
     return Response.json({ success: true, data: content }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return Response.json(
-      { success: false, message: error.message || "Failed to fetch content" },
+      { success: false, message: err.message || "Failed to fetch content" },
       { status: 500 },
     );
   }

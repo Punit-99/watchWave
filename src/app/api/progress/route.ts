@@ -37,9 +37,10 @@ export async function GET() {
       success: true,
       data: progress,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to fetch progress" },
+      { success: false, message: err.message || "Failed to fetch progress" },
       { status: 500 },
     );
   }
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
             },
           },
         });
-      } catch (e) {
+      } catch {
         // Ignore error if it didn't exist in the first place
       }
 
@@ -118,9 +119,10 @@ export async function POST(req: Request) {
       success: true,
       data: progress,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to save progress" },
+      { success: false, message: err.message || "Failed to save progress" },
       { status: 500 },
     );
   }
@@ -159,9 +161,10 @@ export async function DELETE(req: Request) {
       success: true,
       message: "Removed from watch progress",
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message || "Failed to delete progress" },
+      { success: false, message: err.message || "Failed to delete progress" },
       { status: 500 },
     );
   }

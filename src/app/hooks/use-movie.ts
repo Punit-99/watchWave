@@ -15,7 +15,6 @@ import {
 
 import { appToast } from "@/lib/toast";
 import type {
-  GetMoviesResponse,
   UpdateMovieInput,
   CreateMovieInput,
 } from "@/validation/movie.validation";
@@ -62,10 +61,9 @@ export function useDeleteMovie() {
       });
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to delete movie",
-      );
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to delete movie");
     },
   });
 }
@@ -102,10 +100,9 @@ export function useUpdateMovie() {
       ]);
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to update movie",
-      );
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to update movie");
     },
   });
 }

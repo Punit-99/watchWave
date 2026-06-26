@@ -23,7 +23,7 @@ export function ContinueWatching() {
       <SectionHeader title="Continue Watching" />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {items.map((item: any) => {
+        {items.map((item) => {
           const content = item.content;
           if (!content) return null;
 
@@ -32,7 +32,7 @@ export function ContinueWatching() {
               key={item.id}
               id={content.id}
               title={content.title}
-              image={content.bannerUrl || content.posterUrl}
+              image={content.bannerUrl || content.posterUrl || ""}
               type={content.type}
               description={content.description}
               progress={{

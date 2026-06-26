@@ -17,6 +17,30 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+interface Episode {
+  id: string;
+  title: string;
+  episodeNumber: number;
+  videoUrl?: string | null;
+  thumbnailUrl?: string | null;
+  description?: string | null;
+  duration?: number | null;
+}
+
+interface Season {
+  id: string;
+  seasonNumber: number;
+  episodes?: Episode[];
+}
+
+interface ProgressItem {
+  id: string;
+  contentId: string;
+  watchedTime: number;
+  duration: number;
+  episodeId?: string | null;
+}
+
 export default function ContentDetailPage() {
   const { id } = useParams();
   const { data, isLoading, error } = useGetContentById(id as string);
@@ -29,15 +53,15 @@ export default function ContentDetailPage() {
   const playNextEpisode = () => {
     if (!data?.success || data?.data?.type !== "SERIES" || !activeEpisodeId)
       return;
-    const seasons = data.data.series?.seasons ?? [];
-    const flatEpisodes = seasons.flatMap((s: any) =>
-      (s.episodes ?? []).map((ep: any) => ({
+    const seasons = (data.data.series?.seasons ?? []) as Season[];
+    const flatEpisodes = seasons.flatMap((s) =>
+      (s.episodes ?? []).map((ep) => ({
         ...ep,
         seasonNumber: s.seasonNumber,
       })),
     );
     const currentIndex = flatEpisodes.findIndex(
-      (ep: any) => ep.id === activeEpisodeId,
+      (ep) => ep.id === activeEpisodeId,
     );
     if (currentIndex !== -1 && currentIndex + 1 < flatEpisodes.length) {
       const nextEp = flatEpisodes[currentIndex + 1];
@@ -70,10 +94,8 @@ export default function ContentDetailPage() {
   }
 
   const media = data.data;
-  const progressList = progressData?.data || [];
-  const contentProgress = progressList.find(
-    (p: any) => p.contentId === media.id,
-  );
+  const progressList = (progressData?.data || []) as ProgressItem[];
+  const contentProgress = progressList.find((p) => p.contentId === media.id);
 
   if (media.type === "MOVIE") {
     return (
@@ -257,7 +279,7 @@ export default function ContentDetailPage() {
 
   // Else render SERIES layout
   const seriesRoot = media.series;
-  const seasons = seriesRoot?.seasons ?? [];
+  const seasons = (seriesRoot?.seasons ?? []) as Season[];
 
   return (
     <div className="space-y-10 pb-10">
@@ -357,7 +379,7 @@ export default function ContentDetailPage() {
                   </p>
                 ) : (
                   <Accordion type="single" collapsible className="space-y-2">
-                    {seasons.map((season: any) => (
+                    {seasons.map((season: Season) => (
                       <AccordionItem
                         key={season.id}
                         value={season.id}
@@ -369,7 +391,7 @@ export default function ContentDetailPage() {
 
                         <AccordionContent className="pb-4 pt-2">
                           <div className="space-y-3">
-                            {season.episodes?.map((ep: any) => (
+                            {season.episodes?.map((ep: Episode) => (
                               <div
                                 key={ep.id}
                                 onClick={() => {
@@ -501,39 +523,39 @@ export default function ContentDetailPage() {
               episodeId={activeEpisodeId || undefined}
               episodeNumber={
                 seasons
-                  .flatMap((s: any) =>
-                    (s.episodes || []).map((e: any) => ({
+                  .flatMap((s) =>
+                    (s.episodes || []).map((e) => ({
                       id: e.id,
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
                     })),
                   )
-                  .find((e: any) => e.id === activeEpisodeId)?.episodeNumber
+                  .find((e) => e.id === activeEpisodeId)?.episodeNumber
               }
               seasonNumber={
                 seasons
-                  .flatMap((s: any) =>
-                    (s.episodes || []).map((e: any) => ({
+                  .flatMap((s) =>
+                    (s.episodes || []).map((e) => ({
                       id: e.id,
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
                     })),
                   )
-                  .find((e: any) => e.id === activeEpisodeId)?.seasonNumber
+                  .find((e) => e.id === activeEpisodeId)?.seasonNumber
               }
               episodeTitle={
                 seasons
-                  .flatMap((s: any) =>
-                    (s.episodes || []).map((e: any) => ({
+                  .flatMap((s) =>
+                    (s.episodes || []).map((e) => ({
                       id: e.id,
                       episodeNumber: e.episodeNumber,
                       seasonNumber: s.seasonNumber,
                       title: e.title,
                     })),
                   )
-                  .find((e: any) => e.id === activeEpisodeId)?.title
+                  .find((e) => e.id === activeEpisodeId)?.title
               }
               startTime={
                 contentProgress?.episodeId === activeEpisodeId

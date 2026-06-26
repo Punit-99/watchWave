@@ -40,10 +40,9 @@ export function useCreateSeries() {
       });
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to create series",
-      );
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to create series");
     },
   });
 }
@@ -98,10 +97,9 @@ export function useUpdateSeries() {
       ]);
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to update series",
-      );
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to update series");
     },
   });
 }
@@ -124,10 +122,9 @@ export function useDeleteSeries() {
       });
     },
 
-    onError: (error: any) => {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to delete series",
-      );
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to delete series");
     },
   });
 }

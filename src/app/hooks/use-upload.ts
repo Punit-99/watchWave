@@ -12,8 +12,9 @@ export function useUploadMedia() {
       appToast.uploadSuccess("File");
     },
 
-    onError: (error: any) => {
-      appToast.error(error?.response?.data?.message ?? "Failed to upload file");
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to upload file");
     },
   });
 }
@@ -26,8 +27,9 @@ export function useDeleteMedia() {
       appToast.deleted("File");
     },
 
-    onError: (error: any) => {
-      appToast.error(error?.response?.data?.message ?? "Failed to delete file");
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to delete file");
     },
   });
 }

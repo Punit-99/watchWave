@@ -11,7 +11,7 @@ import { Dropzone } from "@/components/common/dropzone";
 import { SeasonSection } from "./season-section";
 import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
 import { cn } from "@/lib/utils";
-import { Tv, Sliders, Globe, Tag } from "lucide-react";
+import { Tv, Sliders, Globe } from "lucide-react";
 import {
   createSeriesSchema,
   updateSeriesSchema,
@@ -54,7 +54,7 @@ export function SeriesForm({
   } = useForm<CreateSeriesInput>({
     resolver: zodResolver(
       mode === "create" ? createSeriesSchema : updateSeriesSchema,
-    ) as any,
+    ) as unknown as import("react-hook-form").Resolver<CreateSeriesInput>,
   });
 
   // ======================

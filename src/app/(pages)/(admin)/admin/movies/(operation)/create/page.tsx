@@ -30,9 +30,12 @@ export default function CreateMoviePage() {
                   appToast.created("Movie");
                   router.push("/admin/movies");
                 },
-                onError: (err: any) => {
+                onError: (err: unknown) => {
+                  const error = err as {
+                    response?: { data?: { message?: string } };
+                  };
                   appToast.error(
-                    err?.response?.data?.message ?? "Failed to create movie",
+                    error?.response?.data?.message ?? "Failed to create movie",
                   );
                 },
               });

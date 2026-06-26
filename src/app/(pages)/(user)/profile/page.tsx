@@ -47,10 +47,9 @@ export default function ProfilePage() {
         image: updatedUser.image,
       });
       appToast.updated("Profile picture");
-    } catch (error: any) {
-      appToast.error(
-        error?.response?.data?.message ?? "Failed to upload avatar",
-      );
+    } catch (error) {
+      const err = error as { response?: { data?: { message?: string } } };
+      appToast.error(err?.response?.data?.message ?? "Failed to upload avatar");
     } finally {
       setIsUploading(false);
       // Reset file input value so same file can be selected again

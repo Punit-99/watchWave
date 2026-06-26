@@ -101,9 +101,10 @@ export async function registerController(req: Request) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message },
+      { success: false, message: err.message },
       { status: 400 },
     );
   }
@@ -186,9 +187,10 @@ export async function loginController(req: Request) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message },
+      { success: false, message: err.message },
       { status: 400 },
     );
   }
@@ -268,9 +270,10 @@ export async function updateProfileController(req: Request) {
       message: "Profile updated successfully",
       data: updatedUser,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
-      { success: false, message: error.message || "Internal Server Error" },
+      { success: false, message: err.message || "Internal Server Error" },
       { status: 400 },
     );
   }

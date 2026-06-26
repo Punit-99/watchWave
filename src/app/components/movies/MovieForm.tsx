@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dropzone } from "@/components/common/dropzone";
 import { cn } from "@/lib/utils";
-import { Film, Sliders, Globe, Tag } from "lucide-react";
+import { Film, Sliders, Globe } from "lucide-react";
 
 import { useUploadMedia, useDeleteMedia } from "@/hooks/use-upload";
 
@@ -58,7 +58,7 @@ export function MovieForm({
   } = useForm<CreateMovieInput>({
     resolver: zodResolver(
       mode === "create" ? createMovieSchema : updateMovieSchema,
-    ) as any,
+    ) as unknown as import("react-hook-form").Resolver<CreateMovieInput>,
   });
   useEffect(() => {
     if (mode === "edit" && initialData) {

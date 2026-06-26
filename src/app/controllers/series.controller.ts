@@ -245,7 +245,7 @@ export async function updateSeriesController(
       const existingSeasons = series.seasons || [];
       const incomingSeasons = data.seasons;
 
-      const deletePromises: Promise<any>[] = [];
+      const deletePromises: Promise<unknown>[] = [];
 
       // 1. Identify deleted seasons and their episodes
       const incomingSeasonNumbers = new Set(

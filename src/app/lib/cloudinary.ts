@@ -28,7 +28,7 @@ export function extractPublicId(url: string | null | undefined): string | null {
 export async function deleteFromCloudinary(
   url: string | null | undefined,
   resourceType: "image" | "video" = "image",
-): Promise<any> {
+): Promise<unknown> {
   const publicId = extractPublicId(url);
   if (!publicId) return null;
 

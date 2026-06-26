@@ -3,10 +3,11 @@ import {
   getProgress,
   saveProgress,
   deleteProgress,
+  type ProgressResponse,
 } from "@/lib/api/progress.api";
 
 export function useGetProgress() {
-  return useQuery({
+  return useQuery<ProgressResponse>({
     queryKey: ["progress"],
     queryFn: getProgress,
   });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Upload, Trash2, Video, Image as ImageIcon } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 
 import { Button } from "@/components/ui/button";
