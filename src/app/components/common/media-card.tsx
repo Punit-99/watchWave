@@ -23,7 +23,7 @@ type MediaCardProps = {
 
 const trimText = (text?: string, maxLength: number = 80) => {
   if (!text) return "";
-  return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
 
 export function MediaCard({
