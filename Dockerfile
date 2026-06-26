@@ -10,7 +10,7 @@ RUN npm install -g pnpm@10
 
 # Copy lockfile first — layer cache skips install if unchanged
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN HUSKY=0 pnpm install --frozen-lockfile
 
 # Copy source + generate Prisma client (outputs to /src/generated/prisma)
 COPY . .
