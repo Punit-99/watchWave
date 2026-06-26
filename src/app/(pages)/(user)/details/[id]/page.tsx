@@ -49,7 +49,7 @@ export default function ContentDetailPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground animate-pulse">
-        Loading details...
+        Loading...
       </div>
     );
   }
