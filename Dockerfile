@@ -34,6 +34,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Next.js compiled output
 COPY --from=builder /src/.next/standalone ./
 COPY --from=builder /src/.next/static     ./.next/static
+COPY --from=builder /src/public ./public
 
 # Prisma generated client + schema + adapter packages
 COPY --from=builder /src/generated            ./generated
