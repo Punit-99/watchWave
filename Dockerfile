@@ -54,3 +54,10 @@ ENV NODE_ENV=production \
 EXPOSE 3000
 
 CMD ["node", "server.js"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget --spider http://localhost:3000 || exit 1
+
+LABEL org.opencontainers.image.title="WatchWave"
+LABEL org.opencontainers.image.description="WatchWave Next.js application"
+LABEL org.opencontainers.image.source="https://github.com/Punit-99/watchWave"
