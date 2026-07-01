@@ -1,0 +1,32 @@
+services:
+  watchwave:
+    image: ghcr.io/punit-99/watchwave:master
+    container_name: watchwave
+
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    networks:
+      - watchwave-network
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  watchwave-network:
+    driver: bridge
