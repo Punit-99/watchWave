@@ -1,4 +1,4 @@
-name: WatchWave CI Pipeline
+name: WatchWave CI
 
 on:
   push:
