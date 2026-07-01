@@ -1,0 +1,25 @@
+name: WatchWave CD
+
+on:
+  workflow_run:
+    workflows: ["WatchWave CI"]
+    types:
+      - completed
+
+jobs:
+  cd:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/watchWave
+            docker compose pull
+            docker compose up -d
+            echo "Deployment complete 🚀"
