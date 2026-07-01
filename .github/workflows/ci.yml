@@ -15,14 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ─────────────────────────────────────────────
-      # Checkout Repository
-      # ─────────────────────────────────────────────
       - uses: actions/checkout@v4
 
-      # ─────────────────────────────────────────────
-      # Setup pnpm & Node.js
-      # ─────────────────────────────────────────────
       - uses: pnpm/action-setup@v3
         with:
           version: 10
@@ -32,21 +26,12 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      # ─────────────────────────────────────────────
-      # Install Dependencies
-      # ─────────────────────────────────────────────
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ─────────────────────────────────────────────
-      # Prisma
-      # ─────────────────────────────────────────────
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      # ─────────────────────────────────────────────
-      # Validation
-      # ─────────────────────────────────────────────
       - name: Type Check
         run: pnpm tsc --noEmit
 
@@ -67,23 +52,23 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # ─────────────────────────────────────────────
-      # Generate Image Metadata
+      # Extract version tags (IMPORTANT FIX)
       # ─────────────────────────────────────────────
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository_owner }}/watchwave
+          tags: |
+            type=sha
+            type=raw,value=latest
 
       # ─────────────────────────────────────────────
-      # Setup Buildx
+      # Build & Push Image
       # ─────────────────────────────────────────────
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # ─────────────────────────────────────────────
-      # Build & Push Docker Image
-      # ─────────────────────────────────────────────
       - name: Build and Push Docker image
         uses: docker/build-push-action@v6
         with:

@@ -1,6 +1,6 @@
 services:
   watchwave:
-    image: ghcr.io/punit-99/watchwave:master
+    image: ghcr.io/punit-99/watchwave:latest
     container_name: watchwave
 
     restart: unless-stopped
