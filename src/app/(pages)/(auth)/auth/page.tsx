@@ -68,9 +68,7 @@ export default function AuthPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-violet-600 shadow-md shadow-primary/20">
             <Play className="h-4 w-4 fill-white text-white ml-0.5" />
           </div>
-          <span className="text-xl font-black tracking-wider">
-            WATCHWAVE-test
-          </span>
+          <span className="text-xl font-black tracking-wider">WATCHWAVE</span>
         </div>
 
         {/* Form Card wrapper */}
